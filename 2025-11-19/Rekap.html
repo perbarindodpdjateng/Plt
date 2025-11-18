@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rekap Peserta Realtime</title>
+
+  <!-- Google Font -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+
+  <style>
+    :root {
+      --clr-bg: #ffffff;
+      --clr-card: #ffffff;
+      --clr-line: #e5e7eb;
+      --clr-text: #111827;
+      --clr-subtle: #6b7280;
+      --clr-accent: #3b82f6;
+      --radius: 8px;
+      --shadow: 0 4px 12px rgba(0,0,0,.18);
+      --font-main: 11px;
+      --font-body: 10px;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--clr-bg);
+      color: var(--clr-text);
+      font-size: var(--font-main);
+      padding: 8px;
+    }
+
+    /* ---------- Card ---------- */
+    .card {
+      background: var(--clr-card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 10px;
+      max-width: 640px;
+      margin: auto;
+    }
+
+    /* ---------- Search ---------- */
+    .search-box {
+      position: relative;
+      margin-bottom: 8px;
+    }
+    .search-box input {
+      width: 100%;
+      font-size: var(--font-main);
+      padding: 6px 30px 6px 10px;
+      border: 1px solid var(--clr-line);
+      border-radius: var(--radius);
+      outline: none;
+    }
+    .search-box input:focus { border-color: var(--clr-accent); }
+
+    /* ---------- Table ---------- */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: var(--font-body);
+    }
+    th, td {
+      padding: 4px 5px;
+      border: 1px solid var(--clr-line);
+      line-height: 1.2;
+      vertical-align: top;
+    }
+    th {
+      background: #f9fafb;
+      font-weight: 500;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    /* Kolom 1 (No) */
+    th:nth-child(1), td:nth-child(1) { width: 7ch; max-width: 10ch; }
+    /* Kolom 2 (Kode) */
+    th:nth-child(2), td:nth-child(2) { width: 3ch; max-width: 4ch; }
+    /* Kolom 3 (Nama BPR) -> auto kapital */
+    th:nth-child(3), td:nth-child(3) { text-transform: uppercase; }
+    /* Kolom 4 (Status) */
+    th:nth-child(4), td:nth-child(4) { width: 2ch; max-width: 2ch; }
+
+    /* Baris baru */
+    tr.new-entry td { background: #e0ffe0; animation: fadeIn 1s ease-in; }
+    @keyframes fadeIn { from { background: #c4ffc4; } to { background: #e0ffe0; } }
+
+    /* ---------- Util ---------- */
+    .loading, .warning {
+      text-align: center;
+      margin-bottom: 6px;
+      font-size: var(--font-main);
+    }
+    .loading { color: var(--clr-subtle); }
+    .warning { color: #ef4444; }
+
+    /* ---------- Mobile ---------- */
+    @media (max-width: 360px) {
+      :root { --font-main: 10px; --font-body: 9px; }
+      th, td { padding: 3px 4px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <p id="loading" class="loading">Memuat data...</p>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Cari Nama BPR/S, No Daftar, Jumlah"/>
+    </div>
+
+    <table id="dataTable">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <script>
+    /* ---------- Script Anda (TIDAK DIUBAH) ---------- */
+    let previousData = '';
+    let lastRendered = [];
+    let originalData = [];
+
+    async function fetchData() {
+      try {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbweKYxkEXbKEooyVf6TC_ZLdulAJbVFj3n-hynrssn_VRd46pYMZd1FFoz-D1GlO5ZJDA/exec', {
+          cache: 'no-store'
+        });
+        const data = await response.json();
+        const dataString = JSON.stringify(data);
+
+        if (dataString !== previousData) {
+          previousData = dataString;
+          originalData = data;
+          renderTable(originalData);
+        }
+        document.getElementById("loading").style.display = "none";
+      } catch (error) {
+        console.error("Fetch error:", error);
+        document.getElementById("loading").textContent = "Gagal memuat data.";
+      }
+    }
+
+    function renderTable(data) {
+      const search = document.getElementById("searchInput").value.toLowerCase();
+      const thead = document.querySelector("#dataTable thead");
+      const tbody = document.querySelector("#dataTable tbody");
+      thead.innerHTML = "";
+      tbody.innerHTML = "";
+
+      data.forEach((row, index) => {
+        const rowText = row.join(" ").toLowerCase();
+        if (index === 0 || rowText.includes(search)) {
+          const tr = document.createElement("tr");
+
+          let isNew = index !== 0 && !lastRendered.includes(JSON.stringify(row));
+          if (isNew) tr.classList.add("new-entry");
+
+          row.forEach(cell => {
+            const el = document.createElement(index === 0 ? "th" : "td");
+            el.textContent = cell;
+            tr.appendChild(el);
+          });
+
+          if (index === 0) thead.appendChild(tr);
+          else {
+            tbody.appendChild(tr);
+            if (isNew) lastRendered.push(JSON.stringify(row));
+          }
+        }
+      });
+    }
+
+    document.getElementById("searchInput").addEventListener("input", () => {
+      renderTable(originalData);
+    });
+
+    fetchData();
+    setInterval(fetchData, 5000);
+  </script>
+</body>
+</html>
