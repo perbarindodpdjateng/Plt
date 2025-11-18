@@ -1,4 +1,4 @@
-const S='https://script.google.com/macros/s/AKfycbzlkt7qCe0bqzez5_ThJ2OpKJ2GJwdcv0V7_sUtrZ0ntx4j0VOH9MAw8UibCO5GQNaE/exec',v=document.getElementById('vw');
+const S='https://script.google.com/macros/s/AKfycbxAkCtFD1iHQcpJDrjlZE4EZhqHqVn0asvbeEhXNGORlNipbvacV84rnGsajR-ezCE3/exec',v=document.getElementById('vw');
 let r=[],i=0,l='';
 
 function h(o){try{return btoa(JSON.stringify(o))}catch{return''}}
@@ -23,3 +23,4 @@ function show(){
 }
 
 document.addEventListener('DOMContentLoaded',()=>{pull();setInterval(pull,15000);setInterval(show,3000)});
+
