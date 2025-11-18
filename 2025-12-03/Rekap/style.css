@@ -67,4 +67,49 @@ th {
 }
 
 /* Kolom 1 (No) */
-th:nth-child(1), td:nth-child(1) { width: 7ch; max-width:
+th:nth-child(1), td:nth-child(1) { width: 7ch; max-width: 10ch; }
+/* Kolom 2 (Kode) */
+th:nth-child(2), td:nth-child(2) { width: 3ch; max-width: 4ch; }
+/* Kolom 3 (Nama BPR) -> auto kapital */
+th:nth-child(3), td:nth-child(3) { text-transform: uppercase; }
+/* Kolom 4 (Status) */
+th:nth-child(4), td:nth-child(4) { width: 2ch; max-width: 2ch; }
+
+/* Baris baru */
+tr.new-entry td { background: #e0ffe0; animation: fadeIn 1s ease-in; }
+@keyframes fadeIn { from { background: #c4ffc4; } to { background: #e0ffe0; } }
+
+/* ---------- Util ---------- */
+.loading, .warning {
+  text-align: center;
+  margin-bottom: 6px;
+  font-size: var(--font-main);
+}
+.loading { color: var(--clr-subtle); }
+.warning { color: #ef4444; }
+
+/* ---------- Pagination ---------- */
+.pagination{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:6px;
+  font-size:var(--font-body);
+}
+.pagination button{
+  padding:4px 8px;
+  border:1px solid var(--clr-line);
+  background:#fff;
+  border-radius:var(--radius);
+  cursor:pointer;
+}
+.pagination button:disabled{
+  opacity:.5;
+  cursor:not-allowed;
+}
+
+/* ---------- Mobile ---------- */
+@media (max-width: 360px) {
+  :root { --font-main: 10px; --font-body: 9px; }
+  th, td { padding: 3px 4px; }
+}
