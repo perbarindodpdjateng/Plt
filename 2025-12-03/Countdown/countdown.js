@@ -1,5 +1,5 @@
 // UBAH TANGGAL/JAM TARGET DI SINI
-const targetDate = new Date("2025-12-25T00:00:00").getTime();
+const targetDate = new Date("2025-11-26T00:00:00").getTime();
 
 const els = {
   d: document.getElementById('d'),
