@@ -9,7 +9,7 @@ let originalData = [];
 
 async function fetchData() {
   try {
-    const response = await fetch('https://script.google.com/macros/s/AKfycbySDY3EzxglaPtQkmpf5KZvIZ1Pv1c9z_U4cEXp0xTAKgpuh7DqVdFn1vdDA9OQqRWw/exec', {
+    const response = await fetch('https://script.google.com/macros/s/AKfycbxx8TPHSIKJywjeeonff2_7tYx2YvwqiH1OmpZYrD4csAEps09qO4Fnhc0eGE9tvxzr/exec', {
       cache: 'no-store'
     });
     const data = await response.json();
