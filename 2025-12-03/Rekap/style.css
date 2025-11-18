@@ -1,0 +1,70 @@
+:root {
+  --clr-bg: transparent;
+  --clr-card: #ffffff;
+  --clr-line: #e5e7eb;
+  --clr-text: #111827;
+  --clr-subtle: #6b7280;
+  --clr-accent: #3b82f6;
+  --radius: 8px;
+  --shadow: 0 4px 12px rgba(0,0,0,.18);
+  --font-main: 11px;
+  --font-body: 10px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--clr-bg);
+  color: var(--clr-text);
+  font-size: var(--font-main);
+  padding: 8px;
+}
+
+/* ---------- Card ---------- */
+.card {
+  background: var(--clr-card);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 10px;
+  max-width: 640px;
+  margin: auto;
+}
+
+/* ---------- Search ---------- */
+.search-box {
+  position: relative;
+  margin-bottom: 8px;
+}
+.search-box input {
+  width: 100%;
+  font-size: var(--font-main);
+  padding: 6px 30px 6px 10px;
+  border: 1px solid var(--clr-line);
+  border-radius: var(--radius);
+  outline: none;
+}
+.search-box input:focus { border-color: var(--clr-accent); }
+
+/* ---------- Table ---------- */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--font-body);
+}
+th, td {
+  padding: 4px 5px;
+  border: 1px solid var(--clr-line);
+  line-height: 1.2;
+  vertical-align: top;
+}
+th {
+  background: #f9fafb;
+  font-weight: 500;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+
+/* Kolom 1 (No) */
+th:nth-child(1), td:nth-child(1) { width: 7ch; max-width:
