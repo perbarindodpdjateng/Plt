@@ -1,4 +1,3 @@
-// >>>>> UBAH TANGGAL TARGET >>>>>
 const targetDate = new Date("2025-12-25T00:00:00").getTime();
 
 const els = {
@@ -16,7 +15,7 @@ function tick(){
     clearInterval(interval);
     Object.values(els).forEach(el=>el.textContent="00");
     document.getElementById('countdown').innerHTML=
-      '<div class="box" style="max-width:20rem;margin-inline:auto"><span class="num">Waktu Habis!</span></div>';
+      '<div class="box" style="max-width:18rem;margin-inline:auto"><span class="num">Waktu Habis!</span></div>';
     return;
   }
   const days    = Math.floor(diff / 86_400_000);
