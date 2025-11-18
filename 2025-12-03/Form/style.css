@@ -1,0 +1,9 @@
+/* reset + layout */
+html,body{margin:0;padding:0;height:100%;overflow:hidden;background:transparent;font-family:sans-serif}
+
+/* loader */
+.loader{position:fixed;inset:0;background:#fff;display:flex;align-items:center;justify-content:center;z-index:10}
+
+/* iframe */
+#form-frame{border:0;width:100%;height:100%;display:block;opacity:0;transform:translateY(10px);transition:opacity .6s ease,transform .6s ease}
+#form-frame.visible{opacity:1;transform:translateY(0)}
