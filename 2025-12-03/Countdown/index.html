@@ -3,33 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Countdown 12 px</title>
+  <title>Countdown 8px</title>
   <link rel="stylesheet" href="countdown.css">
 </head>
 <body>
-  <main class="card">
-    <h1 class="title">BATAS AKHIR DAFTAR <span>(MAKS. H-7)</span></h1>
-
-    <div class="countdown" id="countdown">
-      <div class="box">
-        <span class="num" id="d">00</span>
-        <span class="label">Hari</span>
-      </div>
-      <div class="box">
-        <span class="num" id="h">00</span>
-        <span class="label">Jam</span>
-      </div>
-      <div class="box">
-        <span class="num" id="m">00</span>
-        <span class="label">Menit</span>
-      </div>
-      <div class="box">
-        <span class="num" id="s">00</span>
-        <span class="label">Detik</span>
-      </div>
+  <div class="box">
+    <div class="row">BATAS AKHIR DAFTAR (MAKS. H-7)</div>
+    <div class="row countdown" id="countdown">
+      <span id="d">00</span>:
+      <span id="h">00</span>:
+      <span id="m">00</span>:
+      <span id="s">00</span>
     </div>
-  </main>
-
+  </div>
   <script src="countdown.js"></script>
 </body>
 </html>
