@@ -20,7 +20,7 @@ body{
 .box{
   width:100%;
   max-width:320px;          /* batas HP */
-  background:rgba(0,0,0,.35); /* sedikit gelap agar tetap terbaca */
+  background:rgb(3, 0, 0); /* sedikit gelap agar tetap terbaca */
   border-radius:3px;
   padding:4px 6px;
 }
