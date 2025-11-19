@@ -1,5 +1,5 @@
 /* 8px base */
-html{font-size:8px}
+html{font-size:14px}
 *{
   box-sizing:border-box;
   margin:0;
@@ -26,7 +26,7 @@ body{
 }
 
 .row{
-  font-size:8px;
+  font-size:14px;
   line-height:1.2;
   text-align:center;
   white-space:nowrap;
