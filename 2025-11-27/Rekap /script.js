@@ -1,5 +1,5 @@
 /* ---------- konfigurasi paginasi ---------- */
-const rowsPerPage = 25;
+const rowsPerPage = 15;
 let currentPage   = 1;
 /* ----------------------------------------- */
 
