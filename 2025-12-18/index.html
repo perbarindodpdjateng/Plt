@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Formulir Google</title>
+
+  <!-- preload kritis -->
+  <link rel="preload" href="style.css" as="style">
+  <link rel="preload" href="loader.svg" as="image">
+
+  <!-- css -->
+  <link rel="stylesheet" href="style.css">
+
+  <!-- js ringan, di-load setelah DOM -->
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <!-- loader inline agar langsung muncul tanpa menunggu css -->
+  <div class="loader" id="loader">
+    <img src="loader.svg" alt="Loading…" width="40" height="40">
+  </div>
+
+  <!-- iframe -->
+  <iframe id="form-frame"
+          src="https://docs.google.com/forms/d/e/1FAIpQLSey4g48WfY4Ht7w18RJ1uwJs1wse6m_FvnBSAplN_6UDwoOCQ/viewform?embedded=true"
+          loading="lazy"
+          referrerpolicy="no-referrer"
+          sandbox="allow-same-origin allow-scripts allow-forms"
+          allowfullscreen
+          title="Formulir Google"></iframe>
+</body>
+</html>
