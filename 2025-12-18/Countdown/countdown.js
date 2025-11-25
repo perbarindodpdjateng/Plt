@@ -1,4 +1,4 @@
-const target = new Date("2025-11-25T00:00:00").getTime();
+const target = new Date("2025-12-11T00:00:00").getTime();
 const d=document.getElementById('d'),h=document.getElementById('h'),
       m=document.getElementById('m'),s=document.getElementById('s');
 
