@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PJJPenyegaranDir-Kom</title>
+  <style>
+    :root{
+      --accent:#1a4e8a;
+      --bg:white;
+      --header:#ffffff;
+      --row-even:transparent;
+      --row-odd:transparent;
+      --border:#e1e8f0;
+      --text:#222;
+      --radius:8px;
+      --shadow:0 2px 2px rgba(0,0,0,.18);
+      font-size:14px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      padding:0;
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
+    }
+    header{
+      background:var(--header);
+      box-shadow:var(--shadow);
+      padding:.5rem .5rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:.5rem;
+    }
+    header h1{font-size:2.55rem;color:var(--accent)}
+    .info-box-group{display:flex;gap:.5rem;flex-wrap:wrap}
+    .info-box{
+      font-size:.8rem;
+      font-weight:600;
+      padding:.35rem .6rem;
+      border-radius:var(--radius);
+      background:#fff8dc;
+      color:var(--accent);
+      white-space:nowrap;
+      box-shadow:var(--shadow);
+    }
+    .info-box.sisa-ok{background:#d4edda;color:#155724}
+    .info-box.sisa-penuh{background:#f8d7da;color:#721c24}
+
+    #warningBox{
+      background:#dc3545;
+      color:#fff;
+      text-align:center;
+      padding:.6rem;
+      font-weight:600;
+      display:none;
+    }
+
+    main{padding:.2rem}
+    #searchInput{
+      width:100%;
+      font-size:1rem;
+      padding:.5rem .75rem;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:.5rem;
+    }
+    .table-wrapper{
+      flex:1;
+      overflow:auto;
+      background:var(--header);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+    }
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:.75rem;
+    }
+    th{
+      background:var(--accent);
+      color:#fff;
+      position:sticky;
+      top:0;
+      z-index:1;
+      padding:.55rem .65rem;
+      text-transform:uppercase;
+      letter-spacing:.5px;
+    }
+    td{padding:.55rem .65rem;border-bottom:1px solid var(--border)}
+    tr:nth-child(even){background:var(--row-even)}
+    tr:nth-child(odd){background:var(--row-odd)}
+    tr.starred{background:#fff9c4 !important;}
+    .loading{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:.5rem;
+      padding:2rem 1rem;
+      font-size:.9rem;
+    }
+    .loading svg{width:1.2rem;height:1.2rem;animation:spin 1s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    .pagination{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:.5rem;
+      margin-top:1rem;
+    }
+    .pagination button{
+      padding:.35rem .6rem;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:var(--radius);
+      cursor:pointer;
+      font-size:.8rem;
+    }
+    .pagination button:disabled{
+      opacity:.5;
+      cursor:not-allowed;
+    }
+    .pagination span{
+      font-size:.8rem;
+    }
+
+    @media(max-width:420px){
+      header h1{font-size:1rem}
+      :root{font-size:10px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Rekap Peserta</h1>
+    <div class="info-box-group">
+      <div id="infoBoxTotal" class="info-box">👥 Total: <span id="totalCount">0</span></div>
+      <div id="infoBoxRemaining" class="info-box sisa-ok">✅ Sisa: <span id="remainingCount">30</span></div>
+    </div>
+  </header>
+
+  <div id="warningBox">⚠️ Kuota penuh! Maaf tidak dapat tambah Peserta</div>
+
+  <main>
+    <div class="loading">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2v4m0 12v4m8-8h-4M8 12H4m15.364-6.364l-2.828 2.828M8.464 15.536l-2.828 2.828m12.728 0l-2.828-2.828M8.464 8.464L5.636 5.636"/>
+      </svg>
+      Memuat data...
+    </div>
+    <input id="searchInput" type="text" placeholder="Cari BPR/Perusahaan, Peserta, Modul Yg Diikuti"/>
+    <div class="table-wrapper">
+      <table id="dataTable">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="pagination" id="pagination"></div>
+  </main>
+
+  <script>
+    /* ---------- CONFIG ---------- */
+    const URL = 'https://script.google.com/macros/s/AKfycbwaRAxUKyDyupi6fMPwU8GkxG85VikHpN1WJl7zEKWwArR3jTi6ByY2ONEKfpDW1MZS/exec';
+    let originalData = [];      // cache RAM
+    let currentPage  = 1;
+    const rowsPerPage = 5;
+
+    /* ---------- FETCH 1× ---------- */
+    async function fetchData() {
+      if (originalData.length) return;            // sudah ada cache
+      try {
+        const r = await fetch(URL, { cache: 'no-store' });
+        const j = await r.json();
+        originalData = j;                         // simpan ke cache
+        renderTable(originalData);
+        updateInfoBox(originalData);
+        document.querySelector('.loading').style.display = 'none';
+      } catch (e) {
+        console.error(e);
+        document.querySelector('.loading').textContent = 'Gagal memuat data.';
+      }
+    }
+
+    /* ---------- RENDER TABEL ---------- */
+    function renderTable(data) {
+      const s = document.getElementById('searchInput').value.toLowerCase();
+      const thead = document.querySelector('#dataTable thead');
+      const tbody = document.querySelector('#dataTable tbody');
+      thead.innerHTML = ''; tbody.innerHTML = '';
+
+      const filtered = data.filter((row, i) => {
+        if (i === 0) return true;
+        return row.join(' ').toLowerCase().includes(s);
+      });
+
+      const totalRows = filtered.length - 1;
+      const totalPages = Math.ceil(totalRows / rowsPerPage);
+      const start = (currentPage - 1) * rowsPerPage + 1;
+      const end   = Math.min(start + rowsPerPage - 1, totalRows);
+
+      const headerTr = document.createElement('tr');
+      filtered[0].forEach((cell, j) => {
+        if (j === 4 || j === 7) return;
+        const th = document.createElement('th');
+        th.textContent = cell.toUpperCase();
+        headerTr.appendChild(th);
+      });
+      thead.appendChild(headerTr);
+
+      for (let i = start; i <= end; i++) {
+        if (i >= filtered.length) break;
+        const row = filtered[i];
+        const tr  = document.createElement('tr');
+        let hasStar = false;
+        row.forEach((cell, j) => {
+          if (j === 4 || j === 7) return;
+          const td = document.createElement('td');
+          td.textContent = cell;
+          tr.appendChild(td);
+          if (String(cell).includes('*')) hasStar = true;
+        });
+        if (hasStar) tr.classList.add('starred');
+        tbody.appendChild(tr);
+      }
+      renderPagination(totalPages);
+    }
+
+    /* ---------- PAGINATION ---------- */
+    function renderPagination(totalPages) {
+      const pg = document.getElementById('pagination');
+      pg.innerHTML = '';
+      const prev = document.createElement('button');
+      prev.textContent = '‹ Prev';
+      prev.disabled = currentPage === 1;
+      prev.onclick = () => { if (currentPage > 1) { currentPage--; renderTable(originalData); } };
+      pg.appendChild(prev);
+
+      const info = document.createElement('span');
+      info.textContent = `Hal ${currentPage} / ${totalPages}`;
+      pg.appendChild(info);
+
+      const next = document.createElement('button');
+      next.textContent = 'Next ›';
+      next.disabled = currentPage === totalPages;
+      next.onclick = () => { if (currentPage < totalPages) { currentPage++; renderTable(originalData); } };
+      pg.appendChild(next);
+    }
+
+    /* ---------- INFO BOX ---------- */
+    function updateInfoBox(data) {
+      const total = data.length - 1;
+      const rem   = 30 - total;
+      document.getElementById('totalCount').textContent = total;
+      const box = document.getElementById('infoBoxRemaining');
+      box.className = 'info-box ' + (rem > 0 ? 'sisa-ok' : 'sisa-penuh');
+      box.innerHTML = (rem > 0 ? '✅' : '❌') + ' Sisa: <span id="remainingCount">' + (rem > 0 ? rem : 0) + '</span>';
+      document.getElementById('warningBox').style.display = rem <= 0 ? 'block' : 'none';
+    }
+
+    /* ---------- SEARCH ---------- */
+    document.getElementById('searchInput').addEventListener('input', () => {
+      currentPage = 1;
+      renderTable(originalData);
+    });
+
+    /* ---------- INIT ---------- */
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchData();          // UI sudah tampil, fetch di belakang
+      setInterval(() => {
+        originalData = [];  // reset cache → force reload
+        fetchData();
+      }, 5000);
+    });
+  </script>
+</body>
+</html>
