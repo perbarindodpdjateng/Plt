@@ -1,0 +1,208 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<title>Registrasi Ulang PJJ Penyegaran</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+/* ======= kritis: agar tampil duluan ======= */
+:root{--m:#1a237e;--b:#007bff}
+*{box-sizing:border-box}
+body{margin:0;padding:4px;font:11px/1.3 "Segoe UI",sans-serif;color:#333;background:#fff}
+h2{margin:0 0 6px;font-size:14px;font-weight:600;text-align:center;color:var(--m)}
+.box{max-width:560px;margin:auto;background:#fff;padding:4px;border-radius:4px;box-shadow:0 2px 8px rgba(0,0,0,.15)}
+input,select,button{width:100%;padding:5px 6px;margin:2px 0;border:1px solid #bbb;border-radius:4px;font-size:11px}
+input:focus,select:focus{border-color:var(--b);outline:0}
+button{background:var(--b);color:#fff;cursor:pointer}
+button:disabled{background:#888}
+.hidden{display:none}
+.info{padding:4px;border-radius:4px;margin:6px 0;font-size:10px}
+.ok{background:#d4edda;color:#155724}
+.err{background:#f8d7da;color:#721c24}
+.row{display:flex;gap:2px}
+.row>input{flex:1}
+label.small{font-size:10px;color:#555;margin-top:2px;display:block}
+/* progress */
+#progressBox{margin:6px 0;text-align:center;font-size:10px}
+#progressBar{height:4px;background:#e0e0e0;border-radius:2px;overflow:hidden}
+#progressBar>div{height:100%;background:var(--b);width:0;transition:width .25s}
+#progressTxt{display:inline-block;margin-top:3px;color:var(--b);animation:blink 1s infinite}
+@keyframes blink{50%{opacity:.5}}
+</style>
+</head>
+<body>
+
+<h2>INPUT BARU / REGISTRASI ULANG</h2>
+
+<div class="box">
+  <input id="keyword" placeholder="Ketik Nama Peserta">
+  <button onclick="cekData()">CEK DATA</button>
+
+  <!-- progress -->
+  <div id="progressBox" class="hidden">
+    <div id="progressBar"><div></div></div>
+    <div id="progressTxt">Proses Pengecekan…</div>
+  </div>
+
+  <div id="pesan"></div>
+
+  <!-- Mode REPLACE -->
+  <form id="reFormFound" class="hidden">
+    <input name="PesertaNama" readonly placeholder="Peserta (Nama)">
+    <input name="PesertaNoWA" readonly placeholder="Peserta (NoWA)">
+    <input name="JatuhTempoDir1" placeholder="JthTempo.Dir1 (dd/mm/yyyy) /TidakPunya 00/00/0000" pattern="\d{1,2}/\d{1,2}/\d{4}" title="Format: dd/mm/yyyy">
+    <input name="JatuhTempoDir2" placeholder="JthTempo.Dir2 (dd/mm/yyyy) /TidakPunya 00/00/0000" pattern="\d{1,2}/\d{1,2}/\d{4}">
+    <input name="JatuhTempoKom" placeholder="JthTempo.Kom (dd/mm/yyyy) /TidakPunya 00/00/0000" pattern="\d{1,2}/\d{1,2}/\d{4}">
+    <input name="SertifikatDiperpanjang" readonly placeholder="Sertifikat yang Diperpanjang">
+    <input name="NamaBPR" readonly placeholder="Nama BPR/Umum">
+    <input name="ContactNama" readonly placeholder="Contact Person (Nama)">
+    <input name="ContactNoWA" readonly placeholder="Contact Person (NoWA)">
+    <input name="BiayaPelatihan" readonly placeholder="Biaya Pelatihan">
+    <label class="small">No.Rek By.Pelatihan</label>
+    <input name="RekPelatihan" readonly value="Mandiri KCP Semarang Gayamsari, 135-00-1871870-8, DPD Perbarindo Jateng.Sertifikasi">
+    <input name="BiayaSU" readonly placeholder="Biaya SU (Ujian)">
+    <label class="small">No.Rek By.SU</label>
+    <input name="RekSU" readonly value="Bank Mandiri 103-000-4185035, An PT. Lembaga Sertifikasi Profesi Certif">
+    <input name="Pelatihan" value="PJJ Penyegaran Dir-Kom" readonly>
+    <input name="Tanggal" value="10-11-12 Feb'26" readonly>
+    <input name="RegistrasiUlang" value="Proses Registrasi Ulang" readonly>
+    <button>SUBMIT Registrasi Ulang</button>
+  </form>
+
+  <!-- Mode INSERT -->
+  <form id="reFormNew" class="hidden">
+    <input name="PesertaNama" required placeholder="Peserta (Nama)">
+    <input name="PesertaNoWA" required placeholder="Peserta (NoWA), contoh:85727051675">
+    <input name="JatuhTempoDir1" required placeholder="JthTempo.Dir1 (dd/mm/yyyy) /TidakPunya 00/00/0000" pattern="\d{1,2}/\d{1,2}/\d{4}">
+    <input name="JatuhTempoDir2" required placeholder="JthTempo.Dir2 (dd/mm/yyyy) /TidakPunya 00/00/0000" pattern="\d{1,2}/\d{1,2}/\d{4}">
+    <input name="JatuhTempoKom" required placeholder="JthTempo.Kom (dd/mm/yyyy) /TidakPunya 00/00/0000" pattern="\d{1,2}/\d{1,2}/\d{4}">
+    <select name="SertifikatDiperpanjang" required>
+      <option value="">-- Pilih Sertifikat Yg Diperpanjang --</option>
+      <option>(BPR) Komisaris</option><option>(BPR) Direktur Tk 2</option><option>(BPR) Direktur Tk 1</option>
+      <option>(BPR) Dir 2 + Dir 1</option><option>(BPR) Dir 1 + Kom</option><option>(BPR) Dir 2 + Kom</option><option>(BPR) Dir 2 + Dir 1 + Kom</option>
+      <option>(Umum) Komisaris</option><option>(Umum) Direktur Tk 2</option><option>(Umum) Direktur Tk 1</option>
+      <option>(Umum) Dir 2 + Dir 1</option><option>(Umum) Dir 1 + Kom</option><option>(Umum) Dir 2 + Kom</option><option>(Umum) Dir 2 + Dir 1 + Kom</option>
+    </select>
+    <input name="NamaBPR" required placeholder="Nama BPR/Umum">
+    <input name="ContactNama" placeholder="Contact Person (Nama)">
+    <input name="ContactNoWA" placeholder="Contact Person (NoWA), contoh:85727051675">
+    <input name="BiayaPelatihan" readonly placeholder="Biaya Pelatihan">
+    <label class="small">No.Rek By.Pelatihan</label>
+    <input name="RekPelatihan" readonly value="Mandiri KCP Semarang Gayamsari, 135-00-1871870-8, DPD Perbarindo Jateng.Sertifikasi">
+    <input name="BiayaSU" readonly placeholder="Biaya SU (Ujian)">
+    <label class="small">No.Rek By.SU</label>
+    <input name="RekSU" readonly value="Bank Mandiri 103-000-4185035, An PT. Lembaga Sertifikasi Profesi Certif">
+    <input name="Pelatihan" value="PJJ Penyegaran Dir-Kom" readonly>
+    <input name="Tanggal" value="10-11-12 Feb'26" readonly>
+    <input name="RegistrasiUlang" value="Proses Registrasi Ulang" readonly>
+    <button>SUBMIT Pendaftaran Baru</button>
+  </form>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+<script>
+/* =========== script tetap sama, hanya edit kecil =========== */
+const scriptURL = 'https://script.google.com/macros/s/AKfycbzF25LwL-0znlkf7hVo_bnl78Su02LKmnHRW7O9kM_cE6JXsLdpEx6tgRV2ByeJ9MGW/exec';
+
+function hitungBiaya(j){const m={
+"(BPR) Komisaris":[1500000,1665000],
+"(BPR) Direktur Tk 2":[1500000,1665000],
+"(BPR) Direktur Tk 1":[1500000,1665000],
+"(BPR) Dir 2 + Dir 1":[2000000,3330000],
+"(BPR) Dir 1 + Kom":[2500000,3330000],
+"(BPR) Dir 2 + Kom":[2500000,3330000],
+"(BPR) Dir 2 + Dir 1 + Kom":[3000000,4995000],
+"(Umum) Komisaris":[2000000,1665000],
+"(Umum) Direktur Tk 2":[2000000,1665000],
+"(Umum) Direktur Tk 1":[2000000,1665000],
+"(Umum) Dir 2 + Dir 1":[2500000,3330000],
+"(Umum) Dir 1 + Kom":[3000000,3330000],
+"(Umum) Dir 2 + Kom":[3000000,3330000],
+"(Umum) Dir 2 + Dir 1 + Kom":[3500000,4995000]
+};return m[j]||[0,0]}
+function formatRupiah(n){return n?'Rp '+n.toLocaleString('id-ID'):''}
+
+function cekData(){
+  const kw=document.getElementById('keyword').value.trim();
+  if(!kw){alert('Isi nama peserta');return}
+  const box=document.getElementById('progressBox');
+  const bar=box.querySelector('div>div');
+  box.classList.remove('hidden');bar.style.width='10%';
+  let w=10;const anim=setInterval(()=>{if(w>=90)clearInterval(anim);else{w+=10;bar.style.width=w+'%'}},80);
+  fetch(`${scriptURL}?action=cek&keyword=${encodeURIComponent(kw)}`)
+  .then(r=>r.json()).then(res=>{
+    clearInterval(anim);bar.style.width='100%';setTimeout(()=>box.classList.add('hidden'),300);
+    const pesan=document.getElementById('pesan'),fF=document.getElementById('reFormFound'),fN=document.getElementById('reFormNew');
+    fF.classList.add('hidden');fN.classList.add('hidden');pesan.innerHTML='';
+    if(res.status==='found'){fF.classList.remove('hidden');pesan.innerHTML='<div class="info ok">Data ditemukan. Lengkapi & submit ulang.</div>';isiFormFound(res.data);}
+    else if(res.status==='full'){pesan.innerHTML='<div class="info err">Maaf Data Tidak Ada dan Kuota Sudah Penuh.</div>';}
+    else{pesan.innerHTML='<div class="info err">Data tidak ditemukan. Silahkan isi formulir baru.</div>';fN.classList.remove('hidden');}
+  }).catch(e=>{clearInterval(anim);box.classList.add('hidden');alert('Gagal cek: '+e)})
+}
+function isiFormFound(d){
+  const f=document.getElementById('reFormFound');
+  Object.keys(d).forEach(k=>{if(f[k])f[k].value=d[k]||''});
+  const j=d.SertifikatDiperpanjang||f.SertifikatDiperpanjang.value||'';
+  const[pel,uj]=hitungBiaya(j);f.BiayaPelatihan.value=formatRupiah(pel);f.BiayaSU.value=formatRupiah(uj);
+}
+document.querySelector('#reFormNew select[name="SertifikatDiperpanjang"]').addEventListener('change',function(){
+  const[pel,uj]=hitungBiaya(this.value);
+  const f=document.getElementById('reFormNew');
+  f.BiayaPelatihan.value=formatRupiah(pel);f.BiayaSU.value=formatRupiah(uj);
+});
+function downloadPDF(form){
+  const{jsPDF}=window.jspdf;const doc=new jsPDF('p','mm','a4');
+  const all=[...form.elements].filter(el=>el.name&&el.value).map(el=>[el.name,el.value]);
+  const y=['BiayaPelatihan','RekPelatihan'],b=['BiayaSU','RekSU'];
+  const n=all.filter(r=>!y.includes(r[0])&&!b.includes(r[0])),yel=all.filter(r=>y.includes(r[0])),bl=all.filter(r=>b.includes(r[0]));
+  doc.setFontSize(13);doc.setFont(undefined,'bold');
+  doc.text('BUKTI KONFIRMASI REGISTRASI PJJ PENYEGARAN DIREKTUR-KOMISARIS',14,15);
+  doc.setFontSize(7);doc.text('Dicetak: '+new Date().toLocaleString('id-ID'),14,23);
+  let sy=30;
+  if(n.length){doc.autoTable({head:[['Field','Value']],body:n,startY:sy,theme:'grid',styles:{fontSize:9},headStyles:{fillColor:[66,139,202],textColor:255}});sy=doc.lastAutoTable.finalY+2}
+  if(yel.length){doc.autoTable({head:[['Field','Value']],body:yel,startY:sy,theme:'grid',styles:{fontSize:9,fillColor:[255,255,153]},headStyles:{fillColor:[66,139,202],textColor:255}});sy=doc.lastAutoTable.finalY+2}
+  if(bl.length){doc.autoTable({head:[['Field','Value']],body:bl,startY:sy,theme:'grid',styles:{fontSize:9,fillColor:[173,216,230]},headStyles:{fillColor:[66,139,202],textColor:255}});sy=doc.lastAutoTable.finalY+10}
+  doc.setFontSize(9);doc.setFont(undefined,'bold');
+  doc.text('Peserta telah Tercatat Sebagai Peserta, agar segera Transfer Biaya Pelatihan & Biaya SU',14,sy);sy+=7;
+  doc.setFont(undefined,'normal');
+  ['Mohon Dilengkapi dan Dikirimkan (berkas Tidak Perlu distaples, cukup diklip saja) :',
+  '1.FC KTP','2.Pas foto berwarna 3x4 = 3 lbr (bag.belakang mohon diberi nama Peserta & BPR)',
+  '3.FC Sertifikat (Dir1 / Dir2 / Kom) yang dimiliki','4.Surat Keterangan Bekerja (bila dari BPR) atau CV (bila dari Umum/pribadi)',
+  '5.Surat Keterangan Penugasan Kerja level 6 (form.khusus dr LSP Certif, pilih sesuai yg diperpanjang)'].forEach(t=>{doc.text(t,14,sy);sy+=5});
+  [{t:'Direktur Tk 1',l:'https://docs.google.com/document/d/1WA0vA9ez5eCloOBJGEn2TpUcDla9apCP/edit?usp=drive_link&ouid=101024212609727743125&rtpof=true&sd=true'},
+  {t:'Direktur Tk 2',l:'https://docs.google.com/document/d/1gAN1Q7o1ho2f9gLZqDsqmXQ3NrfgsRsX/edit?usp=drive_link&ouid=101024212609727743125&rtpof=true&sd=true'},
+  {t:'Komisaris',l:'https://docs.google.com/document/d/1U4ACTSpzaSRh9sMiLKOi_PTaj6o4Dtay/edit?usp=drive_link&ouid=101024212609727743125&rtpof=true&sd=true'}].forEach(it=>{
+    const txt='   '+it.t+', klik link --> ';doc.text(txt,14,sy);
+    doc.setTextColor(0,102,204);doc.textWithLink(it.t,14+doc.getTextWidth(txt),sy,{url:it.l});doc.setTextColor(0,0,0);sy+=4;
+  });
+  doc.setFontSize(11);doc.text('6.Surat Permohonan Perpanjangan Sertifikat Kompetensi BPR (pilih sesuai yg diperpanjang)',14,sy+=2);sy+=5;
+  [{t:'Direktur Tk 1',l:'https://drive.google.com/file/d/1MDAr_BhHieRRxBONZbEqcDORbsi88O2_/view?usp=drive_link'},
+  {t:'Direktur Tk 2',l:'https://drive.google.com/file/d/1PqkYoC-qZO5XxQi-71bvIt1TZn1GtDld/view?usp=drive_link'},
+  {t:'Komisaris',l:'https://drive.google.com/file/d/1K9npGCxKkhZtglV_969fsMzpQZfCg_8o/view?usp=drive_link'},
+  {t:'Contoh Pengisian Formulir',l:'https://drive.google.com/file/d/1eOFbnxSDIAj1Hjqgx30G4peX2Z7LkNiI/view?usp=drive_link'}].forEach(it=>{
+    const txt='   '+it.t+', klik link --> ';doc.text(txt,14,sy);
+    doc.setTextColor(0,102,204);doc.textWithLink(it.t,14+doc.getTextWidth(txt),sy,{url:it.l});doc.setTextColor(0,0,0);sy+=4;
+  });
+  doc.setFontSize(9);['7.FC Bukti Transfer By Pelatihan (ke No.Rek.PerbarindoJateng)',
+  '8.FC Bukti Transfer By Sertifikasi Ulang (ke No.Rek. LSP CERTIF)',
+  '9.FC NPWP BPR (bila dari BPR) atau NPWP Personal (bila dari Umum/pribadi)',
+  '','Kirim Berkas Persyaratan Fisik (Paling Lambat H-7) Ke : Kepada Yth. : Perbarindo DPD Jawa Tengah,',
+  'Jl. Sendangsari Utara XIII No.187, Kel.Kalicari, Kec.Pedurungan, Semarang 50198',
+  '','Info Lainnya : H-3 Akan dimasukkan ke WAGrup (Tersampai Modul, Jadwal serta Info2 Penting lainnya)',
+  'Upload BuktiTransfer : ViaWA https://wa.me/6285640316593',
+  'PIC Tanya Daftar-Berkas Tika https://wa.me/6285640316593'].forEach(t=>{doc.text(t,14,sy);sy+=(t===''?3:5)});
+  const nm=form.PesertaNama&&form.PesertaNama.value.trim()?form.PesertaNama.value.trim().replace(/\s+/g,'-'):'peserta';
+  doc.save(`Registrasi-Ulang-${nm}.pdf`);
+}
+document.getElementById('reFormFound').addEventListener('submit',e=>{
+  e.preventDefault();const f=e.target;
+  fetch(scriptURL,{method:'POST',body:new FormData(f)}).then(()=>{downloadPDF(f);f.reset();f.classList.add('hidden');document.getElementById('pesan').innerHTML='<div class="info ok">Registrasi ulang berhasil & PDF telah diunduh.</div>'}).catch(er=>alert('Gagal update: '+er))
+});
+document.getElementById('reFormNew').addEventListener('submit',e=>{
+  e.preventDefault();const f=e.target;
+  fetch(scriptURL,{method:'POST',body:new FormData(f)}).then(()=>{downloadPDF(f);f.reset();f.classList.add('hidden');document.getElementById('pesan').innerHTML='<div class="info ok">Pendaftaran baru berhasil & PDF telah diunduh.</div>'}).catch(er=>alert('Gagal simpan: '+er))
+});
+</script>
+</body>
+</html>
