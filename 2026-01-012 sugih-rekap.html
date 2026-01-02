@@ -26,6 +26,18 @@
       font-size:var(--font-main);
       padding:0 4px 4px 4px;
     }
+    /* ---------- Countdown ---------- */
+    .countdown-bar{
+      background:#fff3cd;
+      border:1px solid #ffeaa7;
+      color:#d63031;
+      text-align:center;
+      padding:4px 6px;
+      font-size:10px;
+      font-weight:500;
+      margin-bottom:4px;
+      border-radius:var(--radius);
+    }
     /* ---------- Header sebaris ---------- */
     .header-bar{
       display:flex;
@@ -91,6 +103,11 @@
 </head>
 
 <body>
+  <!-- Countdown Bar -->
+  <div id="countdownBar" class="countdown-bar">
+    PENDAFTARAN DITUTUP DALAM <span id="cd"></span>
+  </div>
+
   <div class="header-bar">
     <h2>REKAP PESERTA</h2>
     <div class="search-box">
@@ -109,6 +126,28 @@
   </div>
 
   <script>
+    // ---------- Countdown ----------
+    const targetDate = new Date("2026-02-10T23:59:59").getTime(); // Ganti dengan tanggal tutup pendaftaran
+    const cdSpan = document.getElementById('cd');
+    const cdBar = document.getElementById('countdownBar');
+
+    function updateCountdown(){
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+      if(distance < 0){
+        cdBar.style.display = 'none';
+        return;
+      }
+      const days = Math.floor(distance / (1000*60*60*24));
+      const hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+      const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
+      const seconds = Math.floor((distance % (1000*60)) / 1000);
+      cdSpan.textContent = `${days} hari ${String(hours).padStart(2,'0')} jam ${String(minutes).padStart(2,'0')} menit ${String(seconds).padStart(2,'0')} detik`;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // ---------- Data Table (sama seperti sebelumnya) ----------
     const rowsPerPage = 10;
     let currentPage   = 1;
     let previousData  = '';
