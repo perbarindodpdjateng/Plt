@@ -4,6 +4,11 @@
   <meta charset="UTF-8">
   <title>Registrasi Ulang PJJ Penyegaran</title>
   <style>
+/* ===== countdown ===== */
+#countdownBox{text-align:center;background:#fff3cd;color:#856404;padding:6px;font-size:11px;font-weight:600;margin-bottom:4px;border-radius:0px}
+#countdownBox span{display:inline-block;margin:0 2px}
+#countdownBox .label{font-size:9px;font-weight:400}
+    
     /* ---------- base ---------- */
     :root{--main:#1a237e;}
     body{
@@ -59,7 +64,7 @@
     /* ---------- countdown ---------- */
     #countdown{
       text-align:center;
-      font-size:13px;font-weight:600;
+      font-size:11px;font-weight:600;
       color:#d32f2f;margin:6px 0;
     }
 
@@ -115,14 +120,16 @@
 
 
   
-  <!-- countdown -->
-  <div id="countdown">PENDAFTARAN DITUTUP DALAM <br><span id="cd"></span><br>
-  bila penuh, ditutup tanpa pemberitahuan</div>
-  <div class="header-wrapper">
-    <div class="header-title">
-      <h2><strong>INPUT BARU / REGISTRASI</strong></h2>
-    </div>
-  </div>
+<!-- ===== countdown ===== -->
+<div id="countdownBox">
+  PENDAFTARAN DITUTUP DALAM<br>
+  <span id="cdHari">0</span><span class="label">hari</span>
+  <span id="cdJam">00</span><span class="label">jam</span>
+  <span id="cdMenit">00</span><span class="label">menit</span>
+  <span id="cdDetik">00</span><span class="label">detik</span><br>
+  bila penuh, ditutup tanpa pemberitahuan 
+</div>
+
 
   <div class="box">
     <input type="text" id="keyword" placeholder="Ketik Nama Peserta">
@@ -229,21 +236,41 @@
 
   <script>
     /* ========== COUNTDOWN ========== */
-    (function countdown(){
-      /* waktu awal: 36 hari 03 jam 12 menit 01 detik */
-      let t = 36*24*3600 + 3*3600 + 12*60 + 1;
-      const cd = document.getElementById('cd');
-      setInterval(()=>{
-        if(t<=0){cd.innerHTML='DITUTUP'; return;}
-        const h=Math.floor(t/3600);
-        const m=Math.floor((t%3600)/60);
-        const s=t%60;
-        const hr=Math.floor(h/24), jam=h%24;
-        cd.innerHTML=
-          `${hr} hari ${String(jam).padStart(2,'0')} jam ${String(m).padStart(2,'0')} menit ${String(s).padStart(2,'0')} detik`;
-        t--;
-      },1000);
-    })();
+/* =========== countdown dengan label hari,jam,menit,detik =========== */
+function startCountdown(){
+  // --- UBAH TANGGAL DEADLINE DISINI ---
+  // new Date(tahun, bulan-1, tanggal, jam, menit, detik)
+  const deadline = new Date(2026, 1, 8, 23, 59, 59).getTime();
+
+  const elHari  = document.getElementById('cdHari');
+  const elJam   = document.getElementById('cdJam');
+  const elMenit = document.getElementById('cdMenit');
+  const elDetik = document.getElementById('cdDetik');
+  const box     = document.getElementById('countdownBox');
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  const timer = setInterval(()=>{
+    const now = Date.now();
+    const diff = deadline - now;
+    if(diff <= 0){
+      clearInterval(timer);
+      box.innerHTML = 'Pendaftaran telah ditutup';
+      return;
+    }
+    const hari  = Math.floor(diff / 86400000);
+    const jam   = Math.floor((diff % 86400000) / 3600000);
+    const menit = Math.floor((diff % 3600000) / 60000);
+    const detik = Math.floor((diff % 60000) / 1000);
+
+    elHari.textContent  = hari;
+    elJam.textContent   = pad(jam);
+    elMenit.textContent = pad(menit);
+    elDetik.textContent = pad(detik);
+  }, 1000);
+}
+startCountdown();
+
 
     /* ========== FUNGSI LAMA (TETAP) ========== */
     const scriptURL = 'https://script.google.com/macros/s/AKfycby6Rbe1aEVZgsuYVkznaIJ0flJU4OjidBli9d-BZUTRWCL-z7m3MdFWuwGrkKb86g92Jg/exec';
