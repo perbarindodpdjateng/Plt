@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Registrasi Ulang PJJ Penyegaran</title>
+  <style>
+    /* ---------- base ---------- */
+    :root{--main:#1a237e;}
+    body{
+      font-family:'Segoe UI',sans-serif;
+      font-size:9px;               /* ← diperkecil */
+      margin:0;padding:5px;
+      background:white;color:#333;
+    }
+    h2{
+      text-align:center;color:var(--main);
+      margin:0;font-size:12px;     /* ← diperkecil */
+      font-weight:600;
+    }
+    .box{
+      max-width:560px;margin:auto;
+      background:#fff;padding:3px;
+      border-radius:10px;
+      box-shadow:0 4px 12px rgba(0,0,0,.15);
+    }
+    input,select,button{
+      width:100%;padding:8px;margin:6px 0;
+      border:1px solid #ccc;border-radius:6px;box-sizing:border-box;
+    }
+    button{background:#007bff;color:#fff;cursor:pointer}
+    button:disabled{background:#888}
+    .hidden{display:none}
+    .info{padding:5px;border-radius:6px;margin:10px 0}
+    .ok{background:#d4edda;color:#155724}
+    .err{background:#f8d7da;color:#721c24}
+    .row{display:flex;gap:8px}
+    .row > input{flex:1}
+    label.small{
+      font-size:10px;             /* ← diperkecil */
+      color:#555;margin-top:4px;display:block;
+    }
+
+    /* ---------- progress bar ---------- */
+    #progressBox{display:none;margin:10px 0;text-align:center}
+    #progressBar{
+      width:100%;height:8px;background:#e0e0e0;border-radius:4px;overflow:hidden;
+    }
+    #progressFill{
+      height:100%;width:0%;background:#007bff;
+      animation:fillBar 1.5s infinite;
+    }
+    @keyframes fillBar{0%{width:0%} 50%{width:70%} 100%{width:100%}}
+    .blink{
+      font-size:11px;color:#007bff;
+      animation:blink 0.7s infinite;
+    }
+    @keyframes blink{0%,100%{opacity:1} 50%{opacity:.3}}
+
+    /* ---------- countdown ---------- */
+    #countdown{
+      text-align:center;
+      font-size:13px;font-weight:600;
+      color:#d32f2f;margin:6px 0;
+    }
+
+    /* ---------- running text ---------- */
+    #running{
+      white-space:nowrap;
+      overflow:hidden;
+      background:#e3f2fd;
+      color:#0d47a1;
+      font-size:10px;
+      padding:4px 0;
+    }
+    #running span{
+      display:inline-block;
+      padding-left:100%;
+      animation:run 12s linear infinite;
+    }
+    @keyframes run{0%{transform:translateX(0)} 100%{transform:translateX(-100%)}}
+  </style>
+</head>
+<body>
+
+  <!-- running text -->
+  <div id="running">
+    <span>Budayakan Membaca Sebelum Bertanya</span>
+  </div>
+
+<!-- Teks Berjalan -->
+<!-- Seamless tanpa putus, ultra-ringan -->
+<style>
+.banner{
+  background:#e74c3c;
+  color:#fff;
+  font:500 10px/18px sans-serif;
+  height:18px;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.track{
+  display:inline-block;
+  animation:scroll 10s linear infinite;
+}
+.track span{
+  display:inline-block;          /* hilangkan jarak antar salinan */
+}
+@keyframes scroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+</style>
+
+<div class="banner">
+  <div class="track">
+    <span>Budayakan Membaca Sebelum Bertanya ◼️ Budayakan Membaca Sebelum Bertanya ◼️ </span>
+    <span>Budayakan Membaca Sebelum Bertanya ◼️ Budayakan Membaca Sebelum Bertanya ◼️ </span>
+  </div>
+</div>
+
+
+  
+  <!-- countdown -->
+  <div id="countdown">PENDAFTARAN DITUTUP DALAM <span id="cd"></span></div>
+
+  <div class="header-wrapper">
+    <div class="header-title">
+      <h2><strong>INPUT BARU / REGISTRASI</strong></h2>
+    </div>
+  </div>
+
+  <div class="box">
+    <input type="text" id="keyword" placeholder="Ketik Nama Peserta">
+    <button onclick="cekData()">CEK DATA</button>
+    <div id="pesan"></div>
+
+    <!-- indikator pengecekan -->
+    <div id="progressBoxCek" class="hidden">
+      <div id="progressBar"><div id="progressFill"></div></div>
+      <span id="progressTextCek" class="blink">Proses Pengecekan</span>
+    </div>
+
+    <!-- Mode REPLACE (data lama ditemukan) -->
+    <form id="reFormFound" class="hidden">
+      <input name="PesertaNama" readonly placeholder="Peserta (Nama)">
+      <input name="PesertaNoWA" readonly placeholder="Peserta (NoWA)">
+
+      <input name="JatuhTempoDir1" placeholder="Jth Tempo Dir1 (dd/mm/yyyy)" pattern="\d{1,2}/\d{1,2}/\d{4}" title="Format: dd/mm/yyyy">
+      <input name="JatuhTempoDir2" placeholder="Jth Tempo Dir2 (dd/mm/yyyy)" pattern="\d{1,2}/\d{1,2}/\d{4}" title="Format: dd/mm/yyyy">
+      <input name="JatuhTempoKom" placeholder="Jth Tempo Kom (dd/mm/yyyy)" pattern="\d{1,2}/\d{1,2}/\d{4}" title="Format: dd/mm/yyyy">
+
+      <input name="ModulYgDiikuti" readonly placeholder="ModulYgDiikuti">
+      <input name="NamaBPR" readonly placeholder="Nama BPR/Umum">
+      <input name="ContactNama" readonly placeholder="Contact Person (Nama)">
+      <input name="ContactNoWA" readonly placeholder="Contact Person (NoWA)">
+
+      <input name="BiayaPelatihan" readonly placeholder="Biaya Pelatihan">
+      <label class="small">No.Rek By.Pelatihan</label>
+      <input name="RekPelatihan" readonly value="Mandiri KCP Semarang Gayamsari, 135-00-1871870-8, DPD Perbarindo Jateng.Sertifikasi">
+
+      <input name="BiayaUjian" readonly placeholder="Biaya Ujian">
+      <label class="small">No.Rek By.Ujian</label>
+      <input name="RekUjian" readonly value="Bank Mandiri, 126.000.437.6165 Cab.Kemang Raya, PT. Lembaga Sertifikasi Profesi Certif">
+
+      <input name="Pelatihan" value="PTM Sertifikasi Direktur 1 & Direktur 2" readonly>
+      <input name="Tanggal" value="20-23,26-30 Jan,2-5 Feb" readonly>
+      <input name="RegistrasiUlang" value="Proses Registrasi Ulang" readonly>
+
+      <button type="submit">SUBMIT Registrasi Ulang</button>
+      <!-- indikator kirim & download -->
+      <div id="progressBox" class="hidden">
+        <div id="progressBar"><div id="progressFill"></div></div>
+        <span id="progressText" class="blink">Kirim Data & Download Bukti Konfirmasi - Info Biaya - Info No Rek</span>
+      </div>
+    </form>
+
+    <!-- Mode INSERT (data tidak ditemukan) -->
+    <form id="reFormNew" class="hidden">
+      <input name="PesertaNama" required placeholder="Peserta (Nama)">
+      <input name="PesertaNoWA" required placeholder="Peserta (NoWA), contoh:85727051675">
+      <input name="JatuhTempoDir1" required placeholder="Jth Tempo Dir1 (dd/mm/yyyy)" pattern="\d{1,2}/\d{1,2}/\d{4}" title="Format: dd/mm/yyyy">
+      <input name="JatuhTempoDir2" required placeholder="Jth Tempo Dir2 (dd/mm/yyyy)" pattern="\d{1,2}/\d{1,2}/\d{4}" title="Format: dd/mm/yyyy">
+      <input name="JatuhTempoKom" required placeholder="Jth Tempo Kom (dd/mm/yyyy)" pattern="\d{1,2}/\d{1,2}/\d{4}" title="Format: dd/mm/yyyy">
+
+      <select name="ModulYgDiikuti" required>
+        <option value="">-- Pilih Modul Yang Diikuti --</option>
+        <option>[BPR] Direktur 1 Full Modul</option>
+        <option>[BPR] Direktur 1 Lanjutan dari Kom</option>
+        <option>[BPR] Direktur 1 Lanjutan dari PeOPR</option>
+        <option>[BPR] Direktur 1 Lanjutan dari PeAI</option>
+        <option>[BPR] Direktur 1 Lanjutan dari PeKPR</option>
+        <option>[BPR] Direktur 2 Full Modul</option>
+        <option>[BPR] Direktur 2 Lanjutan dari Dir1</option>
+        <option>[BPR] Direktur 2 Lanjutan dari Dir1+Kom</option>
+        <option>[BPR] Direktur 2 Lanjutan dari Dir1+PeOPR</option>
+        <option>[BPR] Direktur 2 Lanjutan dari Dir1+PeAI</option>
+        <option>[BPR] Direktur 2 Lanjutan dari Dir1+PeKPR</option>
+        <option>[UMUM] Direktur 1 Full Modul</option>
+        <option>[UMUM] Direktur 1 Lanjutan dari Kom</option>
+        <option>[UMUM] Direktur 1 Lanjutan dari PeOPR</option>
+        <option>[UMUM] Direktur 1 Lanjutan dari PeAI</option>
+        <option>[UMUM] Direktur 1 Lanjutan dari PeKPR</option>
+        <option>[UMUM] Direktur 2 Full Modul</option>
+        <option>[UMUM] Direktur 2 Lanjutan dari Dir1</option>
+        <option>[UMUM] Direktur 2 Lanjutan dari Dir1+Kom</option>
+        <option>[UMUM] Direktur 2 Lanjutan dari Dir1+PeOPR</option>
+        <option>[UMUM] Direktur 2 Lanjutan dari Dir1+PeAI</option>
+        <option>[UMUM] Direktur 2 Lanjutan dari Dir1+PeKPR</option>
+      </select>
+
+      <input name="NamaBPR" required placeholder="Nama BPR/Umum">
+      <input name="ContactNama" placeholder="Contact Person (Nama)">
+      <input name="ContactNoWA" placeholder="Contact Person (NoWA), contoh:85727051675">
+
+      <input name="BiayaPelatihan" readonly placeholder="Biaya Pelatihan">
+      <label class="small">No.Rek By.Pelatihan</label>
+      <input name="RekPelatihan" readonly value="Mandiri KCP Semarang Gayamsari, 135-00-1871870-8, DPD Perbarindo Jateng.Sertifikasi">
+
+      <input name="BiayaUjian" readonly placeholder="Biaya Ujian">
+      <label class="small">No.Rek By Ujian</label>
+      <input name="RekUjian" readonly value="Bank Mandiri, 126.000.437.6165 Cab.Kemang Raya, PT. Lembaga Sertifikasi Profesi Certif">
+
+      <input name="Pelatihan" value="PTM Sertifikasi Direktur 1 & Direktur 2" readonly>
+      <input name="Tanggal" value="20-23,26-30 Jan,2-5 Feb" readonly>
+      <input name="RegistrasiUlang" value="Proses Registrasi Ulang" readonly>
+
+      <button type="submit">SUBMIT Pendaftaran Baru</button>
+    </form>
+  </div>
+
+  <!-- jsPDF & autoTable -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+
+  <script>
+    /* ========== COUNTDOWN ========== */
+    (function countdown(){
+      /* waktu awal: 36 hari 03 jam 12 menit 01 detik */
+      let t = 36*24*3600 + 3*3600 + 12*60 + 1;
+      const cd = document.getElementById('cd');
+      setInterval(()=>{
+        if(t<=0){cd.innerHTML='DITUTUP'; return;}
+        const h=Math.floor(t/3600);
+        const m=Math.floor((t%3600)/60);
+        const s=t%60;
+        const hr=Math.floor(h/24), jam=h%24;
+        cd.innerHTML=
+          `${hr} hari ${String(jam).padStart(2,'0')} jam ${String(m).padStart(2,'0')} menit ${String(s).padStart(2,'0')} detik`;
+        t--;
+      },1000);
+    })();
+
+    /* ========== FUNGSI LAMA (TETAP) ========== */
+    const scriptURL = 'https://script.google.com/macros/s/AKfycby6Rbe1aEVZgsuYVkznaIJ0flJU4OjidBli9d-BZUTRWCL-z7m3MdFWuwGrkKb86g92Jg/exec';
+
+    function hitungBiaya(jenis){
+      const biayaMap = {
+        "[BPR] Direktur 1 Full Modul" : [9500000, 4384500],
+        "[BPR] Direktur 1 Lanjutan dari Kom" : [5000000, 2053500],
+        "[BPR] Direktur 1 Lanjutan dari PeOPR" : [6000000, 2442000],
+        "[BPR] Direktur 1 Lanjutan dari PeAI" : [7000000, 2830500],
+        "[BPR] Direktur 1 Lanjutan dari PeKPR" : [6000000, 2442000],
+        "[BPR] Direktur 2 Full Modul" : [12000000, 5161500],
+        "[BPR] Direktur 2 Lanjutan dari Dir1" : [2000000, 888000],
+        "[BPR] Direktur 2 Lanjutan dari Dir1+Kom" : [1000000, 499500],
+        "[BPR] Direktur 2 Lanjutan dari Dir1+PeOPR" : [2000000, 888000],
+        "[BPR] Direktur 2 Lanjutan dari Dir1+PeAI" : [2000000, 888000],
+        "[BPR] Direktur 2 Lanjutan dari Dir1+PeKPR" : [1000000, 499500],
+        "[UMUM] Direktur 1 Full Modul" : [10000000, 4384500],
+        "[UMUM] Direktur 1 Lanjutan dari Kom" : [5500000, 2053500],
+        "[UMUM] Direktur 1 Lanjutan dari PeOPR" : [6500000, 2442000],
+        "[UMUM] Direktur 1 Lanjutan dari PeAI" : [7500000, 2830500],
+        "[UMUM] Direktur 1 Lanjutan dari PeKPR" : [6500000, 2442000],
+        "[UMUM] Direktur 2 Full Modul" : [12500000, 5161500],
+        "[UMUM] Direktur 2 Lanjutan dari Dir1" : [2500000, 888000],
+        "[UMUM] Direktur 2 Lanjutan dari Dir1+Kom" : [1500000, 499500],
+        "[UMUM] Direktur 2 Lanjutan dari Dir1+PeOPR" : [2500000, 888000],
+        "[UMUM] Direktur 2 Lanjutan dari Dir1+PeAI" : [2500000, 888000],
+        "[UMUM] Direktur 2 Lanjutan dari Dir1+PeKPR" : [1500000, 499500]
+      };
+      return biayaMap[jenis] || [0, 0];
+    }
+
+    function formatRupiah(n){
+      if(!n) return '';
+      return 'Rp ' + n.toLocaleString('id-ID');
+    }
+
+    /* ---------- indikator helper ---------- */
+    function showProgress(txt, targetBox){
+      const box = document.getElementById(targetBox);
+      box.querySelector('span').textContent = txt;
+      box.classList.remove('hidden');
+    }
+    function hideProgress(targetBox){
+      document.getElementById(targetBox).classList.add('hidden');
+    }
+
+    /* ---------- cek data ---------- */
+    function cekData(){
+      showProgress('Proses Pengecekan', 'progressBoxCek');
+      const kw = document.getElementById('keyword').value.trim();
+      if(!kw){alert('Isi nama peserta'); hideProgress('progressBoxCek'); return;}
+      fetch(`${scriptURL}?action=cek&keyword=${encodeURIComponent(kw)}`)
+        .then(r=>r.json())
+        .then(res=>{
+          hideProgress('progressBoxCek');
+          const pesan = document.getElementById('pesan');
+          const fFound = document.getElementById('reFormFound');
+          const fNew  = document.getElementById('reFormNew');
+          fFound.classList.add('hidden'); fNew.classList.add('hidden');
+          pesan.innerHTML = '';
+          if(res.status==='found'){
+            fFound.classList.remove('hidden');
+            pesan.innerHTML='<div class="info ok">Data ditemukan. Lengkapi & submit ulang.</div>';
+            isiFormFound(res.data);
+          }else if(res.status==='full'){
+            pesan.innerHTML='<div class="info err">Maaf Data Tidak Ada dan Kuota Sudah Penuh.</div>';
+          }else{
+            pesan.innerHTML='<div class="info err">Data tidak ditemukan. Silahkan isi formulir baru.</div>';
+            fNew.classList.remove('hidden');
+          }
+        })
+        .catch(e=>{hideProgress('progressBoxCek'); alert('Gagal cek: '+e)});
+    }
+
+    function isiFormFound(data){
+      const form = document.getElementById('reFormFound');
+      Object.keys(data).forEach(k=>{ if(form[k]) form[k].value = data[k] || '' });
+      const jenis = data.ModulYgDiikuti || form.ModulYgDiikuti.value || '';
+      const [pel, uj] = hitungBiaya(jenis);
+      form.BiayaPelatihan.value = pel ? formatRupiah(pel) : '';
+      form.BiayaUjian.value = uj ? formatRupiah(uj) : '';
+    }
+
+    const selectNew = document.querySelector('#reFormNew select[name="ModulYgDiikuti"]');
+    if(selectNew){
+      selectNew.addEventListener('change', function(){
+        const [pel, uj] = hitungBiaya(this.value);
+        const form = document.getElementById('reFormNew');
+        form.BiayaPelatihan.value = pel ? formatRupiah(pel) : '';
+        form.BiayaUjian.value = uj ? formatRupiah(uj) : '';
+      });
+    }
+
+    function downloadPDF(form){
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p','mm','a4');
+      const allRows = [...form.elements]
+                      .filter(el=>el.name && el.value)
+                      .map(el=>[el.name, el.value]);
+      const yellowRows = ['BiayaPelatihan','RekPelatihan'];
+      const blueRows   = ['BiayaUjian','RekUjian'];
+      const normalRows = allRows.filter(r=> !yellowRows.includes(r[0]) && !blueRows.includes(r[0]));
+      const yellow     = allRows.filter(r=>  yellowRows.includes(r[0]));
+      const blue       = allRows.filter(r=>  blueRows.includes(r[0]));
+
+      doc.setFontSize(13);
+      doc.setTextColor(0,0,0);
+      doc.setFont(undefined,'bold');
+      doc.text('Registrasi Ulang PTM Sertifikasi Direktur Tk 1 & Direktur Tk 2', 14, 15);
+      doc.setFontSize(7);
+      doc.text('Dicetak: '+new Date().toLocaleString('id-ID'), 14, 23);
+
+      let startY = 30;
+      if(normalRows.length){
+        doc.autoTable({
+          head:[['Field','Value']],
+          body:normalRows,
+          startY:startY,
+          theme:'grid',
+          styles:{fontSize:9},
+          headStyles:{fillColor:[66,139,202],textColor:255}
+        });
+        startY = doc.lastAutoTable.finalY + 2;
+      }
+      if(yellow.length){
+        doc.autoTable({
+          head:[['Field','Value']],
+          body:yellow,
+          startY:startY,
+          theme:'grid',
+          styles:{fontSize:9, fillColor:[255,255,153]},
+          headStyles:{fillColor:[66,139,202],textColor:255}
+        });
+        startY = doc.lastAutoTable.finalY + 2;
+      }
+      if(blue.length){
+        doc.autoTable({
+          head:[['Field','Value']],
+          body:blue,
+          startY:startY,
+          theme:'grid',
+          styles:{fontSize:9, fillColor:[173,216,230]},
+          headStyles:{fillColor:[66,139,202],textColor:255}
+        });
+        startY = doc.lastAutoTable.finalY + 10;
+      }
+      doc.setFontSize(9);
+      doc.setTextColor(0,0,0);
+      doc.setFont(undefined,'bold');
+      doc.text('Peserta telah Tercatat Sebagai Peserta, agar segera Transfer Biaya Pelatihan & Biaya Ujian', 14, startY);
+      startY += 7;
+      doc.setFont(undefined,'normal');
+      const lines = [
+        'Informasi yang dapat kami sampaikan :',
+        '1. Terkait Info Pemberkasan akan disampaikan via WA Grup',
+        '2. PIC Pelatihan-Pemberkasan, Tika https://wa.me/6285640316593 ',
+        '3. Tanggal Hadir menyesuaikan Modul Yang Diikuti yang tercantum di JADWAL PELATIHAN',
+        '4. Upload BuktiTransfer, ViaWA https://wa.me/6285875657375 '
+      ];
+      lines.forEach(txt=>{ doc.text(txt, 14, startY); startY += 5; });
+      const namaFile = (form.PesertaNama && form.PesertaNama.value.trim())
+                       ? form.PesertaNama.value.trim().replace(/\s+/g,'-')
+                       : 'peserta';
+      doc.save(`Registrasi-Ulang-${namaFile}.pdf`);
+    }
+
+    document.getElementById('reFormFound').addEventListener('submit', e=>{
+      e.preventDefault();
+      showProgress('Kirim Data & Download Bukti Konfirmasi - Info Biaya - Info No Rek', 'progressBox');
+      const form = e.target;
+      fetch(scriptURL,{method:'POST',body:new FormData(form)})
+        .then(r=>r.text())
+        .then(()=>{
+          downloadPDF(form);
+          form.reset();
+          form.classList.add('hidden');
+          document.getElementById('pesan').innerHTML =
+            '<div class="info ok">Registrasi ulang berhasil & PDF telah diunduh.</div>';
+          hideProgress('progressBox');
+        })
+        .catch(er=>{hideProgress('progressBox'); alert('Gagal update: '+er)});
+    });
+
+    document.getElementById('reFormNew').addEventListener('submit', e=>{
+      e.preventDefault();
+      const form = e.target;
+      fetch(scriptURL,{method:'POST',body:new FormData(form)})
+        .then(r=>r.text())
+        .then(()=>{
+          downloadPDF(form);
+          form.reset();
+          form.classList.add('hidden');
+          document.getElementById('pesan').innerHTML =
+            '<div class="info ok">Pendaftaran baru berhasil & PDF telah diunduh.</div>';
+        })
+        .catch(er=>alert('Gagal simpan: '+er));
+    });
+  </script>
+</body>
+</html>
