@@ -206,7 +206,7 @@
 
       const headerTr = document.createElement('tr');
       filtered[0].forEach((cell, j) => {
-        if (j === 6 || j === 7) return;
+        if (j === 0 || j === 5) return;
         const th = document.createElement('th');
         th.textContent = cell.toUpperCase();
         headerTr.appendChild(th);
