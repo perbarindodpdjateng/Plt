@@ -206,7 +206,7 @@
 
       const headerTr = document.createElement('tr');
       filtered[0].forEach((cell, j) => {
-        if (j === 0 || j === 5) return;
+        if (j === 4 ) return;
         const th = document.createElement('th');
         th.textContent = cell.toUpperCase();
         headerTr.appendChild(th);
@@ -219,7 +219,7 @@
         const tr  = document.createElement('tr');
         let hasStar = false;
         row.forEach((cell, j) => {
-          if (j === 4 || j === 7) return;
+          if (j === 5 || j === 7) return;
           const td = document.createElement('td');
           td.textContent = cell;
           tr.appendChild(td);
