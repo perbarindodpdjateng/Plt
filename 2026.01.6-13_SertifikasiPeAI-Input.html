@@ -238,6 +238,45 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 
   <script>
+
+        /* ========== COUNTDOWN ========== */
+/* =========== countdown dengan label hari,jam,menit,detik =========== */
+function startCountdown(){
+  // --- UBAH TANGGAL DEADLINE DISINI ---
+  // new Date(tahun, bulan-1, tanggal, jam, menit, detik)
+  const deadline = new Date(2026, 0, 5, 12, 59, 59).getTime();
+
+  const elHari  = document.getElementById('cdHari');
+  const elJam   = document.getElementById('cdJam');
+  const elMenit = document.getElementById('cdMenit');
+  const elDetik = document.getElementById('cdDetik');
+  const box     = document.getElementById('countdownBox');
+
+  function pad(n){ return String(n).padStart(2,'0'); }
+
+  const timer = setInterval(()=>{
+    const now = Date.now();
+    const diff = deadline - now;
+    if(diff <= 0){
+      clearInterval(timer);
+      box.innerHTML = 'Pendaftaran telah ditutup';
+      return;
+    }
+    const hari  = Math.floor(diff / 86400000);
+    const jam   = Math.floor((diff % 86400000) / 3600000);
+    const menit = Math.floor((diff % 3600000) / 60000);
+    const detik = Math.floor((diff % 60000) / 1000);
+
+    elHari.textContent  = hari;
+    elJam.textContent   = pad(jam);
+    elMenit.textContent = pad(menit);
+    elDetik.textContent = pad(detik);
+  }, 1000);
+}
+startCountdown();
+
+
+    
     const scriptURL = 'https://script.google.com/macros/s/AKfycbzUT-2-wn3LWuVi8cOfWqKgX3aryD-QIieT1J935gO2LFVzkT_Nj4XR_aqLyTg8p6iSBw/exec';
 
     function hitungBiaya(jenis){
