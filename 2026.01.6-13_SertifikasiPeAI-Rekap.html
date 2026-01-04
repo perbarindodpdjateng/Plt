@@ -7,85 +7,128 @@
   <style>
     :root{
       --accent:#1a4e8a;
-      --bg:#fff;
-      --header:#fff;
+      --bg:white;
+      --header:#ffffff;
       --row-even:transparent;
       --row-odd:transparent;
       --border:#e1e8f0;
       --text:#222;
-      --radius:6px;
-      --shadow:0 1px 2px rgba(0,0,0,.08);
+      --radius:8px;
+      --shadow:0 2px 2px rgba(0,0,0,.18);
       font-size:14px;
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{
       font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
-      background:var(--bg);color:var(--text);
-      display:flex;flex-direction:column;min-height:100vh;
+      background:var(--bg);
+      color:var(--text);
+      padding:0;
+      display:flex;
+      flex-direction:column;
+      min-height:100vh;
     }
     header{
-      background:var(--header);box-shadow:var(--shadow);
-      padding:.4rem .35rem .4rem .35rem;
-      display:flex;justify-content:space-between;align-items:center;
-      flex-wrap:wrap;gap:.35rem;
+      background:var(--header);
+      box-shadow:var(--shadow);
+      padding:.5rem .5rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:.5rem;
     }
-    header h1{font-size:1.45rem;color:var(--accent)}
-    .info-box-group{display:flex;gap:.35rem;flex-wrap:wrap}
+    header h1{font-size:1.55rem;color:var(--accent)}
+    .info-box-group{display:flex;gap:.5rem;flex-wrap:wrap}
     .info-box{
-      font-size:.75rem;font-weight:600;
-      padding:.3rem .5rem;border-radius:var(--radius);
-      background:#fff8dc;color:var(--accent);
-      white-space:nowrap;box-shadow:var(--shadow);
+      font-size:.8rem;
+      font-weight:600;
+      padding:.35rem .6rem;
+      border-radius:var(--radius);
+      background:#fff8dc;
+      color:var(--accent);
+      white-space:nowrap;
+      box-shadow:var(--shadow);
     }
     .info-box.sisa-ok{background:#d4edda;color:#155724}
     .info-box.sisa-penuh{background:#f8d7da;color:#721c24}
 
     #warningBox{
-      background:#dc3545;color:#fff;text-align:center;
-      padding:.5rem;font-weight:600;display:none;
+      background:#dc3545;
+      color:#fff;
+      text-align:center;
+      padding:.6rem;
+      font-weight:600;
+      display:none;
     }
 
-    main{padding:.2rem .15rem}
+    main{padding:.2rem}
     #searchInput{
-      width:100%;font-size:1rem;padding:.45rem .6rem;
-      border:1px solid var(--border);border-radius:var(--radius);
-      margin-bottom:.4rem;
+      width:100%;
+      font-size:1rem;
+      padding:.5rem .75rem;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      margin-bottom:.5rem;
     }
     .table-wrapper{
-      flex:1;overflow:auto;background:var(--header);
-      border-radius:var(--radius);box-shadow:var(--shadow);
+      flex:1;
+      overflow:auto;
+      background:var(--header);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
     }
-    table{width:100%;border-collapse:collapse;font-size:.72rem}
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:.75rem;
+    }
     th{
-      background:var(--accent);color:#fff;position:sticky;top:0;z-index:1;
-      padding:.5rem .55rem;text-transform:uppercase;letter-spacing:.5px;
+      background:var(--accent);
+      color:#fff;
+      position:sticky;
+      top:0;
+      z-index:1;
+      padding:.55rem .65rem;
+      text-transform:uppercase;
+      letter-spacing:.5px;
     }
-    td{padding:.5rem .55rem;border-bottom:1px solid var(--border)}
+    td{padding:.55rem .65rem;border-bottom:1px solid var(--border)}
     tr:nth-child(even){background:var(--row-even)}
     tr:nth-child(odd){background:var(--row-odd)}
     tr.starred{background:#fff9c4 !important;}
-
-    /* ---------- overlay loading ---------- */
-    .loading-overlay{
-      position:absolute;left:0;right:0;top:0;bottom:0;
-      background:rgba(255,255,255,.75);
-      display:flex;align-items:center;justify-content:center;
-      gap:.5rem;font-size:.9rem;color:#555;
+    .loading{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:.5rem;
+      padding:2rem 1rem;
+      font-size:.9rem;
     }
-    .loading-overlay svg{width:1.1rem;height:1.1rem;animation:spin 1s linear infinite}
+    .loading svg{width:1.2rem;height:1.2rem;animation:spin 1s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
 
     .pagination{
-      display:flex;justify-content:center;align-items:center;
-      gap:.4rem;margin-top:.7rem;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:.5rem;
+      margin-top:1rem;
     }
     .pagination button{
-      padding:.3rem .55rem;border:1px solid var(--border);
-      background:#fff;border-radius:var(--radius);cursor:pointer;
-      font-size:.75rem;
+      padding:.35rem .6rem;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:var(--radius);
+      cursor:pointer;
+      font-size:.8rem;
     }
-    .pagination button:disabled{opacity:.5;cursor:not-allowed}
-    .pagination span{font-size:.75rem}
+    .pagination button:disabled{
+      opacity:.5;
+      cursor:not-allowed;
+    }
+    .pagination span{
+      font-size:.8rem;
+    }
 
     @media(max-width:420px){
       header h1{font-size:1rem}
@@ -105,26 +148,25 @@
   <div id="warningBox">⚠️ Kuota penuh! Maaf tidak dapat tambah Peserta</div>
 
   <main>
+    <div class="loading">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2v4m0 12v4m8-8h-4M8 12H4m15.364-6.364l-2.828 2.828M8.464 15.536l-2.828 2.828m12.728 0l-2.828-2.828M8.464 8.464L5.636 5.636"/>
+      </svg>
+      Memuat data...
+    </div>
     <input id="searchInput" type="text" placeholder="Cari BPR/Perusahaan, Peserta, Modul Yg Diikuti"/>
     <div class="table-wrapper">
-      <!-- Tabel langsung ada, loading hanya overlay -->
       <table id="dataTable">
         <thead></thead>
         <tbody></tbody>
       </table>
-      <div class="loading-overlay" id="loadingOverlay">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <path d="M12 2v4m0 12v4m8-8h-4M8 12H4m15.364-6.364l-2.828 2.828M8.464 15.536l-2.828 2.828m12.728 0l-2.828-2.828M8.464 8.464L5.636 5.636"/>
-        </svg>
-        Memuat data...
-      </div>
     </div>
     <div class="pagination" id="pagination"></div>
   </main>
 
   <script>
     /* ---------- CONFIG ---------- */
-    const URL = 'https://script.google.com/macros/s/AKfycbxvCgA30xF8ntcuMiTbIotsqkWg8jC9PP8CRmLDGtWZkv02kkzu6KR1bDCW0JttRKL_/exec';
+    const URL = 'https://script.google.com/macros/s/AKfycbykiUauvUIXbpdwGF62gTLLgMCcdZ6FQaSd-R8En32LmOlaKNB9-Dl-Qa_XRgNEpp9UTg/exec';
     let originalData = [];      // cache RAM
     let currentPage  = 1;
     const rowsPerPage = 5;
@@ -138,10 +180,10 @@
         originalData = j;                         // simpan ke cache
         renderTable(originalData);
         updateInfoBox(originalData);
-        document.getElementById('loadingOverlay').style.display = 'none';
+        document.querySelector('.loading').style.display = 'none';
       } catch (e) {
         console.error(e);
-        document.getElementById('loadingOverlay').textContent = 'Gagal memuat data.';
+        document.querySelector('.loading').textContent = 'Gagal memuat data.';
       }
     }
 
@@ -162,23 +204,22 @@
       const start = (currentPage - 1) * rowsPerPage + 1;
       const end   = Math.min(start + rowsPerPage - 1, totalRows);
 
-      /* ----- header ----- */
       const headerTr = document.createElement('tr');
       filtered[0].forEach((cell, j) => {
-        // TAMPILKAN SEMUA KOLOM (tidak skip lagi)
+        if (j === 4 ) return;
         const th = document.createElement('th');
         th.textContent = cell.toUpperCase();
         headerTr.appendChild(th);
       });
       thead.appendChild(headerTr);
 
-      /* ----- body ----- */
       for (let i = start; i <= end; i++) {
         if (i >= filtered.length) break;
         const row = filtered[i];
         const tr  = document.createElement('tr');
         let hasStar = false;
-        row.forEach((cell) => {
+        row.forEach((cell, j) => {
+          if (j === 5 || j === 7) return;
           const td = document.createElement('td');
           td.textContent = cell;
           tr.appendChild(td);
