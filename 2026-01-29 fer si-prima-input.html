@@ -1,1 +1,30 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Formulir Google</title>
+  <style>
+    html,body{margin:0;height:100%;font:10px/1 "Segoe UI",Roboto,Arial,sans-serif;background:#fff}
+    #f{display:block;width:100%;height:100%;border:0;opacity:0;transition:opacity .2s}
+    #f.show{opacity:1}
+  </style>
+</head>
+<body>
+  <!-- iframe start-up hidden -->
+  <iframe id="f" loading="lazy" referrerpolicy="no-referrer"
+          sandbox="allow-same-origin allow-scripts allow-forms"
+          title="Formulir Google"></iframe>
+
+  <script>
+    /* tampilkan iframe secepatnya setelah first paint */
+    requestAnimationFrame(() => {
+      const fr = document.getElementById('f');
+      fr.onload = () => fr.classList.add('show');   // fade-in 0.2 s
+      fr.src = 'https://docs.google.com/forms/d/e/1FAIpQLSfQXbHbhERYDZnzjZz5WK-7ETKYcuwnh7u5TdM4yc3RW8xtLA/viewform?embedded=true';
+    });
+  </script>
+</body>
+</html>
+
 
