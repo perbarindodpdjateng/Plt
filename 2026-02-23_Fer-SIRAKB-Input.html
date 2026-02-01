@@ -58,7 +58,6 @@
       background: #0056b3;
     }
     
-    /* Loading Bar */
     #loadingBar {
       display: none;
       height: 3px;
@@ -74,7 +73,6 @@
       transition: width .3s;
     }
     
-    /* Blink Message Styles */
     .message {
       display: none;
       text-align: center;
@@ -83,12 +81,12 @@
       border-radius: 4px;
       font-weight: bold;
       font-size: 12px;
-      animation: blink 1s infinite;
     }
     .message.success {
       background: #d4edda;
       color: #155724;
       border: 1px solid #c3e6cb;
+      animation: blink 1s infinite;
     }
     .message.error {
       background: #f8d7da;
@@ -101,7 +99,6 @@
       51%, 100% { opacity: 0.3; }
     }
     
-    /* Searchable Dropdown Styles */
     .searchable-select {
       position: relative;
       margin-bottom: 6px;
@@ -147,7 +144,6 @@
       color: #999;
     }
 
-    /* Peserta Container Styles */
     #pesertaContainer {
       margin-bottom: 6px;
     }
@@ -173,6 +169,15 @@
       display: block;
       text-transform: uppercase;
     }
+    .debug-info {
+      font-size: 9px;
+      color: #666;
+      margin-top: 5px;
+      padding: 5px;
+      background: #f0f0f0;
+      border-radius: 3px;
+      display: none;
+    }
   </style>
 </head>
 <body>
@@ -182,46 +187,48 @@
   <h3>Perbarindo DPD Jateng - Yandora</h3><br>
 </div>
 
-<form id="Form">
+<form id="Form" onsubmit="return false;">
 
   <select name="Pelatihan" required>
     <option>PTM Aplikasi Digital SI-RAKB (Sistem Informasi Rencana Aksi Keuangan Berkelanjutan) Versi 3 APOLO untuk Menyusun dan Menyampaikan Laporan RAKB BPR - BPRS Tahun 2026 ke OJK Satu Klik ke APOLO Laporan Keuangan Berkelanjutan</option>
   </select>
+  
   <select name="Tgl" required>
     <option>23 Februari 2026</option>
   </select>
+  
   <select name="Paket" required>
     <option value="">-- Pilih Paket 1/2/3 --</option>
-<option>PAKET 1 : 2.950.000; 1 Org + SI-RAKB Ver.3 (hemat 0)</option>
-<option>PAKET 1 : 4.200.000; 2 Org + SI-RAKB Ver.3 (hemat 1.700.000)</option>
-<option>PAKET 1 : 5.450.000; 3 Org + SI-RAKB Ver.3 (hemat 3.400.000)</option>
-<option>PAKET 1 : 6.700.000; 4 Org + SI-RAKB Ver.3 (hemat 5.100.000)</option>
-<option>PAKET 1 : 7.950.000; 5 Org + SI-RAKB Ver.3 (hemat 6.800.000)</option>
-<option>PAKET 1 : 9.200.000; 6 Org + SI-RAKB Ver.3 (hemat 8.500.000)</option>
-<option>PAKET 1 : 10.450.000; 7 Org + SI-RAKB Ver.3 (hemat 10.200.000)</option>
-<option>PAKET 1 : 11.700.000; 8 Org + SI-RAKB Ver.3 (hemat 11.900.000)</option>
-<option>PAKET 1 : 12.950.000; 9 Org + SI-RAKB Ver.3 (hemat 13.600.000)</option>
-<option>PAKET 1 : 14.200.000; 10 Org + SI-RAKB Ver.3 (hemat 15.300.000)</option>
-<option>PAKET 2 : 2.050.000; 1 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 0)</option>
-<option>PAKET 2 : 3.300.000; 2 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 800.000)</option>
-<option>PAKET 2 : 4.550.000; 3 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 4.300.000)</option>
-<option>PAKET 2 : 5.800.000; 4 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 6.000.000)</option>
-<option>PAKET 2 : 7.050.000; 5 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 7.700.000)</option>
-<option>PAKET 2 : 8.300.000; 6 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 9.400.000)</option>
-<option>PAKET 2 : 9.550.000; 7 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 11.100.000)</option>
-<option>PAKET 2 : 10.800.000; 8 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 12.800.000)</option>
-<option>PAKET 2 : 12.050.000; 9 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 14.500.000)</option>
-<option>PAKET 2 : 13.300.000; 10 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 16.200.000)</option>
-<option>PAKET 3 : 1.400.000; 1 Org Plt Refresment (hemat 0)</option>
-<option>PAKET 3 : 2.650.000; 2 Org Plt Refresment (hemat 150.000)</option>
-<option>PAKET 3 : 3.900.000; 3 Org Plt Refresment (hemat 4.950.000)</option>
-<option>PAKET 3 : 5.150.000; 4 Org Plt Refresment (hemat 6.650.000)</option>
-<option>PAKET 3 : 6.400.000; 5 Org Plt Refresment (hemat 8.350.000)</option>
-<option>PAKET 3 : 7.650.000; 6 Org Plt Refresment (hemat 10.050.000)</option>
-<option>PAKET 3 : 8.900.000; 7 Org Plt Refresment (hemat 11.750.000)</option>
-<option>PAKET 3 : 10.150.000; 8 Org Plt Refresment (hemat 13.450.000)</option>
-<option>PAKET 3 : 11.400.000; 9 Org Plt Refresment (hemat 15.150.000)</option>
-<option>PAKET 3 : 12.650.000; 10 Org Plt Refresment (hemat 16.850.000)</option>
+    <option>PAKET 1 : 2.950.000; 1 Org + SI-RAKB Ver.3 (hemat 0)</option>
+    <option>PAKET 1 : 4.200.000; 2 Org + SI-RAKB Ver.3 (hemat 1.700.000)</option>
+    <option>PAKET 1 : 5.450.000; 3 Org + SI-RAKB Ver.3 (hemat 3.400.000)</option>
+    <option>PAKET 1 : 6.700.000; 4 Org + SI-RAKB Ver.3 (hemat 5.100.000)</option>
+    <option>PAKET 1 : 7.950.000; 5 Org + SI-RAKB Ver.3 (hemat 6.800.000)</option>
+    <option>PAKET 1 : 9.200.000; 6 Org + SI-RAKB Ver.3 (hemat 8.500.000)</option>
+    <option>PAKET 1 : 10.450.000; 7 Org + SI-RAKB Ver.3 (hemat 10.200.000)</option>
+    <option>PAKET 1 : 11.700.000; 8 Org + SI-RAKB Ver.3 (hemat 11.900.000)</option>
+    <option>PAKET 1 : 12.950.000; 9 Org + SI-RAKB Ver.3 (hemat 13.600.000)</option>
+    <option>PAKET 1 : 14.200.000; 10 Org + SI-RAKB Ver.3 (hemat 15.300.000)</option>
+    <option>PAKET 2 : 2.050.000; 1 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 0)</option>
+    <option>PAKET 2 : 3.300.000; 2 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 800.000)</option>
+    <option>PAKET 2 : 4.550.000; 3 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 4.300.000)</option>
+    <option>PAKET 2 : 5.800.000; 4 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 6.000.000)</option>
+    <option>PAKET 2 : 7.050.000; 5 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 7.700.000)</option>
+    <option>PAKET 2 : 8.300.000; 6 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 9.400.000)</option>
+    <option>PAKET 2 : 9.550.000; 7 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 11.100.000)</option>
+    <option>PAKET 2 : 10.800.000; 8 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 12.800.000)</option>
+    <option>PAKET 2 : 12.050.000; 9 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 14.500.000)</option>
+    <option>PAKET 2 : 13.300.000; 10 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 16.200.000)</option>
+    <option>PAKET 3 : 1.400.000; 1 Org Plt Refresment (hemat 0)</option>
+    <option>PAKET 3 : 2.650.000; 2 Org Plt Refresment (hemat 150.000)</option>
+    <option>PAKET 3 : 3.900.000; 3 Org Plt Refresment (hemat 4.950.000)</option>
+    <option>PAKET 3 : 5.150.000; 4 Org Plt Refresment (hemat 6.650.000)</option>
+    <option>PAKET 3 : 6.400.000; 5 Org Plt Refresment (hemat 8.350.000)</option>
+    <option>PAKET 3 : 7.650.000; 6 Org Plt Refresment (hemat 10.050.000)</option>
+    <option>PAKET 3 : 8.900.000; 7 Org Plt Refresment (hemat 11.750.000)</option>
+    <option>PAKET 3 : 10.150.000; 8 Org Plt Refresment (hemat 13.450.000)</option>
+    <option>PAKET 3 : 11.400.000; 9 Org Plt Refresment (hemat 15.150.000)</option>
+    <option>PAKET 3 : 12.650.000; 10 Org Plt Refresment (hemat 16.850.000)</option>
   </select>
 
   <select name="DPK" required>
@@ -236,7 +243,6 @@
     <option>Umum</option>
   </select>
   
-  <!-- Searchable NamaBPR -->
   <div class="searchable-select">
     <input type="text" id="NamaBPRInput" placeholder="Cari-Pilih NamaBPR / Ketik (klo tdk ada)" autocomplete="off" required>
     <input type="hidden" name="NamaBPR" id="NamaBPRHidden">
@@ -246,7 +252,6 @@
   <input name="ContactNama" placeholder="Contact Person (Nama)">
   <input type="tel" name="ContactNoWA" placeholder="Contact Person (NoWA), contoh:85727051675">
   
-  <!-- Select Jumlah Peserta -->
   <select name="JumlahPeserta" id="JumlahPeserta" required>
     <option value="">-- Pilih Jumlah Peserta --</option>
     <option value="1">Peserta 1 Orang</option>
@@ -261,40 +266,51 @@
     <option value="10">Peserta 10 Orang</option>
   </select>
 
-  <!-- Container untuk Field Peserta Dinamis -->
   <div id="pesertaContainer"></div>
   
-  <!-- Message Containers -->
+  <div id="debugInfo" class="debug-info"></div>
+  
   <div id="successMessage" class="message success">✅ Data berhasil dikirim!</div>
   <div id="errorMessage" class="message error">❌ Terjadi kesalahan saat mengirim data!</div>
 
-  <button type="submit">Kirim</button>
+  <button type="button" id="submitBtn">Kirim</button>
   <div id="loadingBar"><div id="progressBar"></div></div>
 </form>
 
 <script>
-  // Data NamaBPR
-  const bprList = [
-"MAJATAMA",
-"KENDAL KOTA",
-"BANK PEMALANG"
-  ];
-
-  // Searchable Dropdown Logic
+  // ============================================================================
+  // KONFIGURASI - GANTI DENGAN URL DEPLOYMENT ANDA YANG BARU
+  // ============================================================================
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbxOCvx4PSyJGNUU1okV7ClVVqZGa4XSvrTmJ7i6wCST_h9dtPd7dYwFVtCSj5blR8IKnA/exec';
+  
+  // ============================================================================
+  // DATA & ELEMENTS
+  // ============================================================================
+  const bprList = ["MAJATAMA", "KENDAL KOTA", "BANK PEMALANG"];
+  const form = document.getElementById('Form');
+  const submitBtn = document.getElementById('submitBtn');
+  const loadingBar = document.getElementById('loadingBar');
+  const progressBar = document.getElementById('progressBar');
+  const successMsg = document.getElementById('successMessage');
+  const errorMsg = document.getElementById('errorMessage');
+  const debugInfo = document.getElementById('debugInfo');
+  const jumlahPesertaSelect = document.getElementById('JumlahPeserta');
+  const pesertaContainer = document.getElementById('pesertaContainer');
   const namaBPRInput = document.getElementById('NamaBPRInput');
   const namaBPRHidden = document.getElementById('NamaBPRHidden');
   const dropdown = document.getElementById('BPRDropdown');
-  
+
+  // ============================================================================
+  // SEARCHABLE DROPDOWN BPR
+  // ============================================================================
   function renderDropdown(filter = '') {
     dropdown.innerHTML = '';
-    const filtered = bprList.filter(item => 
-      item.toLowerCase().includes(filter.toLowerCase())
-    );
+    const filtered = bprList.filter(item => item.toLowerCase().includes(filter.toLowerCase()));
     
     if (filtered.length === 0) {
       const div = document.createElement('div');
       div.className = 'dropdown-item no-result';
-      div.textContent = 'Tidak ada hasil';
+      div.textContent = 'Tidak ada hasil - gunakan input manual';
       dropdown.appendChild(div);
     } else {
       filtered.forEach(item => {
@@ -319,96 +335,155 @@
   namaBPRInput.addEventListener('input', (e) => {
     renderDropdown(e.target.value);
     dropdown.classList.add('active');
-    // Reset hidden input saat mengetik manual
     namaBPRHidden.value = e.target.value;
   });
   
-  // Tutup dropdown saat klik di luar
   document.addEventListener('click', (e) => {
     if (!e.target.closest('.searchable-select')) {
       dropdown.classList.remove('active');
     }
   });
 
-  // Logic untuk Generate Field Peserta Dinamis
-  const jumlahPesertaSelect = document.getElementById('JumlahPeserta');
-  const pesertaContainer = document.getElementById('pesertaContainer');
-
+  // ============================================================================
+  // DYNAMIC PESERTA FIELDS
+  // ============================================================================
   function renderPesertaFields(jumlah) {
     pesertaContainer.innerHTML = '';
+    const count = parseInt(jumlah) || 0;
     
-    if (!jumlah || jumlah < 1) return;
+    if (count < 1) return;
     
-    for (let i = 1; i <= jumlah; i++) {
-      const pesertaDiv = document.createElement('div');
-      pesertaDiv.className = 'peserta-item';
-      pesertaDiv.innerHTML = `
+    for (let i = 1; i <= count; i++) {
+      const div = document.createElement('div');
+      div.className = 'peserta-item';
+      div.innerHTML = `
         <span class="peserta-label">Data Peserta ${i}</span>
         <input type="text" name="PesertaNama${i}" placeholder="Peserta ${i} (Nama)" required>
         <input type="tel" name="PesertaNoWA${i}" placeholder="Peserta ${i} (NoWA), contoh:85727051675" required>
       `;
-      pesertaContainer.appendChild(pesertaDiv);
+      pesertaContainer.appendChild(div);
     }
   }
 
-  // Event listener untuk perubahan jumlah peserta
   jumlahPesertaSelect.addEventListener('change', function() {
-    const jumlah = parseInt(this.value) || 0;
-    renderPesertaFields(jumlah);
+    renderPesertaFields(this.value);
   });
 
-  // Form Submit Logic
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbz_xRAGfJ7HCQlkXuxj1MHyb3ClVUVgDu_bBN4Etxq05DTYyQi8lReuAOhY-0HsXDvPdA/exec';
-  const form = document.getElementById('Form');
-  const loadingBar = document.getElementById('loadingBar');
-  const progressBar = document.getElementById('progressBar');
-  const successMsg = document.getElementById('successMessage');
-  const errorMsg = document.getElementById('errorMessage');
-
-  form.addEventListener('submit', e => {
-    e.preventDefault();
+  // ============================================================================
+  // FORM SUBMISSION
+  // ============================================================================
+  submitBtn.addEventListener('click', async function() {
+    // Reset UI
+    successMsg.style.display = 'none';
+    errorMsg.style.display = 'none';
+    debugInfo.style.display = 'none';
     
-    // Validasi: cek apakah jumlah peserta sudah dipilih
+    // Validasi
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    
     if (!jumlahPesertaSelect.value) {
-      alert('Silakan pilih jumlah peserta terlebih dahulu!');
+      alert('Silakan pilih jumlah peserta!');
       jumlahPesertaSelect.focus();
       return;
     }
     
-    // Sembunyikan pesan sebelumnya
-    successMsg.style.display = 'none';
-    errorMsg.style.display = 'none';
-    
+    // Show loading
     loadingBar.style.display = 'block';
-    progressBar.style.width = '30%';
+    progressBar.style.width = '40%';
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Mengirim...';
     
-    fetch(scriptURL, { method: 'POST', body: new FormData(form) })
-      .then(() => {
-        progressBar.style.width = '100%';
-        setTimeout(() => {
-          loadingBar.style.display = 'none';
-          progressBar.style.width = '0%';
-          successMsg.style.display = 'block';
-          form.reset();
-          namaBPRHidden.value = '';
-          pesertaContainer.innerHTML = ''; // Kosongkan field peserta
-          
-          // Hilangkan pesan setelah 5 detik
-          setTimeout(() => {
-            successMsg.style.display = 'none';
-          }, 5000);
-        }, 300);
-      })
-      .catch(() => {
-        loadingBar.style.display = 'none';
-        progressBar.style.width = '0%';
-        errorMsg.style.display = 'block';
-        
-        // Hilangkan pesan setelah 5 detik
-        setTimeout(() => {
-          errorMsg.style.display = 'none';
-        }, 5000);
+    try {
+      const formData = new FormData(form);
+      
+      // Debug: Log semua data
+      console.log('=== DATA YANG DIKIRIM ===');
+      const dataObj = {};
+      for (let [key, value] of formData.entries()) {
+        console.log(key + ':', value);
+        dataObj[key] = value;
+      }
+      
+      progressBar.style.width = '70%';
+      
+      // Submit dengan timeout
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 detik timeout
+      
+      const response = await fetch(scriptURL, {
+        method: 'POST',
+        body: formData,
+        signal: controller.signal
       });
+      
+      clearTimeout(timeoutId);
+      progressBar.style.width = '100%';
+      
+      let result;
+      const responseText = await response.text();
+      console.log('Raw response:', responseText);
+      
+      try {
+        result = JSON.parse(responseText);
+      } catch (e) {
+        // Jika bukan JSON, anggap sukses jika tidak ada error HTTP
+        result = { 
+          status: response.ok ? 'success' : 'error',
+          message: responseText 
+        };
+      }
+      
+      console.log('Parsed result:', result);
+      
+      if (result.status === 'success') {
+        successMsg.style.display = 'block';
+        form.reset();
+        namaBPRHidden.value = '';
+        pesertaContainer.innerHTML = '';
+        
+        setTimeout(() => {
+          successMsg.style.display = 'none';
+        }, 5000);
+      } else {
+        throw new Error(result.message || 'Server mengembalikan status error');
+      }
+      
+    } catch (error) {
+      console.error('Error detail:', error);
+      
+      let errorMessage = '❌ Gagal mengirim data!';
+      
+      if (error.name === 'AbortError') {
+        errorMessage += '<br>Request timeout (30 detik). Cek koneksi internet.';
+      } else if (error.message.includes('Failed to fetch')) {
+        errorMessage += '<br>Koneksi gagal. Kemungkinan:<br>1. URL salah<br>2. Belum deploy ulang GAS<br>3. CORS error';
+      } else {
+        errorMessage += '<br>' + error.message;
+      }
+      
+      errorMsg.innerHTML = errorMessage;
+      errorMsg.style.display = 'block';
+      debugInfo.textContent = 'Debug: ' + error.toString();
+      debugInfo.style.display = 'block';
+      
+    } finally {
+      loadingBar.style.display = 'none';
+      progressBar.style.width = '0%';
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Kirim';
+    }
+  });
+
+  // Test koneksi saat load
+  window.addEventListener('load', () => {
+    console.log('Page loaded. Script URL:', scriptURL);
+    // Cek apakah URL sudah diganti dari default
+    if (scriptURL.includes('AKfycbxOCvx4PSyJGNUU1okV7ClVVqZGa4XSvrTmJ7i6wCST_h9dtPd7dYwFVtCSj5blR8IKnA/exec')) {
+      console.warn('WARNING: URL masih default! Ganti dengan URL deployment Anda.');
+    }
   });
 </script>
 </body>
