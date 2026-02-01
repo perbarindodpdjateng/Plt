@@ -80,11 +80,6 @@
       color: #721c24;
       border: 1px solid #f5c6cb;
     }
-    .message.warning {
-      background: #fff3cd;
-      color: #856404;
-      border: 1px solid #ffeaa7;
-    }
     
     @keyframes blink {
       0%, 50% { opacity: 1; }
@@ -138,19 +133,6 @@
       display: block;
       text-transform: uppercase;
     }
-    
-    .data-preview {
-      background: #e9ecef;
-      border: 1px solid #ced4da;
-      border-radius: 4px;
-      padding: 8px;
-      margin: 10px 0;
-      font-size: 9px;
-      max-height: 100px;
-      overflow-y: auto;
-      display: none;
-    }
-    .data-preview.show { display: block; }
   </style>
 </head>
 <body>
@@ -222,7 +204,8 @@
     <div class="dropdown-list" id="BPRDropdown"></div>
   </div>
 
-  <input name="ContactNama" placeholder="Contact Person (Nama)">
+  <!-- Contact Person -->
+  <input type="text" name="ContactNama" placeholder="Contact Person (Nama)">
   <input type="tel" name="ContactNoWA" placeholder="Contact Person (NoWA), contoh:85727051675">
   
   <select name="JumlahPeserta" id="JumlahPeserta" required>
@@ -241,45 +224,30 @@
 
   <div id="pesertaContainer"></div>
   
-  <!-- Preview Data yang akan dikirim -->
-  <div id="dataPreview" class="data-preview"></div>
-  
   <div id="successMessage" class="message success">✅ Data berhasil disimpan!</div>
-  <div id="errorMessage" class="message error">❌ Terjadi kesalahan!</div>
-  <div id="warningMessage" class="message warning">⚠️ Periksa data Anda</div>
+  <div id="errorMessage" class="message error">❌ Terjadi kesalahan saat mengirim data!</div>
 
-  <button type="button" id="previewBtn">Cek Data</button>
-  <button type="button" id="submitBtn" style="margin-top:5px;">Kirim Data</button>
+  <button type="button" id="submitBtn">Kirim</button>
   <div id="loadingBar"><div id="progressBar"></div></div>
 </form>
 
 <script>
-  // ============================================================================
-  // KONFIGURASI - GANTI DENGAN URL WEB APP ANDA YANG BARU
-  // ============================================================================
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbyqZX23DrLFah2E_sc-mUUdTiZwS7Jn-GCuZPiu6j4fW1gD24IJVsf5C0J6B0mc7MmGTQ/exec';
+  // GANTI DENGAN URL WEB APP ANDA
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbyX4PmylopYTJqQSowgaWM4wHQYjnhY_2glovlu_qIcRvpbSlcwxj6AOdu4_6AeDQ39BA/exec';
   
-  // ============================================================================
-  // ELEMEN DOM
-  // ============================================================================
   const form = document.getElementById('Form');
   const submitBtn = document.getElementById('submitBtn');
-  const previewBtn = document.getElementById('previewBtn');
   const loadingBar = document.getElementById('loadingBar');
   const progressBar = document.getElementById('progressBar');
   const successMsg = document.getElementById('successMessage');
   const errorMsg = document.getElementById('errorMessage');
-  const warningMsg = document.getElementById('warningMessage');
-  const dataPreview = document.getElementById('dataPreview');
   const jumlahPesertaSelect = document.getElementById('JumlahPeserta');
   const pesertaContainer = document.getElementById('pesertaContainer');
   const namaBPRInput = document.getElementById('NamaBPRInput');
   const namaBPRHidden = document.getElementById('NamaBPRHidden');
   const dropdown = document.getElementById('BPRDropdown');
 
-  // ============================================================================
-  // SEARCHABLE DROPDOWN
-  // ============================================================================
+  // Data BPR
   const bprList = ["MAJATAMA", "KENDAL KOTA", "BANK PEMALANG"];
   
   function renderDropdown(filter = '') {
@@ -291,7 +259,7 @@
     if (filtered.length === 0) {
       const div = document.createElement('div');
       div.className = 'dropdown-item no-result';
-      div.textContent = 'Ketik manual jika tidak ada';
+      div.textContent = 'Ketik manual';
       dropdown.appendChild(div);
     } else {
       filtered.forEach(item => {
@@ -325,22 +293,19 @@
     }
   });
 
-  // ============================================================================
-  // GENERATE FIELDS PESERTA
-  // ============================================================================
+  // Generate fields peserta
   function renderPesertaFields(jumlah) {
     pesertaContainer.innerHTML = '';
     const count = parseInt(jumlah) || 0;
     
-    if (count < 1) return;
-    
     for (let i = 1; i <= count; i++) {
       const div = document.createElement('div');
       div.className = 'peserta-item';
+      // PENTING: name attribute harus sesuai dengan yang GAS expect
       div.innerHTML = `
         <span class="peserta-label">Data Peserta ${i}</span>
-        <input type="text" name="PesertaNama${i}" id="PesertaNama${i}" placeholder="Peserta ${i} (Nama)" required>
-        <input type="tel" name="PesertaNoWA${i}" id="PesertaNoWA${i}" placeholder="Peserta ${i} (NoWA)" required>
+        <input type="text" name="PesertaNama${i}" placeholder="Peserta ${i} (Nama)" required>
+        <input type="tel" name="PesertaNoWA${i}" placeholder="Peserta ${i} (NoWA)" required>
       `;
       pesertaContainer.appendChild(div);
     }
@@ -348,153 +313,70 @@
 
   jumlahPesertaSelect.addEventListener('change', function() {
     renderPesertaFields(this.value);
-    dataPreview.classList.remove('show');
   });
 
-  // ============================================================================
-  // CEK/PREVIEW DATA SEBELUM KIRIM
-  // ============================================================================
-  previewBtn.addEventListener('click', function() {
-    if (!form.checkValidity()) {
-      form.reportValidity();
-      return;
-    }
-    
-    const formData = new FormData(form);
-    let html = '<strong>Data yang akan dikirim:</strong><br>';
-    let count = 0;
-    
-    for (let [key, value] of formData.entries()) {
-      html += `${key}: ${value}<br>`;
-      count++;
-    }
-    
-    html += `<br><em>Total field: ${count}</em>`;
-    dataPreview.innerHTML = html;
-    dataPreview.classList.add('show');
-    
-    // Scroll ke preview
-    dataPreview.scrollIntoView({ behavior: 'smooth' });
-  });
-
-  // ============================================================================
-  // SUBMIT FORM
-  // ============================================================================
+  // Submit
   submitBtn.addEventListener('click', async function() {
-    // Reset messages
     successMsg.style.display = 'none';
     errorMsg.style.display = 'none';
-    warningMsg.style.display = 'none';
     
     // Validasi
     if (!form.checkValidity()) {
       form.reportValidity();
-      warningMsg.textContent = '⚠️ Lengkapi semua field yang wajib diisi!';
-      warningMsg.style.display = 'block';
       return;
     }
     
     if (!jumlahPesertaSelect.value) {
-      warningMsg.textContent = '⚠️ Pilih jumlah peserta!';
-      warningMsg.style.display = 'block';
+      alert('Pilih jumlah peserta!');
       return;
     }
     
-    // Cek apakah NamaBPR terisi
+    // Pastikan NamaBPR terisi
     if (!namaBPRHidden.value) {
       namaBPRHidden.value = namaBPRInput.value;
     }
     
-    // Validasi peserta
-    const jumlah = parseInt(jumlahPesertaSelect.value);
-    let pesertaLengkap = true;
-    
-    for (let i = 1; i <= jumlah; i++) {
-      const nama = document.getElementById(`PesertaNama${i}`)?.value;
-      const wa = document.getElementById(`PesertaNoWA${i}`)?.value;
-      
-      if (!nama || !wa) {
-        pesertaLengkap = false;
-        console.error(`Peserta ${i} tidak lengkap:`, nama, wa);
-      }
-    }
-    
-    if (!pesertaLengkap) {
-      warningMsg.textContent = '⚠️ Data peserta belum lengkap!';
-      warningMsg.style.display = 'block';
-      return;
-    }
-    
-    // UI Loading
     loadingBar.style.display = 'block';
-    progressBar.style.width = '30%';
+    progressBar.style.width = '50%';
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Mengirim...';
     
     try {
       const formData = new FormData(form);
       
-      // Log untuk debug
-      console.log('Mengirim data ke:', scriptURL);
-      
-      progressBar.style.width = '60%';
+      // Debug: Log semua data yang akan dikirim
+      console.log('=== DATA DIKIRIM ===');
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}: ${value}`);
+      }
       
       const response = await fetch(scriptURL, {
         method: 'POST',
         body: formData
       });
       
+      const result = await response.json();
+      console.log('Response:', result);
+      
       progressBar.style.width = '100%';
       
-      let result;
-      const text = await response.text();
-      console.log('Response text:', text);
-      
-      try {
-        result = JSON.parse(text);
-      } catch (e) {
-        // Jika bukan JSON, cek apakah mengandung "Success" atau "success"
-        if (text.toLowerCase().includes('success')) {
-          result = { status: 'success', message: 'Data tersimpan' };
-        } else {
-          result = { status: 'error', message: 'Response tidak valid: ' + text };
-        }
-      }
-      
-      console.log('Result:', result);
-      
       if (result.status === 'success') {
-        successMsg.innerHTML = `✅ ${result.message}<br>Baris: ${result.row || '-'}`;
+        successMsg.innerHTML = `✅ ${result.message}<br>Contact: ${result.contactNama || '-'}, ${result.contactNoWA || '-'}`;
         successMsg.style.display = 'block';
         form.reset();
         namaBPRHidden.value = '';
         pesertaContainer.innerHTML = '';
-        dataPreview.classList.remove('show');
-        
-        setTimeout(() => {
-          successMsg.style.display = 'none';
-        }, 5000);
+        setTimeout(() => successMsg.style.display = 'none', 5000);
       } else {
-        throw new Error(result.message || 'Server error');
+        throw new Error(result.message);
       }
-      
     } catch (error) {
       console.error('Error:', error);
-      errorMsg.innerHTML = `❌ Error: ${error.message}<br><small>Cek console (F12) untuk detail</small>`;
+      errorMsg.textContent = '❌ Error: ' + error.message;
       errorMsg.style.display = 'block';
     } finally {
       loadingBar.style.display = 'none';
       progressBar.style.width = '0%';
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Kirim Data';
-    }
-  });
-
-  // Cek URL saat load
-  window.addEventListener('load', () => {
-    console.log('Script URL:', scriptURL);
-    if (scriptURL.includes('AKfycbxOCvx4')) {
-      console.warn('WARNING: URL masih default!');
     }
   });
 </script>
