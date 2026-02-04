@@ -4,6 +4,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Konfirmasi Kehadiran</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <style>
     * { box-sizing: border-box; }
     body {
@@ -12,18 +14,15 @@
       margin: 0;
       padding: 2px;
       background: transparent;
-      color: #f7f2f2;
     }
     .judul { text-align: center; margin: 0 0 0px; }
-    .judul h1 { font-size: 16px; margin: 0; color: #1a237e; }
-    .judul h2 { font-size: 14px; margin: 0px 0; color: #0d47a1; }
-    .judul h3 { font-size: 10px; margin: 0px 0; color: black; }
+    .judul h2 { font-size: 14px; margin: 0; color: #0d47a1; }
+    .judul h3 { font-size: 10px; margin: 0; color: black; }
     form {
       background: #fff;
       padding: 10px;
       border-radius: 6px;
       box-shadow: 0 1px 3px rgba(0,0,0,.8);
-      position: relative;
     }
     input, select, button {
       width: 100%;
@@ -39,26 +38,10 @@
       border: none;
       cursor: pointer;
     }
-    button:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-    }
-    button:active { background: #0056b3; }
-    
-    #loadingBar {
-      display: none;
-      height: 3px;
-      background: #e0e0e0;
-      border-radius: 2px;
-      overflow: hidden;
-      margin-top: 4px;
-    }
-    #progressBar {
-      height: 100%;
-      background: #007bff;
-      width: 0;
-      transition: width .3s;
-    }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+    button.secondary { background: #6c757d; margin-top: 5px; }
+    button.success { background: #28a745; }
+    button.pdf { background: #dc3545; }
     
     .message {
       display: none;
@@ -69,25 +52,11 @@
       font-weight: bold;
       font-size: 12px;
     }
-    .message.success {
-      background: #d4edda;
-      color: #155724;
-      border: 1px solid #c3e6cb;
-      animation: blink 1s infinite;
-    }
-    .message.error {
-      background: #f8d7da;
-      color: #721c24;
-      border: 1px solid #f5c6cb;
-    }
-    
-    @keyframes blink {
-      0%, 50% { opacity: 1; }
-      51%, 100% { opacity: 0.3; }
-    }
+    .message.success { background: #d4edda; color: #155724; }
+    .message.error { background: #f8d7da; color: #721c24; }
+    .message.warning { background: #fff3cd; color: #856404; }
     
     .searchable-select { position: relative; margin-bottom: 6px; }
-    .searchable-select input { width: 100%; margin-bottom: 0; }
     .dropdown-list {
       display: none;
       position: absolute;
@@ -98,21 +67,11 @@
       overflow-y: auto;
       background: white;
       border: 1px solid #bbb;
-      border-top: none;
-      border-radius: 0 0 4px 4px;
       z-index: 1000;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     .dropdown-list.active { display: block; }
-    .dropdown-item {
-      padding: 7px;
-      cursor: pointer;
-      color: #333;
-      border-bottom: 1px solid #eee;
-    }
+    .dropdown-item { padding: 7px; cursor: pointer; }
     .dropdown-item:hover { background: #007bff; color: white; }
-    .dropdown-item.no-result { color: #999; cursor: default; }
-    .dropdown-item.no-result:hover { background: white; color: #999; }
 
     #pesertaContainer { margin-bottom: 6px; }
     .peserta-item {
@@ -123,16 +82,31 @@
       margin-bottom: 8px;
       border-left: 3px solid #007bff;
     }
-    .peserta-item input { margin-bottom: 4px; }
-    .peserta-item input:last-child { margin-bottom: 0; }
     .peserta-label {
       font-size: 9px;
       font-weight: bold;
       color: #495057;
       margin-bottom: 4px;
       display: block;
-      text-transform: uppercase;
     }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 10px;
+    }
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #007bff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
@@ -142,51 +116,51 @@
   <h3>Perbarindo DPD Jateng - Yandora</h3><br>
 </div>
 
-<form id="Form" onsubmit="return false;">
+<form id="Form">
 
-  <select name="Pelatihan" required>
+  <select name="Pelatihan" id="Pelatihan" required>
     <option>PTM Aplikasi Digital SI-RAKB (Sistem Informasi Rencana Aksi Keuangan Berkelanjutan) Versi 3 APOLO untuk Menyusun dan Menyampaikan Laporan RAKB BPR - BPRS Tahun 2026 ke OJK Satu Klik ke APOLO Laporan Keuangan Berkelanjutan</option>
   </select>
   
-  <select name="Tgl" required>
+  <select name="Tgl" id="Tgl" required>
     <option>23 Februari 2026</option>
   </select>
   
-  <select name="Paket" required>
+  <select name="Paket" id="Paket" required>
     <option value="">-- Pilih Paket 1/2/3 --</option>
-<option>PAKET 1 : 2.950.000; 1 Org + SI-RAKB Ver.3 (hemat 0)</option>
-<option>PAKET 1 : 4.200.000; 2 Org + SI-RAKB Ver.3 (hemat 1.700.000)</option>
-<option>PAKET 1 : 5.450.000; 3 Org + SI-RAKB Ver.3 (hemat 3.400.000)</option>
-<option>PAKET 1 : 6.700.000; 4 Org + SI-RAKB Ver.3 (hemat 5.100.000)</option>
-<option>PAKET 1 : 7.950.000; 5 Org + SI-RAKB Ver.3 (hemat 6.800.000)</option>
-<option>PAKET 1 : 9.200.000; 6 Org + SI-RAKB Ver.3 (hemat 8.500.000)</option>
-<option>PAKET 1 : 10.450.000; 7 Org + SI-RAKB Ver.3 (hemat 10.200.000)</option>
-<option>PAKET 1 : 11.700.000; 8 Org + SI-RAKB Ver.3 (hemat 11.900.000)</option>
-<option>PAKET 1 : 12.950.000; 9 Org + SI-RAKB Ver.3 (hemat 13.600.000)</option>
-<option>PAKET 1 : 14.200.000; 10 Org + SI-RAKB Ver.3 (hemat 15.300.000)</option>
-<option>PAKET 2 : 2.050.000; 1 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 0)</option>
-<option>PAKET 2 : 3.300.000; 2 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 800.000)</option>
-<option>PAKET 2 : 4.550.000; 3 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 1.600.000)</option>
-<option>PAKET 2 : 5.800.000; 4 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 2.400.000)</option>
-<option>PAKET 2 : 7.050.000; 5 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 3.200.000)</option>
-<option>PAKET 2 : 8.300.000; 6 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 4.000.000)</option>
-<option>PAKET 2 : 9.550.000; 7 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 4.800.000)</option>
-<option>PAKET 2 : 10.800.000; 8 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 5.600.000)</option>
-<option>PAKET 2 : 12.050.000; 9 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 6.400.000)</option>
-<option>PAKET 2 : 13.300.000; 10 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 7.200.000)</option>
-<option>PAKET 3 : 1.400.000; 1 Org Plt Refresment SI-RAKB Ver.3 (hemat 0)</option>
-<option>PAKET 3 : 2.650.000; 2 Org Plt Refresment SI-RAKB Ver.3 (hemat 150.000)</option>
-<option>PAKET 3 : 3.900.000; 3 Org Plt Refresment SI-RAKB Ver.3 (hemat 300.000)</option>
-<option>PAKET 3 : 5.150.000; 4 Org Plt Refresment SI-RAKB Ver.3 (hemat 450.000)</option>
-<option>PAKET 3 : 6.400.000; 5 Org Plt Refresment SI-RAKB Ver.3 (hemat 600.000)</option>
-<option>PAKET 3 : 7.650.000; 6 Org Plt Refresment SI-RAKB Ver.3 (hemat 750.000)</option>
-<option>PAKET 3 : 8.900.000; 7 Org Plt Refresment SI-RAKB Ver.3 (hemat 900.000)</option>
-<option>PAKET 3 : 10.150.000; 8 Org Plt Refresment SI-RAKB Ver.3 (hemat 1.050.000)</option>
-<option>PAKET 3 : 11.400.000; 9 Org Plt Refresment SI-RAKB Ver.3 (hemat 1.200.000)</option>
-<option>PAKET 3 : 12.650.000; 10 Org Plt Refresment SI-RAKB Ver.3 (hemat 1.350.000)</option>
+    <option>PAKET 1 : 2.950.000; 1 Org + SI-RAKB Ver.3 (hemat 0)</option>
+    <option>PAKET 1 : 4.200.000; 2 Org + SI-RAKB Ver.3 (hemat 1.700.000)</option>
+    <option>PAKET 1 : 5.450.000; 3 Org + SI-RAKB Ver.3 (hemat 3.400.000)</option>
+    <option>PAKET 1 : 6.700.000; 4 Org + SI-RAKB Ver.3 (hemat 5.100.000)</option>
+    <option>PAKET 1 : 7.950.000; 5 Org + SI-RAKB Ver.3 (hemat 6.800.000)</option>
+    <option>PAKET 1 : 9.200.000; 6 Org + SI-RAKB Ver.3 (hemat 8.500.000)</option>
+    <option>PAKET 1 : 10.450.000; 7 Org + SI-RAKB Ver.3 (hemat 10.200.000)</option>
+    <option>PAKET 1 : 11.700.000; 8 Org + SI-RAKB Ver.3 (hemat 11.900.000)</option>
+    <option>PAKET 1 : 12.950.000; 9 Org + SI-RAKB Ver.3 (hemat 13.600.000)</option>
+    <option>PAKET 1 : 14.200.000; 10 Org + SI-RAKB Ver.3 (hemat 15.300.000)</option>
+    <option>PAKET 2 : 2.050.000; 1 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 0)</option>
+    <option>PAKET 2 : 3.300.000; 2 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 800.000)</option>
+    <option>PAKET 2 : 4.550.000; 3 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 1.600.000)</option>
+    <option>PAKET 2 : 5.800.000; 4 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 2.400.000)</option>
+    <option>PAKET 2 : 7.050.000; 5 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 3.200.000)</option>
+    <option>PAKET 2 : 8.300.000; 6 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 4.000.000)</option>
+    <option>PAKET 2 : 9.550.000; 7 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 4.800.000)</option>
+    <option>PAKET 2 : 10.800.000; 8 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 5.600.000)</option>
+    <option>PAKET 2 : 12.050.000; 9 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 6.400.000)</option>
+    <option>PAKET 2 : 13.300.000; 10 Org + Upgrade SI-RAKB Ver2 ke Ver3 (hemat 7.200.000)</option>
+    <option>PAKET 3 : 1.400.000; 1 Org Plt Refresment SI-RAKB Ver.3 (hemat 0)</option>
+    <option>PAKET 3 : 2.650.000; 2 Org Plt Refresment SI-RAKB Ver.3 (hemat 150.000)</option>
+    <option>PAKET 3 : 3.900.000; 3 Org Plt Refresment SI-RAKB Ver.3 (hemat 300.000)</option>
+    <option>PAKET 3 : 5.150.000; 4 Org Plt Refresment SI-RAKB Ver.3 (hemat 450.000)</option>
+    <option>PAKET 3 : 6.400.000; 5 Org Plt Refresment SI-RAKB Ver.3 (hemat 600.000)</option>
+    <option>PAKET 3 : 7.650.000; 6 Org Plt Refresment SI-RAKB Ver.3 (hemat 750.000)</option>
+    <option>PAKET 3 : 8.900.000; 7 Org Plt Refresment SI-RAKB Ver.3 (hemat 900.000)</option>
+    <option>PAKET 3 : 10.150.000; 8 Org Plt Refresment SI-RAKB Ver.3 (hemat 1.050.000)</option>
+    <option>PAKET 3 : 11.400.000; 9 Org Plt Refresment SI-RAKB Ver.3 (hemat 1.200.000)</option>
+    <option>PAKET 3 : 12.650.000; 10 Org Plt Refresment SI-RAKB Ver.3 (hemat 1.350.000)</option>
   </select>
 
-  <select name="DPK" required>
+  <select name="DPK" id="DPK" required>
     <option value="">-- DPK/Eks.Karesidenan/LuarJateng/Umum --</option>
     <option>DPK Soloraya</option>
     <option>DPK Semarang</option>
@@ -204,9 +178,8 @@
     <div class="dropdown-list" id="BPRDropdown"></div>
   </div>
 
-  <!-- Contact Person -->
-  <input type="text" name="ContactNama" placeholder="Contact Person (Nama)">
-  <input type="tel" name="ContactNoWA" placeholder="Contact Person (NoWA), contoh:85727051675">
+  <input type="text" name="ContactNama" id="ContactNama" placeholder="Contact Person (Nama)">
+  <input type="tel" name="ContactNoWA" id="ContactNoWA" placeholder="Contact Person (NoWA), contoh:85727051675">
   
   <select name="JumlahPeserta" id="JumlahPeserta" required>
     <option value="">-- Pilih Jumlah Peserta --</option>
@@ -224,21 +197,28 @@
 
   <div id="pesertaContainer"></div>
   
-  <div id="successMessage" class="message success">✅ Data berhasil disimpan!</div>
-  <div id="errorMessage" class="message error">❌ Terjadi kesalahan saat mengirim data!</div>
-
-  <button type="button" id="submitBtn">Kirim</button>
-  <div id="loadingBar"><div id="progressBar"></div></div>
+  <div id="loadingDiv" class="loading">
+    <div class="spinner"></div>
+    <span>Menyimpan data...</span>
+  </div>
+  
+  <div id="successMessage" class="message success">
+    ✅ Data berhasil disimpan!
+  </div>
+  <div id="errorMessage" class="message error">❌ Gagal menyimpan data!</div>
+  
+  <button type="submit" id="submitBtn">Kirim & Download PDF</button>
 </form>
 
 <script>
   // GANTI DENGAN URL WEB APP ANDA
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbyX4PmylopYTJqQSowgaWM4wHQYjnhY_2glovlu_qIcRvpbSlcwxj6AOdu4_6AeDQ39BA/exec';
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbz9BaN7Akn3k7Oc01zA3el9Makg_hQuy5DayWPNNkIEVUPB-VdrejRmXPVpih6odcU5TQ/exec';
+  
+  const { jsPDF } = window.jspdf;
   
   const form = document.getElementById('Form');
   const submitBtn = document.getElementById('submitBtn');
-  const loadingBar = document.getElementById('loadingBar');
-  const progressBar = document.getElementById('progressBar');
+  const loadingDiv = document.getElementById('loadingDiv');
   const successMsg = document.getElementById('successMessage');
   const errorMsg = document.getElementById('errorMessage');
   const jumlahPesertaSelect = document.getElementById('JumlahPeserta');
@@ -247,8 +227,7 @@
   const namaBPRHidden = document.getElementById('NamaBPRHidden');
   const dropdown = document.getElementById('BPRDropdown');
 
-  // Data BPR
-  const bprList = ["MAJATAMA", "KENDAL KOTA", "BANK PEMALANG"];
+  const bprList = ["MAJATAMA", "KENDAL KOTA", "BANK PEMALANG", "BPR SYARIAH", "BPR BKK", "BPR LAINNYA"];
   
   function renderDropdown(filter = '') {
     dropdown.innerHTML = '';
@@ -258,8 +237,11 @@
     
     if (filtered.length === 0) {
       const div = document.createElement('div');
-      div.className = 'dropdown-item no-result';
+      div.className = 'dropdown-item';
       div.textContent = 'Ketik manual';
+      div.onclick = () => {
+        dropdown.classList.remove('active');
+      };
       dropdown.appendChild(div);
     } else {
       filtered.forEach(item => {
@@ -293,7 +275,6 @@
     }
   });
 
-  // Generate fields peserta
   function renderPesertaFields(jumlah) {
     pesertaContainer.innerHTML = '';
     const count = parseInt(jumlah) || 0;
@@ -301,11 +282,10 @@
     for (let i = 1; i <= count; i++) {
       const div = document.createElement('div');
       div.className = 'peserta-item';
-      // PENTING: name attribute harus sesuai dengan yang GAS expect
       div.innerHTML = `
         <span class="peserta-label">Data Peserta ${i}</span>
-        <input type="text" name="PesertaNama${i}" placeholder="Peserta ${i} (Nama)" required>
-        <input type="tel" name="PesertaNoWA${i}" placeholder="Peserta ${i} (NoWA)" required>
+        <input type="text" name="PesertaNama${i}" id="PesertaNama${i}" placeholder="Peserta ${i} (Nama)" required>
+        <input type="tel" name="PesertaNoWA${i}" id="PesertaNoWA${i}" placeholder="Peserta ${i} (NoWA)" required>
       `;
       pesertaContainer.appendChild(div);
     }
@@ -315,68 +295,240 @@
     renderPesertaFields(this.value);
   });
 
-  // Submit
-  submitBtn.addEventListener('click', async function() {
-    successMsg.style.display = 'none';
-    errorMsg.style.display = 'none';
+  // FUNGSI GENERATE PDF CLIENT-SIDE
+  function generatePDF(data) {
+    const doc = new jsPDF();
     
-    // Validasi
+    // Header
+    doc.setFontSize(16);
+    doc.setTextColor(26, 35, 126);
+    doc.text('KONFIRMASI PENDAFTARAN PELATIHAN', 105, 10, { align: 'center' });
+    
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text('PERBARINDO DPD JATENG - YANDORA', 105, 15, { align: 'center' });
+    
+    // Garis pemisah
+    doc.setDrawColor(26, 35, 126);
+    doc.line(15, 20, 195, 20);
+    
+    // Info Pendaftaran
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'bold');
+    doc.text('INFORMASI PENDAFTARAN', 15, 30);
+    doc.setFont(undefined, 'normal');
+    
+    const infoData = [
+      ['Pelatihan', data.Pelatihan],
+      ['Tanggal', data.Tgl],
+      ['Paket', data.Paket],
+      ['DPK', data.DPK],
+      ['Nama BPR', data.NamaBPR],
+      ['Contact Person', data.ContactNama + ' / ' + data.ContactNoWA],
+      ['Jumlah Peserta', data.JumlahPeserta + ' Orang']
+    ];
+    
+    doc.autoTable({
+      startY: 35,
+      head: [['Field', 'Value']],
+      body: infoData,
+      theme: 'grid',
+      headStyles: { fillColor: [26, 35, 126], textColor: 255 },
+      styles: { fontSize: 10 },
+      columnStyles: {
+        0: { cellWidth: 40, fontStyle: 'bold' },
+        1: { cellWidth: 'auto' }
+      }
+    });
+    
+    // Daftar Peserta
+    const finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFont(undefined, 'bold');
+    doc.text('DAFTAR PESERTA', 15, finalY);
+    doc.setFont(undefined, 'normal');
+    
+    const pesertaData = [];
+    for (let i = 1; i <= parseInt(data.JumlahPeserta); i++) {
+      pesertaData.push([
+        i,
+        data['PesertaNama' + i],
+        data['PesertaNoWA' + i]
+      ]);
+    }
+    
+    doc.autoTable({
+      startY: finalY + 3,
+      head: [['No', 'Nama Peserta', 'No. WhatsApp']],
+      body: pesertaData,
+      theme: 'grid',
+      headStyles: { fillColor: [26, 35, 126], textColor: 255 },
+      styles: { fontSize: 10 },
+      columnStyles: {
+        0: { cellWidth: 15, halign: 'center' },
+        1: { cellWidth: 'auto' },
+        2: { cellWidth: 50 }
+      },
+      alternateRowStyles: { fillColor: [245, 245, 245] }
+    });
+    
+    // Info Pembayaran
+    const bayarY = doc.lastAutoTable.finalY + 10;
+    doc.setFillColor(227, 242, 253);
+    doc.rect(15, bayarY - 5, 180, 8, 'F');
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(13, 71, 161);
+    doc.text('INFORMASI PEMBAYARAN', 15, bayarY);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont(undefined, 'normal');
+    
+    const bayarData = [
+      ['   Berita Transfer', '230226 ' + data.NamaBPR],
+      ['   Transfer Ke', 'Bank MANDIRI 135.00.1500.2015 an. YAY.PERBARINDO SEJAHTER']
+    ];
+    
+    doc.autoTable({
+      startY: bayarY + 3,
+      body: bayarData,
+      theme: 'plain',
+      styles: { fontSize: 10 },
+      columnStyles: {
+        0: { cellWidth: 40, fontStyle: 'bold' },
+        1: { cellWidth: 'auto', fontStyle: 'bold' }
+      }
+    });
+    
+    // Info Tambahan
+    const infoY = doc.lastAutoTable.finalY + 10;
+    doc.setFillColor(232, 245, 233);
+    doc.rect(15, infoY - 5, 180, 8, 'F');
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(27, 94, 32);
+    doc.text('INFORMASI TAMBAHAN', 15, infoY);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont(undefined, 'normal');
+    
+    doc.setFontSize(9);
+    const infoText = [
+      'CETAK KUITANSI:',
+      '• Klik link: https://www.perbarindodpdjateng.or.id/k/2026/k230226',
+      '• Syarat: Telah membayar, bukti transfer dikirim WA ke Irin https://wa.me/6285865595963',
+      '• Kwitansi akan tersimpan di PC atau Android',
+      '',
+      'CETAK SERTIFIKAT:',
+      '• Akan dikirim via WA PIC & Peserta maks. H+5',
+      '',
+      'PESAN KAMAR HOTEL TEMPAT ACARA:',
+      '• Via Marketing Jati: https://wa.me/6281219632135'
+    ];
+    
+    let textY = infoY + 10;
+    infoText.forEach(line => {
+      if (line === '') {
+        textY += 3;
+      } else {
+        const isBold = line.startsWith('CETAK') || line.startsWith('PESAN');
+        const isLink = line.includes('http');
+        
+        if (isBold) doc.setFont(undefined, 'bold');
+        if (isLink) doc.setTextColor(21, 101, 192);
+        
+        doc.text(line, 20, textY);
+        
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
+        textY += 5;
+      }
+    });
+    
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(102, 102, 102);
+    doc.text('Dicetak: ' + new Date().toLocaleString('id-ID'), 180, 285, { align: 'right' });
+    
+    // Save PDF
+    const fileName = 'Konfirmasi_' + (data.NamaBPR || 'BPR').replace(/[^a-zA-Z0-9]/g, '_') + '_' + 
+                     new Date().toISOString().slice(0,10).replace(/-/g,'') + '.pdf';
+    
+    doc.save(fileName);
+    return fileName;
+  }
+
+  // Submit handler
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
     if (!form.checkValidity()) {
       form.reportValidity();
       return;
     }
     
-    if (!jumlahPesertaSelect.value) {
-      alert('Pilih jumlah peserta!');
-      return;
-    }
-    
-    // Pastikan NamaBPR terisi
     if (!namaBPRHidden.value) {
       namaBPRHidden.value = namaBPRInput.value;
     }
     
-    loadingBar.style.display = 'block';
-    progressBar.style.width = '50%';
+    // Collect data
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+    
+    console.log('Submitting data:', data);
+    
+    // Reset UI
     submitBtn.disabled = true;
+    loadingDiv.style.display = 'block';
+    successMsg.style.display = 'none';
+    errorMsg.style.display = 'none';
     
     try {
-      const formData = new FormData(form);
-      
-      // Debug: Log semua data yang akan dikirim
-      console.log('=== DATA DIKIRIM ===');
-      for (let [key, value] of formData.entries()) {
-        console.log(`${key}: ${value}`);
-      }
-      
+      // Send to Google Sheets
       const response = await fetch(scriptURL, {
         method: 'POST',
-        body: formData
+        body: new URLSearchParams(data)
       });
       
-      const result = await response.json();
-      console.log('Response:', result);
+      if (!response.ok) {
+        throw new Error('HTTP error! status: ' + response.status);
+      }
       
-      progressBar.style.width = '100%';
+      const result = await response.json();
+      console.log('Server response:', result);
+      
+      loadingDiv.style.display = 'none';
+      submitBtn.disabled = false;
       
       if (result.status === 'success') {
-        successMsg.innerHTML = `✅ ${result.message}<br>Contact: ${result.contactNama || '-'}, ${result.contactNoWA || '-'}`;
+        // SUKSES - Generate dan download PDF
+        successMsg.innerHTML = `✅ ${result.message}<br>Baris: ${result.row}`;
         successMsg.style.display = 'block';
-        form.reset();
-        namaBPRHidden.value = '';
-        pesertaContainer.innerHTML = '';
-        setTimeout(() => successMsg.style.display = 'none', 5000);
+        
+        try {
+          const pdfName = generatePDF(data);
+          console.log('PDF generated:', pdfName);
+        } catch (pdfError) {
+          console.error('PDF generation error:', pdfError);
+          alert('Data tersimpan, tapi PDF gagal dibuat. Error: ' + pdfError.message);
+        }
+        
+        // Reset form
+        setTimeout(() => {
+          form.reset();
+          namaBPRHidden.value = '';
+          pesertaContainer.innerHTML = '';
+          successMsg.style.display = 'none';
+        }, 5000);
+        
       } else {
         throw new Error(result.message);
       }
+      
     } catch (error) {
       console.error('Error:', error);
-      errorMsg.textContent = '❌ Error: ' + error.message;
-      errorMsg.style.display = 'block';
-    } finally {
-      loadingBar.style.display = 'none';
-      progressBar.style.width = '0%';
+      loadingDiv.style.display = 'none';
       submitBtn.disabled = false;
+      errorMsg.innerHTML = '❌ Error: ' + error.message + '<br>Coba refresh halaman dan kirim ulang';
+      errorMsg.style.display = 'block';
     }
   });
 </script>
