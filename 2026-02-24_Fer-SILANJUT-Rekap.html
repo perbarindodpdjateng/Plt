@@ -1,1 +1,261 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rekap Peserta Realtime</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap" rel="stylesheet"/>
+  <style>
+    :root{
+      --clr-bg:#fff;
+      --clr-card:#fff;
+      --clr-line:#e5e7eb;
+      --clr-text:#111827;
+      --clr-subtle:#6b7280;
+      --clr-accent:#3b82f6;
+      --radius:6px;
+      --shadow:0 1px 3px rgba(0,0,0,.12);
+      --font-main:11px;
+      --font-body:10px;
+    }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{
+      font-family:'Inter',sans-serif;
+      background:var(--clr-bg);
+      color:var(--clr-text);
+      font-size:var(--font-main);
+      padding:0 4px 4px 4px;
+    }
+    /* ---------- Countdown ---------- */
+    .countdown-bar{
+      background:#fff3cd;
+      border:1px solid #ffeaa7;
+      color:#d63031;
+      text-align:center;
+      padding:4px 6px;
+      font-size:10px;
+      font-weight:500;
+      margin-bottom:4px;
+      border-radius:var(--radius);
+    }
+    /* ---------- Header sebaris ---------- */
+    .header-bar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin:0 4px 4px 4px;
+    }
+    .header-bar h2{
+      font-size:11px;
+      font-weight:600;
+      color:var(--clr-text);
+      margin:0;
+    }
+    .header-bar .search-box{
+      flex:1;
+      margin:0 0 0 8px;
+      max-width:240px;
+    }
+    /* ---------- Card ---------- */
+    .card{
+      background:var(--clr-card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:8px;
+      max-width:640px;
+      margin:auto;
+      position:relative;
+    }
+    .mini-load{
+      position:absolute;
+      top:4px;
+      right:8px;
+      font-size:9px;
+      color:var(--clr-subtle);
+    }
+    /* ---------- Search ---------- */
+    .search-box input{
+      width:100%;
+      font-size:var(--font-main);
+      padding:5px 26px 5px 8px;
+      border:1px solid var(--clr-line);
+      border-radius:var(--radius);
+      outline:none;
+    }
+    .search-box input:focus{border-color:var(--clr-accent)}
+    /* ---------- Table ---------- */
+    table{width:100%;border-collapse:collapse;font-size:var(--font-body)}
+    th,td{padding:3px 4px;border:1px solid var(--clr-line);line-height:1.2}
+    th{background:#f9fafb;font-weight:500;position:sticky;top:0;z-index:1}
+    th:nth-child(1),td:nth-child(1){width:7ch}
+    th:nth-child(2),td:nth-child(2){width:3ch}
+    th:nth-child(3),td:nth-child(3){text-transform:uppercase}
+    th:nth-child(4),td:nth-child(4){width:2ch}
+    tr.new-entry td{background:#e0ffe0;animation:fadeIn .3s}
+    @keyframes fadeIn{from{background:#c4ffc4}to{background:#e0ffe0}}
+    /* ---------- Pagination ---------- */
+    .pagination{display:flex;justify-content:space-between;align-items:center;margin-top:5px;font-size:var(--font-body)}
+    .pagination button{padding:3px 6px;border:1px solid var(--clr-line);background:#fff;border-radius:var(--radius);cursor:pointer;font-size:9px}
+    .pagination button:disabled{opacity:.5;cursor:not-allowed}
+    /* ---------- Mobile ---------- */
+    @media(max-width:360px){:root{--font-main:10px;--font-body:9px}th,td{padding:2px 3px}}
+  </style>
+</head>
+
+<body>
+  <!-- Countdown Bar -->
+  <div id="countdownBar" class="countdown-bar">
+    PENDAFTARAN DITUTUP DALAM <br><span id="cd"></span><br>
+    bila penuh, ditutup tanpa pemberitahuan
+  </div>
+
+<!-- Teks Berjalan -->
+<!-- Seamless tanpa putus, ultra-ringan -->
+<style>
+.banner{
+  background:#e74c3c;
+  color:#fff;
+  font:500 10px/18px sans-serif;
+  height:18px;
+  overflow:hidden;
+  white-space:nowrap;
+}
+.track{
+  display:inline-block;
+  animation:scroll 10s linear infinite;
+}
+.track span{
+  display:inline-block;          /* hilangkan jarak antar salinan */
+}
+@keyframes scroll{
+  0%{transform:translateX(0)}
+  100%{transform:translateX(-50%)}
+}
+</style>
+
+<div class="banner">
+  <div class="track">
+    <span>Budayakan Membaca Sebelum Bertanya ◼️ Budayakan Membaca Sebelum Bertanya ◼️ </span>
+    <span>Budayakan Membaca Sebelum Bertanya ◼️ Budayakan Membaca Sebelum Bertanya ◼️ </span>
+  </div>
+</div>
+
+ <!-- header --> 
+  <div class="header-bar">
+    <h2>REKAP PESERTA</h2>
+    <div class="search-box">
+      <input id="searchInput" type="text" placeholder="Cari Nama BPR/S, No Daftar, Jumlah"/>
+    </div>
+  </div>
+
+  <div class="card">
+    <span id="miniLoad" class="mini-load">loading…</span>
+
+    <table id="dataTable">
+      <thead></thead>
+      <tbody></tbody>
+    </table>
+    <div id="paginationWrap" class="pagination"></div>
+  </div>
+
+  <script>
+    // ---------- Countdown ----------
+    const targetDate = new Date("2026-01-21T23:59:59").getTime(); // Ganti dengan tanggal tutup pendaftaran
+    const cdSpan = document.getElementById('cd');
+    const cdBar = document.getElementById('countdownBar');
+
+    function updateCountdown(){
+      const now = new Date().getTime();
+      const distance = targetDate - now;
+      if(distance < 0){
+        cdBar.style.display = 'none';
+        return;
+      }
+      const days = Math.floor(distance / (1000*60*60*24));
+      const hours = Math.floor((distance % (1000*60*60*24)) / (1000*60*60));
+      const minutes = Math.floor((distance % (1000*60*60)) / (1000*60));
+      const seconds = Math.floor((distance % (1000*60)) / 1000);
+      cdSpan.textContent = `${days} hari ${String(hours).padStart(2,'0')} jam ${String(minutes).padStart(2,'0')} menit ${String(seconds).padStart(2,'0')} detik`;
+    }
+    updateCountdown();
+    setInterval(updateCountdown, 1000);
+
+    // ---------- Data Table (sama seperti sebelumnya) ----------
+    const rowsPerPage = 5;
+    let currentPage   = 1;
+    let previousData  = '';
+    let lastRendered  = [];
+    let originalData  = [];
+
+    const endPoint = 'https://script.google.com/macros/s/AKfycbxo6Hp4UCkyqwVORBi2w1nBT9A5iO7C_VIf-DmlIIBt7xe4M56i84HzSzSw6xLT8TLu7w/exec';
+
+    async function fetchData(){
+      try{
+        const res  = await fetch(endPoint,{cache:'no-store'});
+        const data = await res.json();
+        const str  = JSON.stringify(data);
+        if(str !== previousData){
+          previousData = str;
+          originalData = data;
+          currentPage  = 1;
+          renderAll();
+        }
+      }catch(e){
+        console.error(e);
+      }finally{
+        document.getElementById('miniLoad').style.display='none';
+        setTimeout(fetchData,5000);
+      }
+    }
+
+    function renderAll(){
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      let filtered = originalData.filter((r,i)=> i===0 || r.join(' ').toLowerCase().includes(search));
+      const header = filtered[0];
+      const body   = filtered.slice(1);
+      const total  = Math.max(1,Math.ceil(body.length/rowsPerPage));
+      if(currentPage>total) currentPage=total;
+      const start  = (currentPage-1)*rowsPerPage;
+      const page   = [header, ...body.slice(start,start+rowsPerPage)];
+      renderTable(page);
+      renderPagination(total);
+    }
+    function renderTable(page){
+      const thead = document.querySelector('#dataTable thead');
+      const tbody = document.querySelector('#dataTable tbody');
+      thead.innerHTML = tbody.innerHTML = '';
+      page.forEach((row,i)=>{
+        const tr = document.createElement('tr');
+        if(i!==0 && !lastRendered.includes(JSON.stringify(row))){
+          tr.classList.add('new-entry');
+          lastRendered.push(JSON.stringify(row));
+        }
+        row.forEach(cell=>{
+          const el=document.createElement(i===0?'th':'td');
+          el.textContent=cell;
+          tr.appendChild(el);
+        });
+        i===0?thead.appendChild(tr):tbody.appendChild(tr);
+      });
+    }
+    function renderPagination(total){
+      const wrap=document.getElementById('paginationWrap');
+      wrap.innerHTML=`
+        <button id="prevBtn">Prev</button>
+        <span>${currentPage}/${total}</span>
+        <button id="nextBtn">Next</button>`;
+      const prev=document.getElementById('prevBtn');
+      const next=document.getElementById('nextBtn');
+      prev.disabled=currentPage===1;
+      next.disabled=currentPage===total;
+      prev.onclick=()=>{currentPage--;renderAll();};
+      next.onclick=()=>{currentPage++;renderAll();};
+    }
+
+    document.getElementById('searchInput').addEventListener('input',()=>{currentPage=1;renderAll();});
+
+    fetchData();
+  </script>
+</body>
+</html>
