@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <title>Registrasi Ulang PJJ Penyegaran</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #1e40af; --primary-dark: #1e3a8a; --primary-light: #3b82f6;
+      --success: #059669; --success-light: #d1fae5; --warning: #d97706; --warning-light: #fef3c7;
+      --error: #dc2626; --error-light: #fee2e2;
+      --gray-50: #f9fafb; --gray-100: #f3f4f6; --gray-200: #e5e7eb; --gray-300: #d1d5db;
+      --gray-400: #9ca3af; --gray-500: #6b7280; --gray-600: #4b5563; --gray-700: #374151;
+      --gray-800: #1f2937; --gray-900: #111827;
+      --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05); --shadow: 0 1px 3px 0 rgba(0,0,0,0.1);
+      --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1); --radius-sm: 4px; --radius: 6px; --radius-lg: 8px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      font-size: 10px; line-height: 1; color: var(--gray-700);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh; padding: 12px 10px;
+    }
+    .header { text-align: center; margin-bottom: 14px; color: white; }
+    .header h1 { font-size: 12px; font-weight: 500; margin-bottom: 3px; text-shadow: 0 1px 2px rgba(0,0,0,0.2); }
+    .header .subtitle { font-size: 9px; opacity: 0.9; font-weight: 500; }
+    .info-banner {
+      background: linear-gradient(90deg, #f59e0b 0%, #d97706 100%); color: white;
+      padding: 3px; border-radius: var(--radius); margin-bottom: 3px;
+      display: flex; align-items: center; gap: 3px; flex-wrap: wrap; justify-content: center;
+    }
+    .info-banner::before { content: "💡"; font-size: 10px; flex-shrink: 0; }
+    .info-banner span { font-weight: 400; font-size: 10px; }
+    .kuota-box {
+      background: white; color: var(--gray-800); padding: 8px 14px;
+      border-radius: var(--radius); font-weight: 700; font-size: 10px;
+      display: flex; flex-direction: column; align-items: center; gap: 4px; text-align: center;
+    }
+    .kuota-box .kuota-main { font-size: 10px; display: flex; align-items: center; gap: 3px; }
+    .kuota-box.full { background: var(--error-light); color: var(--error); border: 2px solid var(--error); animation: pulse 2s infinite; }
+    .kuota-box.waiting { background: #fef3c7; color: #92400e; border: 2px solid #f59e0b; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.8; } }
+    .kuota-box.available { background: var(--success-light); color: var(--success); }
+    .kuota-habis-banner {
+      background: linear-gradient(90deg, #dc2626 0%, #b91c1c 100%); color: white;
+      padding: 16px; border-radius: var(--radius); margin-bottom: 14px; text-align: center; display: none;
+    }
+    .kuota-habis-banner.show { display: block; animation: slideIn 0.5s ease; }
+    .kuota-habis-banner h3 { font-size: 14px; margin-bottom: 8px; display: flex; align-items: center; justify-content: center; gap: 8px; }
+    .kuota-habis-banner p { font-size: 10px; opacity: 0.95; line-height: 1; }
+    .container { max-width: 600px; margin: 0 auto; }
+    .card { background: white; border-radius: var(--radius-lg); box-shadow: var(--shadow-md); overflow: hidden; }
+    .card-header {
+      background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+      color: white; padding: 5px 5px; text-align: center;
+    }
+    .card-header h2 { font-size: 12px; font-weight: 700; margin: 0; }
+    .card-header p { font-size: 8px; opacity: 0.9; margin-top: 2px; }
+    .card-body { padding: 5px; }
+    .search-section {
+      background: var(--gray-50); border-radius: var(--radius); padding: 14px;
+      margin-bottom: 14px; border: 1px solid var(--gray-200);
+    }
+    .search-section label { display: block; font-weight: 600; color: var(--gray-800); margin-bottom: 6px; font-size: 10px; }
+    .search-box { display: flex; gap: 8px; flex-wrap: wrap; }
+    .search-box input {
+      flex: 1; min-width: 200px; padding: 10px 12px; border: 1.5px solid var(--gray-300);
+      border-radius: var(--radius); font-size: 11px; transition: all 0.2s ease;
+    }
+    .search-box input:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+    .search-box input::placeholder { color: var(--gray-400); font-size: 11px; }
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      padding: 10px 16px; border: none; border-radius: var(--radius); font-size: 10px;
+      font-weight: 600; cursor: pointer; transition: all 0.2s ease; white-space: nowrap;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-light) 0%, var(--primary) 100%);
+      color: white; box-shadow: var(--shadow-sm);
+    }
+    .btn-primary:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow); }
+    .btn-primary:active:not(:disabled) { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.6; cursor: not-allowed; }
+    .progress-container { margin-top: 12px; text-align: center; }
+    .progress-bar { height: 6px; background: var(--gray-200); border-radius: 3px; overflow: hidden; margin-bottom: 6px; }
+    .progress-fill { height: 100%; background: linear-gradient(90deg, var(--primary-light) 0%, var(--primary) 100%); width: 0%; transition: width 0.3s ease; border-radius: 3px; }
+    .progress-text { font-size: 10px; color: var(--primary); font-weight: 500; }
+    .message {
+      padding: 12px 14px; border-radius: var(--radius); margin-bottom: 14px;
+      display: flex; align-items: flex-start; gap: 10px;
+      animation: slideIn 0.3s ease; font-size: 10px; line-height: 1.5;
+    }
+    @keyframes slideIn { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: translateY(0); } }
+    .message-success { background: var(--success-light); border: 1px solid #a7f3d0; color: var(--success); }
+    .message-success::before { content: "✓"; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+    .message-error { background: var(--error-light); border: 1px solid #fecaca; color: var(--error); }
+    .message-error::before { content: "✕"; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+    .message-info { background: #dbeafe; border: 1px solid #bfdbfe; color: var(--primary); }
+    .message-info::before { content: "ℹ"; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+    .message-warning { background: var(--warning-light); border: 1px solid #fcd34d; color: var(--warning); }
+    .message-warning::before { content: "⚠"; font-weight: 700; font-size: 12px; flex-shrink: 0; }
+    .message-kuota-habis {
+      background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+      border: 2px solid #dc2626; color: #991b1b; padding: 16px;
+      flex-direction: column; text-align: center;
+    }
+    .message-kuota-habis::before { content: "⛔"; font-size: 18px; margin-bottom: 8px; }
+    .message-kuota-habis strong { display: block; font-size: 13px; margin-bottom: 6px; color: #dc2626; }
+    .form-section { margin-top: 14px; }
+    .form-section h3 {
+      font-size: 12px; font-weight: 600; color: var(--gray-800); margin-bottom: 12px;
+      padding-bottom: 8px; border-bottom: 2px solid var(--gray-100);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+    .form-group { display: flex; flex-direction: column; gap: 4px; }
+    .form-group.full-width { grid-column: 1 / -1; }
+    .form-group label { font-size: 11px; font-weight: 600; color: var(--gray-700); display: flex; align-items: center; gap: 4px; }
+    .form-group label .required { color: var(--error); }
+    .form-group input, .form-group select {
+      padding: 9px 12px; border: 1.5px solid var(--gray-300); border-radius: var(--radius);
+      font-size: 10px; transition: all 0.2s ease; background: white; font-family: inherit;
+    }
+    .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary-light); box-shadow: 0 0 0 3px rgba(59,130,246,0.15); }
+    .form-group input[readonly], .form-group select:disabled { background: var(--gray-100); color: var(--gray-600); cursor: not-allowed; border-color: var(--gray-200); }
+    .form-group input::placeholder { color: var(--gray-400); font-size: 10px; }
+    .form-group small { font-size: 10px; color: var(--gray-500); font-weight: 500; }
+    .info-box {
+      background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+      border: 1px solid #bfdbfe; border-radius: var(--radius); padding: 14px; margin: 14px 0;
+    }
+    .info-box-title { font-weight: 700; color: var(--primary); font-size: 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+    .info-box-content { font-size: 11px; color: var(--gray-700); line-height: 1.7; }
+    .info-box-content code { background: white; padding: 2px 6px; border-radius: 4px; font-family: 'Courier New', monospace; font-size: 11px; color: var(--primary); font-weight: 600; border: 1px solid var(--gray-200); }
+    .info-box-content strong { color: var(--gray-900); }
+    .fee-display { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 12px; margin: 16px 0; }
+    .fee-card {
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-radius: var(--radius); padding: 14px; text-align: center;
+      border: 2px solid #fcd34d; position: relative; overflow: hidden;
+    }
+    .fee-card::before { content: "💰"; position: absolute; top: 8px; right: 10px; font-size: 15px; opacity: 0.3; }
+    .fee-card.secondary { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border-color: #93c5fd; }
+    .fee-card.secondary::before { content: "📜"; }
+    .fee-card label { font-size: 10px; font-weight: 700; color: var(--gray-700); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px; }
+    .fee-card .amount { font-size: 13px; font-weight: 800; color: var(--gray-900); font-family: 'Courier New', monospace; }
+    .fee-card .amount.zero { color: var(--gray-500); font-size: 12px; }
+    .submit-section { margin-top: 18px; padding-top: 16px; border-top: 2px solid var(--gray-100); }
+    .btn-submit {
+      width: 100%; padding: 14px 20px; font-size: 12px;
+      background: linear-gradient(135deg, var(--success) 0%, #047857 100%);
+      color: white; border: none; border-radius: var(--radius); font-weight: 700;
+      cursor: pointer; transition: all 0.2s ease;
+      display: flex; align-items: center; justify-content: center; gap: 8px; box-shadow: var(--shadow);
+    }
+    .btn-submit:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(5,150,105,0.3); }
+    .btn-submit:active:not(:disabled) { transform: translateY(0); }
+    .btn-submit:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+    .footer { text-align: center; padding: 5px; color: white; opacity: 0.95; font-size: 11px; }
+    .footer a { color: #fde68a; text-decoration: none; font-weight: 600; }
+    .footer a:hover { text-decoration: underline; }
+    .hidden { display: none !important; }
+    .loading-dots { display: inline-flex; gap: 4px; }
+    .loading-dots span { width: 6px; height: 6px; background: currentColor; border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
+    .loading-dots span:nth-child(1) { animation-delay: -0.32s; }
+    .loading-dots span:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
+    .helper-text { font-size: 10px; color: var(--gray-500); margin-top: 4px; }
+    @media (max-width: 480px) {
+      body { padding: 8px; } .header h1 { font-size: 14px; } .card-body { padding: 12px; }
+      .search-box { flex-direction: column; } .search-box input, .search-box .btn { width: 100%; }
+      .form-grid { grid-template-columns: 1fr; } .fee-display { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Registrasi Ulang PJJ Penyegaran</h1>
+    <h1>Direktur 1 - Direktur 2 - Komisaris</h1>
+    <h1>Zoom, 3-6 Maret 2026</h1>
+    <p class="subtitle">Karena Waiting List >50 org, sedangkan Kuota Kelas hanya 35 org, Mohon Segera Registrasi Ulang</p>
+  </div>
+
+  <div class="container">
+    <!-- Banner KUOTA HABIS - akan disembunyikan ketika data ditemukan -->
+    <div id="kuotaHabisBanner" class="kuota-habis-banner"><h3>⛔ KUOTA HABIS</h3></div>
+    
+    <div class="info-banner">
+      <span>Status Kuota</span>
+      <div id="kuotaStatus" class="kuota-box"><span>Memuat...</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <h2>Cek Data Peserta Waiting List</h2>
+        <p>Copy Paste Tulisan Nama di Rekap Peserta (Harus sama persis)</p>
+      </div>
+      <div class="card-body">
+        <div class="search-section">
+          <label for="keyword">Nama Peserta Waiting List</label>
+          <div class="search-box">
+            <input type="text" id="keyword" placeholder="Ketik Nama Peserta" autocomplete="off">
+            <button class="btn btn-primary" onclick="cekData()" id="btnCek"><span>🔍</span> Cek Data</button>
+          </div>
+          <div class="helper-text">Tekan Enter untuk mencari</div>
+          <div id="progressBox" class="progress-container hidden">
+            <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+            <div class="progress-text"><span class="loading-dots"><span></span><span></span><span></span></span> Memeriksa data...</div>
+          </div>
+        </div>
+
+        <div id="pesan"></div>
+
+        <!-- Template Form -->
+        <template id="formTemplate">
+          <div class="form-section">
+            <h3></h3>
+            <p style="color: var(--gray-600); font-size: 11px; margin-bottom: 12px; line-height: 1.5;"></p>
+            <div class="form-grid">
+              <div class="form-group"><label>Nama Peserta <span class="required">*</span></label><input name="PesertaNama" required></div>
+              <div class="form-group"><label>Nomor WhatsApp <span class="required">*</span></label><input name="PesertaNoWA" required placeholder="Contoh: 85727051675"></div>
+              <div class="form-group"><label>Jatuh Tempo Dir 1 <span class="required">*</span> <small>(dd/mm/yyyy)</small></label><input name="JatuhTempoDir1" required placeholder="dd/mm/yyyy" pattern="\d{1,2}/\d{1,2}/\d{4}"><small>Isi 00/00/0000 jika tidak punya</small></div>
+              <div class="form-group"><label>Jatuh Tempo Dir 2 <span class="required">*</span> <small>(dd/mm/yyyy)</small></label><input name="JatuhTempoDir2" required placeholder="dd/mm/yyyy" pattern="\d{1,2}/\d{1,2}/\d{4}"><small>Isi 00/00/0000 jika tidak punya</small></div>
+              <div class="form-group"><label>Jatuh Tempo Komisaris <span class="required">*</span> <small>(dd/mm/yyyy)</small></label><input name="JatuhTempoKom" required placeholder="dd/mm/yyyy" pattern="\d{1,2}/\d{1,2}/\d{4}"><small>Isi 00/00/0000 jika tidak punya</small></div>
+              <div class="form-group full-width">
+                <label>Sertifikat yang Diperpanjang <span class="required">*</span></label>
+                <select name="SertifikatDiperpanjang" required class="sertifikat-select">
+                  <option value="">-- Pilih Sertifikat --</option>
+                  <option value="[BPR] Komisaris">[BPR] Komisaris</option>
+                  <option value="[BPR] Dir 2">[BPR] Dir 2</option>
+                  <option value="[BPR] Dir 1">[BPR] Dir 1</option>
+                  <option value="[BPR] Dir 2 + Dir 1">[BPR] Dir 2 + Dir 1</option>
+                  <option value="[BPR] Dir 1 + Kom">[BPR] Dir 1 + Kom</option>
+                  <option value="[BPR] Dir 2 + Kom">[BPR] Dir 2 + Kom</option>
+                  <option value="[BPR] Dir 2 + Dir 1 + Kom">[BPR] Dir 2 + Dir 1 + Kom</option>
+                  <option value="[UMUM] Komisaris">[UMUM] Komisaris</option>
+                  <option value="[UMUM] Dir 2">[UMUM] Dir 2</option>
+                  <option value="[UMUM] Dir 1">[UMUM] Dir 1</option>
+                  <option value="[UMUM] Dir 2 + Dir 1">[UMUM] Dir 2 + Dir 1</option>
+                  <option value="[UMUM] Dir 1 + Kom">[UMUM] Dir 1 + Kom</option>
+                  <option value="[UMUM] Dir 2 + Kom">[UMUM] Dir 2 + Kom</option>
+                  <option value="[UMUM] Dir 2 + Dir 1 + Kom">[UMUM] Dir 2 + Dir 1 + Kom</option>
+                </select>
+              </div>
+              <div class="form-group"><label>Nama BPR/Umum <span class="required">*</span></label><input name="NamaBPR" required placeholder="Nama BPR atau Umum"></div>
+              <div class="form-group"><label>Contact Person (Nama)</label><input name="ContactNama" placeholder="Nama contact person"></div>
+              <div class="form-group"><label>Contact Person (No WA)</label><input name="ContactNoWA" placeholder="Contoh: 85727051675"></div>
+            </div>
+            <div class="fee-display">
+              <div class="fee-card"><label>Biaya Pelatihan</label><div class="amount biaya-pel">-</div><input type="hidden" name="BiayaPelatihan"></div>
+              <div class="fee-card secondary"><label>Biaya Sertifikasi Ulang</label><div class="amount biaya-su">-</div><input type="hidden" name="BiayaSU"></div>
+            </div>
+            <div class="info-box">
+              <div class="info-box-title">🏦 Informasi Pembayaran</div>
+              <div class="info-box-content">
+                <strong>Biaya Pelatihan:</strong> Mandiri KCP Semarang Gayamsari, <code>135-00-1871870-8</code>, a.n. DPD Perbarindo Jateng<br><br>
+                <strong>Biaya Sertifikasi:</strong> Bank Mandiri, <code>103-000-4185035</code>, a.n. PT. Lembaga Sertifikasi Profesi Certif
+              </div>
+            </div>
+            <input type="hidden" name="RekPelatihan" value="Mandiri KCP Semarang Gayamsari, 135-00-1871870-8, DPD Perbarindo Jateng.Sertifikasi">
+            <input type="hidden" name="RekSU" value="Bank Mandiri 103-000-4185035, An PT. Lembaga Sertifikasi Profesi Certif">
+            <input type="hidden" name="Pelatihan" value="PJJ Penyegaran Dir-Kom">
+            <input type="hidden" name="Tanggal" value="3-6 Maret'26">
+            <input type="hidden" name="RegistrasiUlang" value="Proses Registrasi Ulang">
+            <div class="submit-section"><button type="submit" class="btn-submit"><span>✓</span> <span class="btn-text">Submit</span></button></div>
+          </div>
+        </template>
+
+        <form id="reFormFound" class="hidden"></form>
+        <form id="reFormNew" class="hidden"></form>
+      </div>
+    </div>
+
+    <div class="footer">
+      <p>Info: <a href="https://wa.me/6285640316593" target="_blank">WA 0856-4031-6593 (Tika)</a></p>
+      <p style="margin-top: 4px;">© 2026 DPD Perbarindo Jawa Tengah</p>
+    </div>
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script>
+    const CONFIG = {
+      scriptURL: 'https://script.google.com/macros/s/AKfycby1pJ2d3R65_k3tl-Hf0RDrHifS6vKKNJ4Ej8EhE5Vsdc0gJ_WpLOXAfEcR07kYybTJwA/exec',
+      maxKuota: 35,
+      feeMap: {
+        "[BPR] Komisaris": [2500000, 1665000], "[BPR] Dir 2": [2500000, 1665000], "[BPR] Dir 1": [2500000, 1665000],
+        "[BPR] Dir 2 + Dir 1": [3500000, 3330000], "[BPR] Dir 1 + Kom": [3500000, 3330000], "[BPR] Dir 2 + Kom": [3500000, 3330000],
+        "[BPR] Dir 2 + Dir 1 + Kom": [4500000, 4995000],
+        "[UMUM] Komisaris": [3000000, 1665000], "[UMUM] Dir 2": [3000000, 1665000], "[UMUM] Dir 1": [3000000, 1665000],
+        "[UMUM] Dir 2 + Dir 1": [4000000, 3330000], "[UMUM] Dir 1 + Kom": [4000000, 3330000], "[UMUM] Dir 2 + Kom": [4000000, 3330000],
+        "[UMUM] Dir 2 + Dir 1 + Kom": [5000000, 4995000]
+      }
+    };
+
+    let currentKuota = { count: 0, max: CONFIG.maxKuota, available: CONFIG.maxKuota };
+    let isKuotaHabis = false;
+
+    const $ = id => document.getElementById(id);
+    const formatRupiah = n => 'Rp ' + (parseInt(n) || 0).toLocaleString('id-ID').replace(/,/g, '.');
+    const hitungBiaya = jenis => CONFIG.feeMap[jenis] || [0, 0];
+
+    function initForms() {
+      const template = $('formTemplate');
+      ['Found', 'New'].forEach(type => {
+        const clone = template.content.cloneNode(true);
+        const form = $(`reForm${type}`);
+        const h3 = clone.querySelector('h3');
+        const p = clone.querySelector('p');
+        const btnText = clone.querySelector('.btn-text');
+        
+        if (type === 'Found') {
+          h3.innerHTML = '📋 Data Peserta Ditemukan';
+          p.textContent = 'Data Anda sudah terdaftar. Silakan lengkapi / perbarui informasi di bawah ini.';
+          btnText.textContent = 'SEGERA REGISTRASI ULANG';
+          clone.querySelector('[name="PesertaNama"]').readOnly = true;
+          clone.querySelector('[name="PesertaNoWA"]').readOnly = true;
+          clone.querySelector('[name="NamaBPR"]').readOnly = true;
+          clone.querySelector('[name="ContactNama"]').readOnly = true;
+          clone.querySelector('[name="ContactNoWA"]').readOnly = true;
+          clone.querySelectorAll('.required').forEach(el => el.remove());
+        } else {
+          h3.innerHTML = '📝 Formulir Pendaftaran Baru';
+          p.textContent = 'Data tidak ditemukan. Silakan isi formulir pendaftaran baru. Biaya akan dihitung otomatis saat memilih jenis sertifikat.';
+          btnText.textContent = 'Submit Pendaftaran Baru';
+        }
+        
+        form.appendChild(clone);
+        form.addEventListener('submit', handleSubmit);
+        form.querySelector('.sertifikat-select').addEventListener('change', e => updateFeeDisplay(form, e.target.value));
+      });
+    }
+
+    function updateKuotaDisplay() {
+      const el = $('kuotaStatus');
+      const banner = $('kuotaHabisBanner');
+      const { count, max, available } = currentKuota;
+      
+      isKuotaHabis = available <= 0;
+      
+      if (isKuotaHabis) {
+        el.className = 'kuota-box full';
+        el.innerHTML = `<div class="kuota-main">⛔ KUOTA HABIS ${count}/${max}</div>`;
+        // Banner ditampilkan hanya jika kuota habis (untuk pendaftar baru)
+        banner.classList.add('show');
+      } else if (available <= 5) {
+        el.className = 'kuota-box waiting';
+        el.innerHTML = `<div class="kuota-main">⚠️ TERSISA ${available} (${count}/${max})</div>`;
+        banner.classList.remove('show');
+      } else {
+        el.className = 'kuota-box available';
+        el.innerHTML = `<div class="kuota-main">✅ Tersedia ${available} kuota</div>`;
+        banner.classList.remove('show');
+      }
+    }
+
+    function showMessage(type, text, duration = 0) {
+      const pesan = $('pesan');
+      const classes = {
+        'success': 'message-success', 'error': 'message-error', 
+        'warning': 'message-warning', 'info': 'message-info', 'kuota-habis': 'message-kuota-habis'
+      };
+      
+      if (type === 'kuota-habis') {
+        pesan.innerHTML = `<div class="message message-kuota-habis"><strong>KUOTA HABIS!</strong>${text}</div>`;
+      } else {
+        pesan.innerHTML = `<div class="message ${classes[type] || 'message-info'}">${text}</div>`;
+      }
+      
+      if (duration > 0) setTimeout(() => pesan.innerHTML = '', duration);
+    }
+
+    function updateFeeDisplay(form, jenis) {
+      const [pel, su] = hitungBiaya(jenis);
+      const pelDisplay = form.querySelector('.biaya-pel');
+      const suDisplay = form.querySelector('.biaya-su');
+      
+      pelDisplay.textContent = formatRupiah(pel);
+      pelDisplay.className = pel > 0 ? 'amount biaya-pel' : 'amount biaya-pel zero';
+      suDisplay.textContent = formatRupiah(su);
+      suDisplay.className = su > 0 ? 'amount biaya-su' : 'amount biaya-su zero';
+      
+      form.querySelector('[name="BiayaPelatihan"]').value = pel;
+      form.querySelector('[name="BiayaSU"]').value = su;
+    }
+
+    function cekData() {
+      const keyword = $('keyword').value.trim();
+      if (!keyword) return showMessage('error', 'Silakan isi nama peserta terlebih dahulu');
+
+      const btn = $('btnCek');
+      const progressBox = $('progressBox');
+      const progressFill = $('progressFill');
+      
+      btn.disabled = true;
+      progressBox.classList.remove('hidden');
+      
+      let width = 10;
+      const interval = setInterval(() => width < 90 && (width += 8, progressFill.style.width = width + '%'), 100);
+
+      ['reFormFound', 'reFormNew'].forEach(id => $(id).classList.add('hidden'));
+      $('pesan').innerHTML = '';
+
+      fetch(`${CONFIG.scriptURL}?action=cek&keyword=${encodeURIComponent(keyword)}`)
+        .then(r => r.json())
+        .then(res => {
+          clearInterval(interval);
+          progressFill.style.width = '100%';
+          setTimeout(() => (progressBox.classList.add('hidden'), btn.disabled = false), 300);
+
+          if (res.count !== undefined) {
+            currentKuota = { count: res.count, max: res.max || CONFIG.maxKuota, available: res.available || (res.max - res.count) };
+            updateKuotaDisplay();
+          }
+
+          if (res.status === 'found') {
+            // Data ditemukan: sembunyikan banner KUOTA HABIS
+            $('kuotaHabisBanner').classList.remove('show');
+            showMessage('success', 'Data ditemukan! Segera lengkapi registrasi ulang.');
+            const form = $('reFormFound');
+            form.classList.remove('hidden');
+            populateForm(form, res.data);
+          } else if (res.status === 'full' || res.available <= 0) {
+            // Kuota habis untuk pendaftar baru: tampilkan banner
+            $('kuotaHabisBanner').classList.add('show');
+            showMessage('kuota-habis', 'Mohon menanti <strong>Kelas Berikutnya</strong> dan masuk <strong>Waiting List</strong> kembali.<br>Terima kasih atas perhatiannya.', 0);
+          } else {
+            // Data tidak ditemukan tapi masih ada kuota: tampilkan form baru, sembunyikan banner
+            $('kuotaHabisBanner').classList.remove('show');
+            showMessage('info', `Data tidak ditemukan. Total peserta: ${res.count}/${res.max}. Silakan isi formulir.`);
+            $('reFormNew').classList.remove('hidden');
+          }
+        })
+        .catch(e => {
+          clearInterval(interval);
+          progressBox.classList.add('hidden');
+          btn.disabled = false;
+          showMessage('error', 'Gagal memeriksa data: ' + e.message);
+        });
+    }
+
+    function populateForm(form, data) {
+      ['PesertaNama', 'PesertaNoWA', 'JatuhTempoDir1', 'JatuhTempoDir2', 'JatuhTempoKom', 
+       'SertifikatDiperpanjang', 'NamaBPR', 'ContactNama', 'ContactNoWA'].forEach(field => {
+        const el = form.querySelector(`[name="${field}"]`);
+        if (el) {
+          el.value = data[field] || '';
+          if (el.tagName === 'SELECT' && data[field]) el.dispatchEvent(new Event('change'));
+        }
+      });
+      
+      if (data.BiayaPelatihan && parseInt(data.BiayaPelatihan) > 0) {
+        form.querySelector('.biaya-pel').textContent = formatRupiah(data.BiayaPelatihan);
+        form.querySelector('.biaya-su').textContent = formatRupiah(data.BiayaSU);
+        form.querySelector('[name="BiayaPelatihan"]').value = data.BiayaPelatihan;
+        form.querySelector('[name="BiayaSU"]').value = data.BiayaSU;
+      } else {
+        updateFeeDisplay(form, data.SertifikatDiperpanjang || '');
+      }
+    }
+
+    function downloadPDF(form) {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('p', 'mm', 'a4');
+      
+      const fields = [...form.elements].filter(el => el.name && el.value).map(el => [el.name, el.value]);
+      const yellowFields = ['BiayaPelatihan', 'RekPelatihan'];
+      const blueFields = ['BiayaSU', 'RekSU'];
+      
+      const normal = fields.filter(r => !yellowFields.includes(r[0]) && !blueFields.includes(r[0]));
+      const yellow = fields.filter(r => yellowFields.includes(r[0]));
+      const blue = fields.filter(r => blueFields.includes(r[0]));
+
+      doc.setFontSize(13).setFont(undefined, 'bold');
+      doc.text('BUKTI KONFIRMASI REGISTRASI PJJ PENYEGARAN DIREKTUR-KOMISARIS', 14, 12);
+      doc.setFontSize(7).text('Dicetak: ' + new Date().toLocaleString('id-ID'), 14, 16);
+
+      let startY = 25;
+      const addTable = (data, styles = {}) => {
+        if (!data.length) return;
+        doc.autoTable({
+          head: [['Field', 'Value']], body: data, startY, theme: 'grid',
+          styles: { fontSize: 9, ...styles },
+          headStyles: { fillColor: [66, 139, 202], textColor: 255 }
+        });
+        startY = doc.lastAutoTable.finalY + 5;
+      };
+
+      addTable(normal);
+      addTable(yellow, { fillColor: [255, 255, 153] });
+      addTable(blue, { fillColor: [173, 216, 230] });
+
+      doc.setFontSize(9).setFont(undefined, 'bold');
+      doc.text('Segera Transfer Biaya : PJJ (berita : NamaPeserta PJJ) & Sertifikasi Ulang (berita : NamaPeserta SU)', 14, startY);
+      startY += 5;
+
+      doc.setFont(undefined, 'normal');
+      const instructions = [
+        'Mohon Dilengkapi dan Dikirimkan (berkas Tidak Perlu distaples, cukup diklip saja):',
+        '1. FC KTP', '2. Pas foto berwarna 3x4 = 3 lbr (bag.belakang mohon diberi nama Peserta & BPR)',
+        '3. FC Sertifikat (Dir1 / Dir2 / Kom) yang dimiliki',
+        '4. Surat Keterangan Bekerja (bila dari BPR) atau CV (bila dari Umum/pribadi)',
+        '5. Surat Keterangan Penugasan Kerja level 6 (form.khusus dr LSP Certif, pilih sesuai yg diperpanjang)'
+      ];
+      instructions.forEach(t => { doc.text(t, 14, startY); startY += 5; });
+
+      const links = [
+        { t: 'Direktur Tk 1', l: 'https://docs.google.com/document/d/1WA0vA9ez5eCloOBJGEn2TpUcDla9apCP/edit?usp=drive_link' },
+        { t: 'Direktur Tk 2', l: 'https://docs.google.com/document/d/1gAN1Q7o1ho2f9gLZqDsqmXQ3NrfgsRsX/edit?usp=drive_link' },
+        { t: 'Komisaris', l: 'https://docs.google.com/document/d/1U4ACTSpzaSRh9sMiLKOi_PTaj6o4Dtay/edit?usp=drive_link' }
+      ];
+      links.forEach(it => {
+        const txt = '   ' + it.t + ', klik link --> ';
+        doc.text(txt, 14, startY);
+        doc.setTextColor(0, 102, 204).textWithLink(it.t, 14 + doc.getTextWidth(txt), startY, { url: it.l });
+        doc.setTextColor(0, 0, 0);
+        startY += 4;
+      });
+
+      doc.setFontSize(9).text('6. Surat Permohonan Perpanjangan Sertifikat Kompetensi BPR (pilih sesuai yg diperpanjang)', 14, startY + 2);
+      startY += 7;
+
+      const moreLinks = [
+        { t: 'Direktur Tk 1', l: 'https://drive.google.com/file/d/1MDAr_BhHieRRxBONZbEqcDORbsi88O2_/view?usp=drive_link' },
+        { t: 'Direktur Tk 2', l: 'https://drive.google.com/file/d/1PqkYoC-qZO5XxQi-71bvIt1TZn1GtDld/view?usp=drive_link' },
+        { t: 'Komisaris', l: 'https://drive.google.com/file/d/1K9npGCxKkhZtglV_969fsMzpQZfCg_8o/view?usp=drive_link' },
+        { t: 'Contoh Pengisian Formulir', l: 'https://drive.google.com/file/d/1eOFbnxSDIAj1Hjqgx30G4peX2Z7LkNiI/view?usp=drive_link' }
+      ];
+      moreLinks.forEach(it => {
+        const txt = '   ' + it.t + ', klik link --> ';
+        doc.text(txt, 14, startY);
+        doc.setTextColor(0, 102, 204).textWithLink(it.t, 14 + doc.getTextWidth(txt), startY, { url: it.l });
+        doc.setTextColor(0, 0, 0);
+        startY += 5;
+      });
+
+      const finalText = [
+        '7. FC Bukti Transfer By Pelatihan (ke No.Rek.PerbarindoJateng)',
+        '8. FC Bukti Transfer By Sertifikasi Ulang (ke No.Rek. LSP CERTIF)',
+        '9. FC NPWP BPR (bila dari BPR) atau NPWP Personal (bila dari Umum/pribadi)', '',
+        'Kirim Berkas Persyaratan Fisik (Paling Lambat H-7) Ke:',
+        'Kepada Yth. Perbarindo DPD Jawa Tengah, Jl. Sendangsari Utara XIII No.187, Kel.Kalicari, Kec.Pedurungan, Semarang 50198', '',
+        'Info Lainnya: H-3 Akan dimasukkan ke WAGrup (Tersampai Modul, Jadwal serta Info Penting lainnya)',
+        'Kirim Bukti Transfer, Via WA https://wa.me/6285640316593, PIC Tanya Daftar-Berkas: Tika https://wa.me/6285640316593'
+      ];
+      finalText.forEach(t => { doc.text(t, 14, startY); startY += (t === '' ? 3 : 5); });
+
+      const nm = form.PesertaNama?.value?.trim().replace(/\s+/g, '-') || 'peserta';
+      doc.save(`Registrasi-Ulang-${nm}.pdf`);
+    }
+
+    function handleSubmit(e) {
+      e.preventDefault();
+      const form = e.target;
+      const btn = form.querySelector('button[type="submit"]');
+      const isNew = form.id === 'reFormNew';
+      
+      btn.disabled = true;
+      btn.innerHTML = '<span class="loading-dots"><span></span><span></span><span></span></span> Memproses...';
+
+      fetch(CONFIG.scriptURL, { method: 'POST', body: new FormData(form) })
+        .then(r => r.json())
+        .then(res => {
+          if (res.error) {
+            if (res.waitingList || res.error.includes('KUOTA HABIS')) {
+              showMessage('kuota-habis', 'Mohon menanti <strong>Kelas Berikutnya</strong> dan masuk <strong>Waiting List</strong> kembali.<br>Terima kasih atas perhatiannya.', 0);
+              form.classList.add('hidden');
+              updateKuotaDisplay();
+            } else {
+              showMessage('error', res.error, 8000);
+            }
+          } else {
+            downloadPDF(form);
+            form.reset();
+            form.classList.add('hidden');
+            showMessage('success', isNew ? 'Pendaftaran baru berhasil! PDF telah diunduh.' : 'Registrasi ulang berhasil! PDF telah diunduh.');
+          }
+        })
+        .catch(er => showMessage('error', 'Gagal: ' + er.message))
+        .finally(() => {
+          btn.disabled = false;
+          btn.innerHTML = `<span>✓</span> <span class="btn-text">${isNew ? 'Submit Pendaftaran Baru' : 'SEGERA REGISTRASI ULANG'}</span>`;
+        });
+    }
+
+    $('keyword').addEventListener('keypress', e => e.key === 'Enter' && (e.preventDefault(), cekData()));
+    
+    initForms();
+    updateKuotaDisplay();
+  </script>
+</body>
+</html>
