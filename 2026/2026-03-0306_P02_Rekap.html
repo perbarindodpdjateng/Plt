@@ -6,139 +6,428 @@
   <title>PJJPenyegaranDir-Kom</title>
   <style>
     :root{
-      --accent:#1a4e8a;
-      --bg:white;
+      --accent:#1e40af;
+      --accent-light:#3b82f6;
+      --bg:#f8fafc;
       --header:#ffffff;
-      --row-even:transparent;
-      --row-odd:transparent;
-      --border:#e1e8f0;
-      --text:#222;
-      --radius:8px;
-      --shadow:0 2px 2px rgba(0,0,0,.18);
+      --border:#e2e8f0;
+      --text:#0f172a;
+      --text-muted:#64748b;
+      --radius:2px;
+      --shadow:0 1px 2px rgba(0,0,0,.08);
+      --shadow-lg:0 4px 6px rgba(0,0,0,.1);
+      --highlight-bg:#fef3c7;
+      --highlight-text:#92400e;
+      --success:#10b981;
+      --danger:#ef4444;
+      --warning:#f59e0b;
+      --pagination-height:32px;
+      --header-height:22px;
+      --warning-height:14px;
+      --search-height:16px;
       font-size:14px;
     }
+    
     *{box-sizing:border-box;margin:0;padding:0}
+    
+    html, body{
+      height:100%;
+      overflow:hidden;
+    }
+    
     body{
-      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
       background:var(--bg);
       color:var(--text);
-      padding:0;
+      line-height:1;
       display:flex;
       flex-direction:column;
-      min-height:100vh;
     }
+    
+    /* HEADER - SUPER COMPACT */
     header{
       background:var(--header);
       box-shadow:var(--shadow);
-      padding:.5rem .5rem;
+      padding:0.25rem 0.35rem;
       display:flex;
       justify-content:space-between;
       align-items:center;
-      flex-wrap:wrap;
-      gap:.5rem;
+      flex-wrap:nowrap;
+      gap:0.25rem;
+      flex-shrink:0;
+      height:var(--header-height);
+      overflow-x:auto;
+      scrollbar-width:none;
+      -ms-overflow-style:none;
     }
-    header h1{font-size:1.55rem;color:var(--accent)}
-    .info-box-group{display:flex;gap:.5rem;flex-wrap:wrap}
+    
+    header::-webkit-scrollbar{display:none;}
+    
+    header h1{
+      font-size:1.25rem;
+      font-weight:500;
+      background:linear-gradient(135deg,var(--accent) 0%,var(--accent-light) 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      white-space:nowrap;
+      flex-shrink:0;
+      line-height:1;
+    }
+    
+    .info-box-group{
+      display:flex;
+      gap:0.2rem;
+      flex-shrink:0;
+    }
+    
     .info-box{
-      font-size:.8rem;
-      font-weight:600;
-      padding:.35rem .6rem;
+      font-size:0.95rem;
+      font-weight:500;
+      padding:0.1rem 0.25rem;
       border-radius:var(--radius);
-      background:#fff8dc;
-      color:var(--accent);
+      background:#fff;
+      border:1px solid var(--border);
       white-space:nowrap;
       box-shadow:var(--shadow);
+      display:flex;
+      align-items:center;
+      gap:0.15rem;
+      line-height:1;
     }
-    .info-box.sisa-ok{background:#d4edda;color:#155724}
-    .info-box.sisa-penuh{background:#f8d7da;color:#721c24}
-
+    
+    .info-box.sisa-ok{border-color:var(--success);color:var(--success);}
+    .info-box.sisa-penuh{border-color:var(--danger);color:var(--danger);background:#fef2f2;}
+    
+    /* WARNING BOX - SANGAT RAPAT */
     #warningBox{
-      background:#dc3545;
+      background:var(--danger);
       color:#fff;
       text-align:center;
-      padding:.6rem;
+      padding:0.2rem 0.3rem;
       font-weight:600;
+      font-size:0.95rem;
       display:none;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      flex-shrink:0;
+      height:var(--warning-height);
+      line-height:1;
+      letter-spacing:0.2px;
     }
-
-    main{padding:.2rem}
+    
+    /* MAIN CONTENT */
+    main{
+      flex:1;
+      padding:0.2rem;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      min-height:0;
+    }
+    
+    /* SEARCH INPUT - RAPAT */
+    .search-container{
+      position:relative;
+      margin-bottom:0.2rem;
+      flex-shrink:0;
+      height:var(--search-height);
+    }
+    
     #searchInput{
       width:100%;
-      font-size:1rem;
-      padding:.5rem .75rem;
+      height:100%;
+      font-size:0.95rem;
+      padding:0.2rem 0.4rem 0.2rem 1.5rem;
       border:1px solid var(--border);
       border-radius:var(--radius);
-      margin-bottom:.5rem;
+      background:#fff;
+      outline:none;
+      line-height:1;
     }
+    
+    #searchInput:focus{
+      border-color:var(--accent-light);
+      box-shadow:0 0 0 1px rgba(59,130,246,.15);
+    }
+    
+    .search-icon{
+      position:absolute;
+      left:0.4rem;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--text-muted);
+      font-size:0.95rem;
+    }
+    
+    /* TABLE CONTAINER */
     .table-wrapper{
-      flex:1;
-      overflow:auto;
       background:var(--header);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
+      overflow:hidden;
+      border:1px solid var(--border);
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
     }
+    
+    .table-scroll{
+      flex:1;
+      overflow:auto;
+      scrollbar-width:thin;
+      scrollbar-color:var(--accent) var(--border);
+    }
+    
+    .table-scroll::-webkit-scrollbar{
+      width:3px;
+      height:3px;
+    }
+    
+    .table-scroll::-webkit-scrollbar-track{
+      background:var(--border);
+      border-radius:2px;
+    }
+    
+    .table-scroll::-webkit-scrollbar-thumb{
+      background:var(--accent);
+      border-radius:2px;
+    }
+    
     table{
       width:100%;
       border-collapse:collapse;
-      font-size:.75rem;
+      font-size:0.95rem;
+      min-width:600px;
     }
+    
     th{
-      background:var(--accent);
+      background:linear-gradient(180deg,var(--accent) 0%,#1e3a8a 100%);
       color:#fff;
       position:sticky;
       top:0;
-      z-index:1;
-      padding:.55rem .65rem;
+      z-index:10;
+      padding:0.25rem 0.35rem;
+      text-align:left;
+      font-weight:600;
       text-transform:uppercase;
-      letter-spacing:.5px;
+      font-size:0.95rem;
+      letter-spacing:0.2px;
+      white-space:normal;
+      line-height:1.05;
+      border-bottom:1px solid rgba(255,255,255,.1);
+      vertical-align:middle;
     }
-    td{padding:.55rem .65rem;border-bottom:1px solid var(--border)}
-    tr:nth-child(even){background:var(--row-even)}
-    tr:nth-child(odd){background:var(--row-odd)}
-    tr.starred{background:#fff9c4 !important;}
+    
+    th:first-child{border-radius:var(--radius) 0 0 0;}
+    th:last-child{border-radius:0 var(--radius) 0 0;}
+    
+    td{
+      padding:0.2rem 0.35rem;
+      border-bottom:1px solid var(--border);
+      color:var(--text);
+      font-weight:400;
+      line-height:1.05;
+      vertical-align:middle;
+      white-space:normal;
+      word-wrap:break-word;
+      max-width:200px;
+    }
+    
+    tr{transition:background .1s ease;}
+    tr:hover{background:#f1f5f9;}
+    tr:nth-child(even){background:#fafafa;}
+    tr:nth-child(even):hover{background:#f1f5f9;}
+    
+    /* STATUS HIGHLIGHT */
+    .status-unregistered{
+      font-weight:700;
+      background:var(--highlight-bg);
+      color:var(--highlight-text);
+      padding:0.05rem 0.2rem;
+      border-radius:2px;
+      display:inline;
+      border:1px solid #fcd34d;
+      font-size:0.6rem;
+      line-height:1;
+    }
+    
+    /* STARRED ROW */
+    tr.starred{
+      background:#fef9c3 !important;
+      border-left:2px solid var(--warning);
+    }
+    
+    tr.starred td:first-child{
+      position:relative;
+      padding-left:0.9rem;
+    }
+    
+    tr.starred td:first-child::before{
+      content:"★";
+      position:absolute;
+      left:0.2rem;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--warning);
+      font-size:0.65rem;
+    }
+    
+    /* LOADING STATE - RAPAT */
     .loading{
       display:flex;
       align-items:center;
       justify-content:center;
-      gap:.5rem;
-      padding:2rem 1rem;
-      font-size:.9rem;
+      gap:0.4rem;
+      padding:1rem 0.5rem;
+      font-size:0.75rem;
+      color:var(--text-muted);
+      background:#fff;
+      border-radius:var(--radius);
+      margin-bottom:0.2rem;
+      flex-shrink:0;
     }
-    .loading svg{width:1.2rem;height:1.2rem;animation:spin 1s linear infinite}
+    
+    .loading svg{
+      width:1rem;
+      height:1rem;
+      animation:spin 1s linear infinite;
+      color:var(--accent);
+    }
+    
     @keyframes spin{to{transform:rotate(360deg)}}
-
+    
+    /* PAGINATION - SUPER RAPAT */
     .pagination{
       display:flex;
       justify-content:center;
       align-items:center;
-      gap:.5rem;
-      margin-top:1rem;
+      gap:0.3rem;
+      padding:0.3rem;
+      background:#fff;
+      border-top:1px solid var(--border);
+      box-shadow:0 -1px 3px rgba(0,0,0,0.05);
+      flex-shrink:0;
+      height:var(--pagination-height);
     }
+    
     .pagination button{
-      padding:.35rem .6rem;
+      padding:0.2rem 0.5rem;
       border:1px solid var(--border);
       background:#fff;
-      border-radius:var(--radius);
+      border-radius:8px;
       cursor:pointer;
-      font-size:.8rem;
+      font-size:0.65rem;
+      font-weight:500;
+      color:var(--text);
+      transition:all .1s ease;
+      min-width:45px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:0.15rem;
+      height:22px;
+      line-height:1;
     }
+    
+    .pagination button:hover:not(:disabled){
+      border-color:var(--accent);
+      color:var(--accent);
+      background:#f8fafc;
+    }
+    
     .pagination button:disabled{
-      opacity:.5;
+      opacity:0.35;
       cursor:not-allowed;
+      background:#f1f5f9;
+      border-color:#cbd5e1;
+      color:#94a3b8;
     }
-    .pagination span{
-      font-size:.8rem;
+    
+    .pagination-info{
+      font-size:0.7rem;
+      color:var(--text-muted);
+      font-weight:500;
+      padding:0 0.2rem;
+      min-width:25px;
+      text-align:center;
+      line-height:1;
     }
-
-    @media(max-width:420px){
-      header h1{font-size:1rem}
-      :root{font-size:10px}
+    
+    /* EMPTY STATE */
+    .empty-state{
+      text-align:center;
+      padding:1rem 0.5rem;
+      color:var(--text-muted);
+      font-size:0.75rem;
+    }
+    
+    /* RESPONSIVE */
+    @media(max-width:480px){
+      :root{
+        font-size:10px;
+        --header-height:20px;
+        --warning-height:12px;
+        --search-height:28px;
+        --pagination-height:28px;
+      }
+      
+      header{padding:0.2rem;gap:0.2rem;}
+      header h1{font-size:0.8rem;}
+      
+      .info-box{
+        font-size:0.55rem;
+        padding:0.08rem 0.2rem;
+        border-radius:4px;
+      }
+      
+      #warningBox{font-size:0.6rem;padding:0.15rem;}
+      main{padding:0.15rem;}
+      
+      table{font-size:0.65rem;min-width:100%;}
+      th{font-size:0.55rem;padding:0.2rem 0.25rem;}
+      td{padding:0.15rem 0.25rem;max-width:150px;}
+      
+      .status-unregistered{
+        font-size:0.55rem;
+        padding:0.03rem 0.15rem;
+      }
+      
+      .pagination{
+        padding:0.25rem;
+        gap:0.25rem;
+      }
+      
+      .pagination button{
+        padding:0.15rem 0.4rem;
+        font-size:0.6rem;
+        min-width:40px;
+        height:20px;
+        border-radius:6px;
+      }
+      
+      .pagination-info{font-size:0.65rem;}
+    }
+    
+    @media(max-width:360px){
+      header h1{font-size:0.75rem;}
+      .info-box{font-size:0.5rem;padding:0.05rem 0.15rem;}
+      #warningBox{font-size:0.55rem;}
+      
+      .pagination button{
+        padding:0.1rem 0.35rem;
+        font-size:0.55rem;
+        min-width:35px;
+        height:18px;
+      }
     }
   </style>
 </head>
 <body>
   <header>
-    <h1>Rekap Peserta</h1>
+    <h1>📋 Rekap Peserta</h1>
     <div class="info-box-group">
       <div id="infoBoxTotal" class="info-box">👥 Total: <span id="totalCount">0</span></div>
       <div id="infoBoxRemaining" class="info-box sisa-ok">✅ Sisa: <span id="remainingCount">30</span></div>
@@ -148,134 +437,232 @@
   <div id="warningBox">⚠️ Kuota penuh! Maaf tidak dapat tambah Peserta</div>
 
   <main>
-    <div class="loading">
+    <div class="loading" id="loadingState">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M12 2v4m0 12v4m8-8h-4M8 12H4m15.364-6.364l-2.828 2.828M8.464 15.536l-2.828 2.828m12.728 0l-2.828-2.828M8.464 8.464L5.636 5.636"/>
       </svg>
       Memuat data...
     </div>
-    <input id="searchInput" type="text" placeholder="🔍Cari Nama BPR-Perusahaan / Nama Peserta"/>
-    <div class="table-wrapper">
-      <table id="dataTable">
-        <thead></thead>
-        <tbody></tbody>
-      </table>
+    
+    <div class="search-container" style="display:none;" id="searchContainer">
+      <span class="search-icon">🔍</span>
+      <input id="searchInput" type="text" placeholder="Cari nama BPR/perusahaan/peserta..."/>
     </div>
-    <div class="pagination" id="pagination"></div>
+    
+    <div class="table-wrapper" style="display:none;" id="tableWrapper">
+      <div class="table-scroll">
+        <table id="dataTable">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
   </main>
+
+  <!-- Pagination Bottom -->
+  <div class="pagination" id="pagination" style="display:none;">
+    <button id="btnPrev" disabled>‹ Prev</button>
+    <span class="pagination-info" id="pageInfo">1/1</span>
+    <button id="btnNext" disabled>Next ›</button>
+  </div>
 
   <script>
     /* ---------- CONFIG ---------- */
-    const URL = 'https://script.google.com/macros/s/AKfycby6E-X2WQq9GbBAObmwsPlkGNVD_DoU_-gli6ioHMvx-EQ_W9mbcBKGvYgup-9EsAe0Vw/exec';
-    let originalData = [];      // cache RAM
-    let currentPage  = 1;
-    const rowsPerPage = 7;
+    const URL = 'https://script.google.com/macros/s/AKfycby6E-X2WQq9GbBAObmwsPlkGNVD_DoU_-gli6ioHMvx-EQ_W9mbcBKGvYgup-9EsAe0Vw/exec ';
+    let originalData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    const rowsPerPage = 18; // Lebih banyak karena semua lebih rapat
+    let isLoading = false;
+    let totalPages = 1;
 
-    /* ---------- FETCH 1× ---------- */
+    /* ---------- FETCH DATA ---------- */
     async function fetchData() {
-      if (originalData.length) return;            // sudah ada cache
+      if (isLoading) return;
+      isLoading = true;
+      
       try {
-        const r = await fetch(URL, { cache: 'no-store' });
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+        
+        const r = await fetch(URL, { 
+          cache: 'no-store',
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        
         const j = await r.json();
-        originalData = j;                         // simpan ke cache
-        renderTable(originalData);
+        originalData = j;
+        filteredData = [...originalData];
+        
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('searchContainer').style.display = 'block';
+        document.getElementById('tableWrapper').style.display = 'flex';
+        document.getElementById('pagination').style.display = 'flex';
+        
         updateInfoBox(originalData);
-        document.querySelector('.loading').style.display = 'none';
+        applyFilters();
       } catch (e) {
-        console.error(e);
-        document.querySelector('.loading').textContent = 'Gagal memuat data.';
+        console.error('Fetch error:', e);
+        document.getElementById('loadingState').innerHTML = 
+          '<span style="color:#ef4444">❌ Gagal memuat data. Silakan refresh halaman.</span>';
+      } finally {
+        isLoading = false;
       }
     }
 
-    /* ---------- RENDER TABEL ---------- */
-    function renderTable(data) {
-      const s = document.getElementById('searchInput').value.toLowerCase();
+    /* ---------- RENDER TABLE ---------- */
+    function applyFilters() {
+      const s = document.getElementById('searchInput').value.toLowerCase().trim();
+      
+      if (!s) {
+        filteredData = [...originalData];
+      } else {
+        filteredData = originalData.filter((row, i) => {
+          if (i === 0) return true;
+          return row.some(cell => String(cell).toLowerCase().includes(s));
+        });
+      }
+      
+      currentPage = 1;
+      renderTable();
+    }
+
+    function renderTable() {
       const thead = document.querySelector('#dataTable thead');
       const tbody = document.querySelector('#dataTable tbody');
-      thead.innerHTML = ''; tbody.innerHTML = '';
-
-      const filtered = data.filter((row, i) => {
-        if (i === 0) return true;
-        return row.join(' ').toLowerCase().includes(s);
-      });
-
-      const totalRows = filtered.length - 1;
-      const totalPages = Math.ceil(totalRows / rowsPerPage);
-      const start = (currentPage - 1) * rowsPerPage + 1;
-      const end   = Math.min(start + rowsPerPage - 1, totalRows);
-
+      
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+      
+      if (filteredData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" class="empty-state">Tidak ada data ditemukan</td></tr>';
+        updatePagination(0);
+        return;
+      }
+      
+      // Header
       const headerTr = document.createElement('tr');
-      filtered[0].forEach((cell, j) => {
+      filteredData[0].forEach((cell, j) => {
         if (j === 4 || j === 7) return;
         const th = document.createElement('th');
-        th.textContent = cell.toUpperCase();
+        th.textContent = cell;
         headerTr.appendChild(th);
       });
       thead.appendChild(headerTr);
-
+      
+      // Body
+      const totalRows = filteredData.length - 1;
+      totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
+      
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+      
+      const start = (currentPage - 1) * rowsPerPage + 1;
+      const end = Math.min(start + rowsPerPage - 1, totalRows);
+      
+      const fragment = document.createDocumentFragment();
+      
       for (let i = start; i <= end; i++) {
-        if (i >= filtered.length) break;
-        const row = filtered[i];
-        const tr  = document.createElement('tr');
+        if (i >= filteredData.length) break;
+        const row = filteredData[i];
+        const tr = document.createElement('tr');
         let hasStar = false;
+        
         row.forEach((cell, j) => {
           if (j === 4 || j === 7) return;
           const td = document.createElement('td');
-          td.textContent = cell;
+          const cellText = String(cell);
+          
+          if (cellText.includes('BELUM RU')) {
+            td.innerHTML = '<span class="status-unregistered">BELUM RU</span>';
+          } else {
+            td.textContent = cellText;
+          }
+          
           tr.appendChild(td);
-          if (String(cell).includes('*')) hasStar = true;
+          if (cellText.includes('*')) hasStar = true;
         });
+        
         if (hasStar) tr.classList.add('starred');
-        tbody.appendChild(tr);
+        fragment.appendChild(tr);
       }
-      renderPagination(totalPages);
+      
+      tbody.appendChild(fragment);
+      updatePagination(totalPages);
     }
 
     /* ---------- PAGINATION ---------- */
-    function renderPagination(totalPages) {
-      const pg = document.getElementById('pagination');
-      pg.innerHTML = '';
-      const prev = document.createElement('button');
-      prev.textContent = '‹ Prev';
-      prev.disabled = currentPage === 1;
-      prev.onclick = () => { if (currentPage > 1) { currentPage--; renderTable(originalData); } };
-      pg.appendChild(prev);
-
-      const info = document.createElement('span');
-      info.textContent = `Hal ${currentPage} / ${totalPages}`;
-      pg.appendChild(info);
-
-      const next = document.createElement('button');
-      next.textContent = 'Next ›';
-      next.disabled = currentPage === totalPages;
-      next.onclick = () => { if (currentPage < totalPages) { currentPage++; renderTable(originalData); } };
-      pg.appendChild(next);
+    function updatePagination(totalPages) {
+      const btnPrev = document.getElementById('btnPrev');
+      const btnNext = document.getElementById('btnNext');
+      const pageInfo = document.getElementById('pageInfo');
+      
+      btnPrev.disabled = currentPage <= 1;
+      btnNext.disabled = currentPage >= totalPages;
+      pageInfo.textContent = totalPages > 0 ? `${currentPage}/${totalPages}` : '0/0';
     }
+
+    document.getElementById('btnPrev').addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+        document.querySelector('.table-scroll').scrollTop = 0;
+      }
+    });
+
+    document.getElementById('btnNext').addEventListener('click', () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderTable();
+        document.querySelector('.table-scroll').scrollTop = 0;
+      }
+    });
 
     /* ---------- INFO BOX ---------- */
     function updateInfoBox(data) {
-      const total = data.length - 1;
-      const rem   = 30 - total;
+      const total = Math.max(0, data.length - 1);
+      const rem = Math.max(0, 30 - total);
+      
       document.getElementById('totalCount').textContent = total;
+      
       const box = document.getElementById('infoBoxRemaining');
-      box.className = 'info-box ' + (rem > 0 ? 'sisa-ok' : 'sisa-penuh');
-      box.innerHTML = (rem > 0 ? '✅' : '❌') + ' Sisa: <span id="remainingCount">' + (rem > 0 ? rem : 0) + '</span>';
-      document.getElementById('warningBox').style.display = rem <= 0 ? 'block' : 'none';
+      const isFull = rem <= 0;
+      
+      box.className = 'info-box ' + (isFull ? 'sisa-penuh' : 'sisa-ok');
+      box.innerHTML = (isFull ? '❌' : '✅') + ' Sisa: <span>' + rem + '</span>';
+      
+      document.getElementById('warningBox').style.display = isFull ? 'block' : 'none';
     }
 
-    /* ---------- SEARCH ---------- */
-    document.getElementById('searchInput').addEventListener('input', () => {
-      currentPage = 1;
-      renderTable(originalData);
+    /* ---------- EVENT LISTENERS ---------- */
+    let searchTimeout;
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        applyFilters();
+      }, 300);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' && currentPage > 1) {
+        currentPage--;
+        renderTable();
+      } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
+        currentPage++;
+        renderTable();
+      }
     });
 
     /* ---------- INIT ---------- */
     window.addEventListener('DOMContentLoaded', () => {
-      fetchData();          // UI sudah tampil, fetch di belakang
+      fetchData();
       setInterval(() => {
-        originalData = [];  // reset cache → force reload
-        fetchData();
-      }, 5000);
+        if (!isLoading) {
+          originalData = [];
+          fetchData();
+        }
+      }, 60000);
     });
   </script>
 </body>
