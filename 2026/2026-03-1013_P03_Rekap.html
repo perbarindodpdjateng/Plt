@@ -1,1 +1,685 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PJJPenyegaranDir-Kom</title>
+  <style>
+    :root{
+      --accent:#1e40af;
+      --accent-light:#3b82f6;
+      --bg:#f8fafc;
+      --header:#ffffff;
+      --border:#e2e8f0;
+      --text:#0f172a;
+      --text-muted:#64748b;
+      --radius:2px;
+      --shadow:0 1px 2px rgba(0,0,0,.08);
+      --shadow-lg:0 4px 6px rgba(0,0,0,.1);
+      --highlight-bg:#fef3c7;
+      --highlight-text:#92400e;
+      --success:#10b981;
+      --danger:#ef4444;
+      --warning:#f59e0b;
+      --pagination-height:40px;
+      --header-height:32px;
+      --warning-height:20px;
+      --search-height:32px;
+      /* BASE FONT SIZE - SAMA UNTUK SEMUA DEVICE */
+      font-size:10px;
+    }
+    
+    *{box-sizing:border-box;margin:0;padding:0}
+    
+    html, body{
+      height:100%;
+      overflow:hidden;
+    }
+    
+    body{
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1;
+      display:flex;
+      flex-direction:column;
+    }
+    
+    /* HEADER - SAMA UNTUK SEMUA DEVICE */
+    header{
+      background:var(--header);
+      box-shadow:var(--shadow);
+      padding:0.3rem;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      flex-wrap:nowrap;
+      gap:0.3rem;
+      flex-shrink:0;
+      height:var(--header-height);
+      overflow-x:auto;
+      scrollbar-width:none;
+      -ms-overflow-style:none;
+    }
+    
+    header::-webkit-scrollbar{display:none;}
+    
+    header h1{
+      font-size:1.3rem;
+      font-weight:600;
+      background:linear-gradient(135deg,var(--accent) 0%,var(--accent-light) 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      white-space:nowrap;
+      flex-shrink:0;
+      line-height:1;
+    }
+    
+    .info-box-group{
+      display:flex;
+      gap:0.3rem;
+      flex-shrink:0;
+    }
+    
+    .info-box{
+      font-size:1.05rem;
+      font-weight:600;
+      padding:0.15rem 0.3rem;
+      border-radius:4px;
+      background:#fff;
+      border:1px solid var(--border);
+      white-space:nowrap;
+      box-shadow:var(--shadow);
+      display:flex;
+      align-items:center;
+      gap:0.2rem;
+      line-height:1;
+    }
+    
+    .info-box.sisa-ok{border-color:var(--success);color:var(--success);}
+    .info-box.sisa-penuh{border-color:var(--danger);color:var(--danger);background:#fef2f2;}
+    
+    /* WARNING BOX - SAMA UNTUK SEMUA DEVICE */
+    #warningBox{
+      background:var(--danger);
+      color:#fff;
+      text-align:center;
+      padding:0.25rem;
+      font-weight:700;
+      font-size:1.05rem;
+      display:none;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      flex-shrink:0;
+      height:var(--warning-height);
+      line-height:1;
+      letter-spacing:0.3px;
+    }
+    
+    /* MAIN CONTENT */
+    main{
+      flex:1;
+      padding:0.25rem;
+      display:flex;
+      flex-direction:column;
+      overflow:hidden;
+      min-height:0;
+    }
+    
+    /* SEARCH INPUT - SAMA UNTUK SEMUA DEVICE */
+    .search-container{
+      position:relative;
+      margin-bottom:0.25rem;
+      flex-shrink:0;
+      height:var(--search-height);
+    }
+    
+    #searchInput{
+      width:100%;
+      height:100%;
+      font-size:0.95rem;
+      padding:0.2rem 0.4rem 0.2rem 1.5rem;
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      background:#fff;
+      outline:none;
+      line-height:1;
+    }
+    
+    #searchInput:focus{
+      border-color:var(--accent-light);
+      box-shadow:0 0 0 1px rgba(59,130,246,.15);
+    }
+    
+    .search-icon{
+      position:absolute;
+      left:0.4rem;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--text-muted);
+      font-size:0.95rem;
+    }
+    
+    /* TABLE CONTAINER */
+    .table-wrapper{
+      background:var(--header);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      border:1px solid var(--border);
+      flex:1;
+      display:flex;
+      flex-direction:column;
+      min-height:0;
+    }
+    
+    .table-scroll{
+      flex:1;
+      overflow:auto;
+      scrollbar-width:thin;
+      scrollbar-color:var(--accent) var(--border);
+    }
+    
+    .table-scroll::-webkit-scrollbar{
+      width:3px;
+      height:3px;
+    }
+    
+    .table-scroll::-webkit-scrollbar-track{
+      background:var(--border);
+      border-radius:2px;
+    }
+    
+    .table-scroll::-webkit-scrollbar-thumb{
+      background:var(--accent);
+      border-radius:2px;
+    }
+    
+    /* TABEL - SAMA UNTUK SEMUA DEVICE, DENGAN WRAP */
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:0.85rem; /* DIKURANGI DARI 0.95rem */
+      min-width:100%;
+      table-layout:fixed; /* MEMUNGKINKAN WIDTH PADA TH/TD */
+    }
+    
+    th{
+      background:linear-gradient(180deg,var(--accent) 0%,#1e3a8a 100%);
+      color:#fff;
+      position:sticky;
+      top:0;
+      z-index:10;
+      padding:0.35rem 0.4rem; /* DIKURANGI SEDIKIT */
+      text-align:left;
+      font-weight:600;
+      text-transform:uppercase;
+      font-size:0.8rem; /* DIKURANGI DARI 0.9rem */
+      letter-spacing:0.2px;
+      white-space:normal;
+      line-height:1.1;
+      border-bottom:1px solid rgba(255,255,255,.1);
+      vertical-align:middle;
+      word-wrap:break-word;
+      overflow-wrap:break-word;
+    }
+    
+    th:first-child{border-radius:var(--radius) 0 0 0;}
+    th:last-child{border-radius:0 var(--radius) 0 0;}
+    
+    td{
+      padding:0.35rem 0.4rem; /* DIKURANGI SEDIKIT */
+      border-bottom:1px solid var(--border);
+      color:var(--text);
+      font-weight:400;
+      line-height:1.3;
+      vertical-align:middle;
+      white-space:normal;
+      word-wrap:break-word;
+      overflow-wrap:break-word;
+    }
+    
+    tr{transition:background .1s ease;}
+    tr:hover{background:#f1f5f9;}
+    tr:nth-child(even){background:#fafafa;}
+    tr:nth-child(even):hover{background:#f1f5f9;}
+    
+    /* KOLOM WIDTH - CUSTOM WIDTH PER KOLOM */
+    /* Kolom 1 (index 0) - No: Lebar tetap kecil */
+    th:nth-child(1), td:nth-child(1) {
+      width: 40%;
+      min-width: 30px;
+    }
+    
+    /* Kolom 2 (index 1) - Nama BPR: LEBAR LEBIH BESAR */
+    th:nth-child(2), td:nth-child(2) {
+      width: 37%; /* DITAMBAH DARI DEFAULT */
+      min-width: 120px;
+    }
+    
+    /* Kolom 3 (index 2) - Nama Peserta: DIKURANGI */
+    th:nth-child(3), td:nth-child(3) {
+      width: 25%; /* DIKURANGI */
+      min-width: 100px;
+    }
+    
+    /* Kolom 4 (index 3) - Jabatan: DIKURANGI */
+    th:nth-child(4), td:nth-child(4) {
+      width: 18%; /* DIKURANGI */
+      min-width: 80px;
+    }
+    
+    /* Kolom 5 (index 4) - No HP: Lebar sedang */
+    th:nth-child(5), td:nth-child(5) {
+      width: 0%;
+      min-width: 90px;
+    }
+    
+    /* Kolom 6 (index 5) - Email: Lebar fleksibel */
+    th:nth-child(6), td:nth-child(6) {
+      width: 0%;
+      min-width: 100px;
+    }
+    
+    /* STATUS HIGHLIGHT - SAMA UNTUK SEMUA DEVICE */
+    .status-unregistered{
+      font-weight:700;
+      background:var(--highlight-bg);
+      color:var(--highlight-text);
+      padding:0.08rem 0.2rem; /* DIKURANGI SEDIKIT */
+      border-radius:3px;
+      display:inline;
+      border:1px solid #fcd34d;
+      font-size:0.75rem; /* DIKURANGI DARI 0.8rem */
+      line-height:1;
+    }
+    
+    /* STARRED ROW - SAMA UNTUK SEMUA DEVICE */
+    tr.starred{
+      background:#fef9c3 !important;
+      border-left:2px solid var(--warning);
+    }
+    
+    tr.starred td:first-child{
+      position:relative;
+      padding-left:1.1rem;
+    }
+    
+    tr.starred td:first-child::before{
+      content:"★";
+      position:absolute;
+      left:0.3rem;
+      top:50%;
+      transform:translateY(-50%);
+      color:var(--warning);
+      font-size:0.8rem;
+    }
+    
+    /* LOADING STATE - SAMA UNTUK SEMUA DEVICE */
+    .loading{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:0.4rem;
+      padding:1rem 0.5rem;
+      font-size:0.75rem;
+      color:var(--text-muted);
+      background:#fff;
+      border-radius:var(--radius);
+      margin-bottom:0.25rem;
+      flex-shrink:0;
+    }
+    
+    .loading svg{
+      width:1rem;
+      height:1rem;
+      animation:spin 1s linear infinite;
+      color:var(--accent);
+    }
+    
+    @keyframes spin{to{transform:rotate(360deg)}}
+    
+    /* PAGINATION - SAMA UNTUK SEMUA DEVICE */
+    .pagination{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      gap:0.4rem;
+      padding:0.4rem;
+      background:#fff;
+      border-top:1px solid var(--border);
+      box-shadow:0 -1px 3px rgba(0,0,0,0.05);
+      flex-shrink:0;
+      height:var(--pagination-height);
+    }
+    
+    .pagination button{
+      padding:0.4rem 0.8rem;
+      border:1px solid var(--border);
+      background:#fff;
+      border-radius:6px;
+      cursor:pointer;
+      font-size:0.9rem;
+      font-weight:600;
+      color:var(--text);
+      transition:all .1s ease;
+      min-width:55px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:0.2rem;
+      height:28px;
+      line-height:1;
+    }
+    
+    .pagination button:hover:not(:disabled){
+      border-color:var(--accent);
+      color:var(--accent);
+      background:#f8fafc;
+    }
+    
+    .pagination button:disabled{
+      opacity:0.35;
+      cursor:not-allowed;
+      background:#f1f5f9;
+      border-color:#cbd5e1;
+      color:#94a3b8;
+    }
+    
+    .pagination-info{
+      font-size:0.9rem;
+      color:var(--text-muted);
+      font-weight:600;
+      padding:0 0.3rem;
+      min-width:30px;
+      text-align:center;
+      line-height:1;
+    }
+    
+    /* EMPTY STATE */
+    .empty-state{
+      text-align:center;
+      padding:1rem 0.5rem;
+      color:var(--text-muted);
+      font-size:0.75rem;
+    }
+    
+    /* MEDIA QUERY - HANYA UNTUK PENYESUAIAN MINOR JIKA DIPERLUKAN */
+    /* TETAPI MENJAGA UKURAN FONT DAN SPACING SAMA */
+    @media(max-width:480px){
+      /* TETAP SAMA DENGAN DEFAULT, TIDAK ADA PERUBAHAN UKURAN */
+      :root{
+        font-size:13px;
+        --header-height:32px;
+        --warning-height:20px;
+        --search-height:32px;
+        --pagination-height:38px;
+      }
+    }
+    
+    @media(max-width:360px){
+      :root{font-size:12px;}
+    }
+    
+    /* UNTUK LAYAR BESAR (LAPTOP), PASTIKAN TABEL TIDAK TERLALU LEBAR */
+    @media(min-width:1024px){
+      .table-wrapper{
+        max-width:100%;
+      }
+      
+      /* OPSIONAL: Batasi lebar maksimal container untuk kenyamanan membaca */
+      body{
+        max-width:100%;
+      }
+      
+      /* Pada layar besar, kolom 2 (Nama BPR) bisa lebih lebar sedikit */
+      th:nth-child(2), td:nth-child(2) {
+        width: 30%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📋 Rekap Peserta</h1>
+    <div class="info-box-group">
+      <div id="infoBoxTotal" class="info-box">👥 Total: <span id="totalCount">0</span></div>
+      <div id="infoBoxRemaining" class="info-box sisa-ok">✅ Sisa: <span id="remainingCount">30</span></div>
+    </div>
+  </header>
 
+  <div id="warningBox">⚠️ Kuota penuh! Maaf tidak dapat tambah Peserta</div>
+
+  <main>
+    <div class="loading" id="loadingState">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M12 2v4m0 12v4m8-8h-4M8 12H4m15.364-6.364l-2.828 2.828M8.464 15.536l-2.828 2.828m12.728 0l-2.828-2.828M8.464 8.464L5.636 5.636"/>
+      </svg>
+      Memuat data...
+    </div>
+    
+    <div class="search-container" style="display:none;" id="searchContainer">
+      <span class="search-icon">🔍</span>
+      <input id="searchInput" type="text" placeholder="Cari nama BPR/perusahaan/peserta..."/>
+    </div>
+    
+    <div class="table-wrapper" style="display:none;" id="tableWrapper">
+      <div class="table-scroll">
+        <table id="dataTable">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </main>
+
+  <!-- Pagination Bottom -->
+  <div class="pagination" id="pagination" style="display:none;">
+    <button id="btnPrev" disabled>‹ Prev</button>
+    <span class="pagination-info" id="pageInfo">1/1</span>
+    <button id="btnNext" disabled>Next ›</button>
+  </div>
+
+  <script>
+    /* ---------- CONFIG ---------- */
+    const URL = 'https://script.google.com/macros/s/AKfycbyhwfqED-XPTU7L8C3VGAQPlGNJzMmcKwcYd17KUkK4LctxmG2ZbBC52-hOsUbOz6F8gA/exec    ';
+    let originalData = [];
+    let filteredData = [];
+    let currentPage = 1;
+    const rowsPerPage = 7; /* SAMA UNTUK SEMUA DEVICE */
+    let isLoading = false;
+    let totalPages = 1;
+
+    /* ---------- FETCH DATA ---------- */
+    async function fetchData() {
+      if (isLoading) return;
+      isLoading = true;
+      
+      try {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), 30000);
+        
+        const r = await fetch(URL, { 
+          cache: 'no-store',
+          signal: controller.signal
+        });
+        clearTimeout(timeoutId);
+        
+        const j = await r.json();
+        originalData = j;
+        filteredData = [...originalData];
+        
+        document.getElementById('loadingState').style.display = 'none';
+        document.getElementById('searchContainer').style.display = 'block';
+        document.getElementById('tableWrapper').style.display = 'flex';
+        document.getElementById('pagination').style.display = 'flex';
+        
+        updateInfoBox(originalData);
+        applyFilters();
+      } catch (e) {
+        console.error('Fetch error:', e);
+        document.getElementById('loadingState').innerHTML = 
+          '<span style="color:#ef4444">❌ Gagal memuat data. Silakan refresh halaman.</span>';
+      } finally {
+        isLoading = false;
+      }
+    }
+
+    /* ---------- RENDER TABLE ---------- */
+    function applyFilters() {
+      const s = document.getElementById('searchInput').value.toLowerCase().trim();
+      
+      if (!s) {
+        filteredData = [...originalData];
+      } else {
+        filteredData = originalData.filter((row, i) => {
+          if (i === 0) return true;
+          return row.some(cell => String(cell).toLowerCase().includes(s));
+        });
+      }
+      
+      currentPage = 1;
+      renderTable();
+    }
+
+    function renderTable() {
+      const thead = document.querySelector('#dataTable thead');
+      const tbody = document.querySelector('#dataTable tbody');
+      
+      thead.innerHTML = '';
+      tbody.innerHTML = '';
+      
+      if (filteredData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="10" class="empty-state">Tidak ada data ditemukan</td></tr>';
+        updatePagination(0);
+        return;
+      }
+      
+      // Header - Hanya tampilkan kolom yang tidak di-skip (index 4 dan 7 di-skip)
+      const headerTr = document.createElement('tr');
+      filteredData[0].forEach((cell, j) => {
+        if (j === 4 || j === 7) return;
+        const th = document.createElement('th');
+        th.textContent = cell;
+        headerTr.appendChild(th);
+      });
+      thead.appendChild(headerTr);
+      
+      // Body
+      const totalRows = filteredData.length - 1;
+      totalPages = Math.max(1, Math.ceil(totalRows / rowsPerPage));
+      
+      if (currentPage > totalPages) currentPage = totalPages;
+      if (currentPage < 1) currentPage = 1;
+      
+      const start = (currentPage - 1) * rowsPerPage + 1;
+      const end = Math.min(start + rowsPerPage - 1, totalRows);
+      
+      const fragment = document.createDocumentFragment();
+      
+      for (let i = start; i <= end; i++) {
+        if (i >= filteredData.length) break;
+        const row = filteredData[i];
+        const tr = document.createElement('tr');
+        let hasStar = false;
+        
+        row.forEach((cell, j) => {
+          if (j === 4 || j === 7) return;
+          const td = document.createElement('td');
+          const cellText = String(cell);
+          
+          if (cellText.includes('BELUM')) {
+            td.innerHTML = '<span class="status-unregistered">BELUM</span>';
+          } else {
+            td.textContent = cellText;
+          }
+          
+          tr.appendChild(td);
+          if (cellText.includes('*')) hasStar = true;
+        });
+        
+        if (hasStar) tr.classList.add('starred');
+        fragment.appendChild(tr);
+      }
+      
+      tbody.appendChild(fragment);
+      updatePagination(totalPages);
+    }
+
+    /* ---------- PAGINATION ---------- */
+    function updatePagination(totalPages) {
+      const btnPrev = document.getElementById('btnPrev');
+      const btnNext = document.getElementById('btnNext');
+      const pageInfo = document.getElementById('pageInfo');
+      
+      btnPrev.disabled = currentPage <= 1;
+      btnNext.disabled = currentPage >= totalPages;
+      pageInfo.textContent = totalPages > 0 ? `${currentPage}/${totalPages}` : '0/0';
+    }
+
+    document.getElementById('btnPrev').addEventListener('click', () => {
+      if (currentPage > 1) {
+        currentPage--;
+        renderTable();
+        document.querySelector('.table-scroll').scrollTop = 0;
+      }
+    });
+
+    document.getElementById('btnNext').addEventListener('click', () => {
+      if (currentPage < totalPages) {
+        currentPage++;
+        renderTable();
+        document.querySelector('.table-scroll').scrollTop = 0;
+      }
+    });
+
+    /* ---------- INFO BOX ---------- */
+    function updateInfoBox(data) {
+      const total = Math.max(0, data.length - 1);
+      const rem = Math.max(0, 30 - total);
+      
+      document.getElementById('totalCount').textContent = total;
+      
+      const box = document.getElementById('infoBoxRemaining');
+      const isFull = rem <= 0;
+      
+      box.className = 'info-box ' + (isFull ? 'sisa-penuh' : 'sisa-ok');
+      box.innerHTML = (isFull ? '❌' : '✅') + ' Sisa: <span>' + rem + '</span>';
+      
+      document.getElementById('warningBox').style.display = isFull ? 'block' : 'none';
+    }
+
+    /* ---------- EVENT LISTENERS ---------- */
+    let searchTimeout;
+    document.getElementById('searchInput').addEventListener('input', (e) => {
+      clearTimeout(searchTimeout);
+      searchTimeout = setTimeout(() => {
+        applyFilters();
+      }, 300);
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft' && currentPage > 1) {
+        currentPage--;
+        renderTable();
+      } else if (e.key === 'ArrowRight' && currentPage < totalPages) {
+        currentPage++;
+        renderTable();
+      }
+    });
+
+    /* ---------- INIT ---------- */
+    window.addEventListener('DOMContentLoaded', () => {
+      fetchData();
+      setInterval(() => {
+        if (!isLoading) {
+          originalData = [];
+          fetchData();
+        }
+      }, 60000);
+    });
+  </script>
+</body>
+</html>
