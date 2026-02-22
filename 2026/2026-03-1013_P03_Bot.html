@@ -1,1 +1,664 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ChatBot Sheets</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
 
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #6e5dbd 0%, #7161c4 50%, #7565d4 100%);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px;
+      background-attachment: fixed;
+      font-size: 11px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(120, 100, 200, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(140, 110, 210, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(160, 130, 220, 0.2) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .chat-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      height: 90vh;
+      min-height: 350px;
+      background: rgba(255, 255, 255, 0.98);
+      border-radius: 16px;
+      box-shadow: 
+        0 20px 40px -12px rgba(0, 0, 0, 0.25),
+        0 0 0 1px rgba(255, 255, 255, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .chat-header {
+      background: linear-gradient(135deg, #6e5dbd 0%, #7c6bc7 100%);
+      color: #fff;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .bot-avatar {
+      width: 32px;
+      height: 32px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+    }
+
+    .header-info {
+      flex: 1;
+    }
+
+    .header-title {
+      font-weight: 600;
+      font-size: 12px;
+      letter-spacing: 0.2px;
+    }
+
+    .header-subtitle {
+      font-size: 10px;
+      opacity: 0.85;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      background: #4ade80;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2px rgba(74, 222, 128, 0.3);
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #f8f7fc 0%, #f0eef8 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .chat-messages::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .chat-messages::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .chat-messages::-webkit-scrollbar-thumb {
+      background: #6e5dbd;
+      border-radius: 2px;
+    }
+
+    .message {
+      max-width: 90%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 11px;
+      line-height: 1.4;
+      position: relative;
+      word-wrap: break-word;
+    }
+
+    .user-message {
+      background: linear-gradient(135deg, #6e5dbd 0%, #7c6bc7 100%);
+      color: #fff;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+      margin-left: auto;
+    }
+
+    .bot-message {
+      background: #fff;
+      color: #333;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(110, 93, 189, 0.12);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .bot-message::before {
+      content: '🤖';
+      position: absolute;
+      left: -22px;
+      bottom: 2px;
+      font-size: 14px;
+    }
+
+    .message a {
+      color: inherit;
+      text-decoration: underline;
+    }
+
+    .user-message a {
+      color: #e8e4ff;
+    }
+
+    .message-content {
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .message-content p {
+      margin-bottom: 8px;
+    }
+
+    .message-content p:last-child {
+      margin-bottom: 0;
+    }
+
+    .message-content br {
+      display: block;
+      content: "";
+      margin-top: 4px;
+    }
+
+    .welcome-message {
+      background: linear-gradient(135deg, rgba(110, 93, 189, 0.08) 0%, rgba(124, 107, 199, 0.04) 100%);
+      border: 1px solid rgba(110, 93, 189, 0.15);
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .welcome-title {
+      font-weight: 600;
+      color: #6e5dbd;
+      margin-bottom: 4px;
+      font-size: 11px;
+    }
+
+    .menu-list {
+      list-style: none;
+      margin-top: 4px;
+    }
+
+    .menu-list li {
+      padding: 2px 0;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #555;
+      font-size: 10px;
+      line-height: 1.0;
+    }
+
+    .menu-list li::before {
+      content: '›';
+      color: #6e5dbd;
+      font-weight: bold;
+      font-size: 10px;
+    }
+
+    .typing-indicator {
+      display: none;
+      align-self: flex-start;
+      background: #fff;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(110, 93, 189, 0.12);
+      margin-left: 22px;
+      margin-bottom: 4px;
+    }
+
+    .typing-indicator.active {
+      display: flex;
+      gap: 4px;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background: #6e5dbd;
+      border-radius: 50%;
+      animation: typingBounce 1.4s infinite ease-in-out both;
+    }
+
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    .chat-input {
+      display: flex;
+      align-items: center;
+      padding: 10px 12px;
+      background: #fff;
+      border-top: 1px solid rgba(110, 93, 189, 0.1);
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid rgba(110, 93, 189, 0.2);
+      border-radius: 20px;
+      outline: none;
+      font-size: 11px;
+      transition: all 0.2s ease;
+      background: #f8f7fc;
+      line-height: 1.3;
+    }
+
+    .chat-input input:focus {
+      border-color: #6e5dbd;
+      background: #fff;
+    }
+
+    .chat-input input::placeholder {
+      color: #999;
+      font-size: 11px;
+    }
+
+    .send-btn {
+      width: 34px;
+      height: 34px;
+      border: none;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #6e5dbd 0%, #7c6bc7 100%);
+      color: #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+      flex-shrink: 0;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.05);
+    }
+
+    .send-btn:active {
+      transform: scale(0.95);
+    }
+
+    .send-btn svg {
+      width: 16px;
+      height: 16px;
+      fill: currentColor;
+    }
+
+    .quick-replies {
+      display: flex;
+      gap: 3px;
+      padding: 5px 5px;
+      overflow-x: auto;
+      background: #f0eef8;
+      flex-wrap: wrap;
+      flex-shrink: 0;
+    }
+
+    .quick-replies::-webkit-scrollbar {
+      display: none;
+    }
+
+    .chip {
+      padding: 4px 8px;
+      background: #fff;
+      border: 1px solid rgba(110, 93, 189, 0.25);
+      border-radius: 16px;
+      font-size: 11px;
+      color: #6e5dbd;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      line-height: 1.0;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .chip:hover {
+      background: #6e5dbd;
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(110, 93, 189, 0.3);
+    }
+
+    .chip:active {
+      transform: translateY(0);
+    }
+
+    .timestamp {
+      font-size: 9px;
+      opacity: 0.5;
+      margin-top: 2px;
+      text-align: right;
+    }
+
+    .bot-message .timestamp {
+      text-align: left;
+    }
+
+    @media (max-width: 480px) {
+      body {
+        padding: 0;
+      }
+      
+      .chat-container {
+        height: 100vh;
+        max-width: 100%;
+        border-radius: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <div class="bot-avatar">🤖</div>
+      <div class="header-info">
+        <div class="header-title">Klim's Assistant</div>
+        <div class="header-subtitle">Online • Siap membantu</div>
+      </div>
+      <div class="status-indicator"></div>
+    </div>
+    
+    <div class="chat-messages" id="chatMessages"></div>
+    
+    <div class="typing-indicator" id="typingIndicator">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+    
+    <div class="quick-replies" id="quickReplies">
+      <span class="chip" onclick="sendQuickReply('1P')">1P</span>
+      <span class="chip" onclick="sendQuickReply('2P')">2P</span>
+      <span class="chip" onclick="sendQuickReply('3P')">3P</span>
+      <span class="chip" onclick="sendQuickReply('4P')">4P</span>
+      <span class="chip" onclick="sendQuickReply('5P')">5P</span>
+      <span class="chip" onclick="sendQuickReply('6P')">6P</span>
+      <span class="chip" onclick="sendQuickReply('7P')">7P</span>
+      <span class="chip" onclick="sendQuickReply('8P')">8P</span>
+      <span class="chip" onclick="sendQuickReply('S36')">S36</span>
+      <span class="chip" onclick="sendQuickReply('J36')">J36</span>
+      <span class="chip" onclick="sendQuickReply('M36')">M36</span>
+    </div>
+    
+    <div class="chat-input">
+      <input id="userInput" type="text" placeholder="Tulis pesan..." autocomplete="off"/>
+      <button class="send-btn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24">
+          <path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const SHEET_ID = '1REf1Z_Bxp91X_FMcgiEHOwAHl-hwAm44YXHGIvw3aXY';
+    const SHEET_NM = 'Sheet1';
+    let sheetCache = null;
+    let cacheValid = false;
+    let isDataLoaded = false;
+
+    async function getSheetData() {
+      if (cacheValid) return sheetCache;
+      
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${SHEET_NM}`;
+      
+      try {
+        const r = await fetch(url);
+        if (!r.ok) throw new Error(`HTTP ${r.status}: ${r.statusText}`);
+        const txt = await r.text();
+        
+        const jsonStart = txt.indexOf('{');
+        const jsonEnd = txt.lastIndexOf('}');
+        const jsonStr = txt.substring(jsonStart, jsonEnd + 1);
+        const raw = JSON.parse(jsonStr);
+        
+        sheetCache = raw.table.rows.map(row => ({
+          question: (row.c[0]?.v || '').toString().trim(),
+          keywords: (row.c[1]?.v || '').toString().trim(),
+          answer: (row.c[2]?.v || '').toString().trim()
+        })).filter(item => item.question || item.keywords);
+        
+        cacheValid = true;
+        isDataLoaded = true;
+        console.log('[Sheet] Data loaded:', sheetCache.length, 'items');
+        
+      } catch (e) {
+        console.error('[Sheet] Gagal load data:', e);
+        sheetCache = [];
+        isDataLoaded = false;
+      }
+      return sheetCache;
+    }
+
+    // PERBAIKAN UTAMA: Fungsi findAnswer yang lebih robust untuk M36, S36, J36
+    function findAnswer(data, input) {
+      const q = input.toLowerCase().trim();
+      console.log('[Find] Mencari:', q);
+      
+      // PERBAIKAN: Regex yang spesifik untuk berbagai pola kode
+      // Pola: 1P-99P, S36, J36, M36, atau huruf+angka apapun
+      const codePatterns = [
+        /\b([1-9][0-9]?[a-z])\b/i,      // 1P, 2P, ..., 99P
+        /\b([a-z][0-9]{1,3})\b/i,       // S36, J36, M36, A1, B123
+        /\b([a-z]{1,2}[0-9]{1,3})\b/i   // AB12, XY123 (jika ada)
+      ];
+      
+      let detectedCode = null;
+      
+      // Coba semua pola regex
+      for (const pattern of codePatterns) {
+        const match = q.match(pattern);
+        if (match) {
+          detectedCode = match[1].toUpperCase();
+          console.log('[Find] Kode terdeteksi:', detectedCode);
+          break;
+        }
+      }
+      
+      // Jika ada kode terdeteksi, cari exact match
+      if (detectedCode) {
+        console.log('[Find] Mencari exact match untuk:', detectedCode);
+        
+        // Cari di kolom Question (exact match di awal string)
+        for (const it of data) {
+          const qUpper = it.question.toUpperCase();
+          
+          // Cek apakah question dimulai dengan kode (contoh: "M36 MENU" atau "M36")
+          if (qUpper.startsWith(detectedCode)) {
+            console.log('[Find] Match di Question:', it.question);
+            return it.answer;
+          }
+          
+          // Cek apakah question mengandung kode sebagai kata utuh
+          const words = qUpper.split(/\s+/);
+          if (words.includes(detectedCode)) {
+            console.log('[Find] Match kata utuh di Question:', it.question);
+            return it.answer;
+          }
+        }
+        
+        // Cari di kolom Keywords (comma separated)
+        for (const it of data) {
+          if (!it.keywords) continue;
+          
+          const keywords = it.keywords.toUpperCase().split(',').map(k => k.trim());
+          console.log('[Find] Checking keywords:', keywords, 'for', detectedCode);
+          
+          if (keywords.includes(detectedCode)) {
+            console.log('[Find] Match di Keywords:', detectedCode);
+            return it.answer;
+          }
+        }
+      }
+      
+      // Jika tidak ketemu dengan kode, coba partial match
+      console.log('[Find] Mencoba partial match...');
+      
+      for (const it of data) {
+        const qLower = it.question.toLowerCase();
+        const keywordsLower = it.keywords.toLowerCase();
+        
+        if (qLower.includes(q) || keywordsLower.includes(q)) {
+          console.log('[Find] Partial match:', it.question);
+          return it.answer;
+        }
+      }
+      
+      console.log('[Find] Tidak ditemukan untuk:', q);
+      return null;
+    }
+
+    function getCurrentTime() {
+      const now = new Date();
+      return now.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function processTextWithFormatting(text) {
+      if (!text) return '';
+      
+      let processed = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+      
+      processed = processed.replace(/\n/g, '<br>');
+      processed = processed.replace(/(<br>\s*){2,}/g, '</p><p>');
+      
+      return `<div class="message-content"><p>${processed}</p></div>`;
+    }
+
+    function processUrls(text) {
+      return text.replace(
+        /(https?:\/\/[^\s<]+)/gi,
+        '<a href="$1" target="_blank" rel="noopener">$1</a>'
+      );
+    }
+
+    function addMessage(text, sender) {
+      const box = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = `message ${sender === 'user' ? 'user-message' : 'bot-message'}`;
+      
+      let content;
+      if (sender === 'user') {
+        content = processTextWithFormatting(text);
+      } else {
+        const formattedText = processTextWithFormatting(text);
+        content = processUrls(formattedText);
+      }
+      
+      div.innerHTML = content + `<div class="timestamp">${getCurrentTime()}</div>`;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function showTyping() {
+      document.getElementById('typingIndicator').classList.add('active');
+      document.getElementById('chatMessages').scrollTop = document.getElementById('chatMessages').scrollHeight;
+    }
+
+    function hideTyping() {
+      document.getElementById('typingIndicator').classList.remove('active');
+    }
+
+    async function processQuery(query) {
+      addMessage(query, 'user');
+      showTyping();
+      
+      if (!isDataLoaded) {
+        await getSheetData();
+      }
+      
+      const data = sheetCache;
+      let rep = findAnswer(data, query);
+      
+      if (!rep) {
+        rep = "Maaf, data untuk kode **" + query + "** belum tersedia di sistem. Pastikan kode sudah benar atau hubungi admin.";
+      }
+      
+      setTimeout(() => {
+        hideTyping();
+        addMessage(rep, 'bot');
+      }, 400 + Math.random() * 300);
+    }
+
+    async function sendMessage() {
+      const inp = document.getElementById('userInput');
+      const txt = inp.value.trim();
+      if (!txt) return;
+      inp.value = '';
+      await processQuery(txt);
+    }
+
+    // PERBAIKAN: Kirim kode langsung tanpa mapping
+    async function sendQuickReply(code) {
+      console.log('[QuickReply] Tombol diklik:', code);
+      await processQuery(code);
+    }
+
+    document.getElementById('userInput').addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    window.addEventListener('DOMContentLoaded', () => {
+      const welcomeHTML = 
+        '<div class="welcome-title">👋 Semangat Pagi!</div>' +
+        '<div style="line-height:1.1">Saya, asisten virtual Anda. Pilih menu di bawah atau ketik pertanyaan:</div>' +
+        '<ul class="menu-list">' +
+        '<li><strong>1P</strong> Biaya PJJ & Sertifikasi Ulang</li>' +
+        '<li><strong>2P</strong> Tahap Pemeliharaan Sertifikat</li>' +
+        '<li><strong>3P</strong> Syarat Sertifikat Dipelihara</li>' +
+        '<li><strong>4P</strong> Panduan Input Daftar</li>' +
+        '<li><strong>5P</strong> Cek Jatuh Tempo Sertifikat</li>' +
+        '<li><strong>6P</strong> WA Kirim BuktiTransfer</li>' +
+        '<li><strong>7P</strong> WA Bila Ada Kendala</li>' +
+        '<li><strong>8P</strong> Ketentuan Batal Ikut</li>' +
+        '<li><strong>S36</strong> Surat Publikasi</li>' +
+        '<li><strong>J36</strong> Jadwal Penyegaran</li>' +
+        '<li><strong>M36</strong> MENU</li>' +
+        '</ul>';
+      
+      const box = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'message bot-message welcome-message';
+      div.innerHTML = welcomeHTML + `<div class="timestamp">${getCurrentTime()}</div>`;
+      box.appendChild(div);
+      
+      getSheetData();
+    });
+  </script>
+</body>
+</html>
