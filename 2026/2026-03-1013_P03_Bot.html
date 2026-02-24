@@ -408,9 +408,9 @@
       <span class="chip" onclick="sendQuickReply('6P')">6P</span>
       <span class="chip" onclick="sendQuickReply('7P')">7P</span>
       <span class="chip" onclick="sendQuickReply('8P')">8P</span>
-      <span class="chip" onclick="sendQuickReply('S36')">S36</span>
-      <span class="chip" onclick="sendQuickReply('J36')">J36</span>
-      <span class="chip" onclick="sendQuickReply('M36')">M36</span>
+      <span class="chip" onclick="sendQuickReply('S1013')">S1013</span>
+      <span class="chip" onclick="sendQuickReply('J1013')">J1013</span>
+      <span class="chip" onclick="sendQuickReply('M1013')">M1013</span>
     </div>
     
     <div class="chat-input">
@@ -463,16 +463,16 @@
       return sheetCache;
     }
 
-    // PERBAIKAN UTAMA: Fungsi findAnswer yang lebih robust untuk M36, S36, J36
+    // PERBAIKAN UTAMA: Fungsi findAnswer yang lebih robust untuk M1013, S1013, J1013
     function findAnswer(data, input) {
       const q = input.toLowerCase().trim();
       console.log('[Find] Mencari:', q);
       
       // PERBAIKAN: Regex yang spesifik untuk berbagai pola kode
-      // Pola: 1P-99P, S36, J36, M36, atau huruf+angka apapun
+      // Pola: 1P-99P, S1013, J1013, M1013, atau huruf+angka apapun
       const codePatterns = [
         /\b([1-9][0-9]?[a-z])\b/i,      // 1P, 2P, ..., 99P
-        /\b([a-z][0-9]{1,3})\b/i,       // S36, J36, M36, A1, B123
+        /\b([a-z][0-9]{1,3})\b/i,       // S1013, J1013, M1013, A1, B123
         /\b([a-z]{1,2}[0-9]{1,3})\b/i   // AB12, XY123 (jika ada)
       ];
       
@@ -496,7 +496,7 @@
         for (const it of data) {
           const qUpper = it.question.toUpperCase();
           
-          // Cek apakah question dimulai dengan kode (contoh: "M36 MENU" atau "M36")
+          // Cek apakah question dimulai dengan kode (contoh: "M1013 MENU" atau "M1013")
           if (qUpper.startsWith(detectedCode)) {
             console.log('[Find] Match di Question:', it.question);
             return it.answer;
@@ -646,9 +646,9 @@
         '<li><strong>6P</strong> WA Kirim BuktiTransfer</li>' +
         '<li><strong>7P</strong> WA Bila Ada Kendala</li>' +
         '<li><strong>8P</strong> Ketentuan Batal Ikut</li>' +
-        '<li><strong>S36</strong> Surat Publikasi</li>' +
-        '<li><strong>J36</strong> Jadwal Penyegaran</li>' +
-        '<li><strong>M36</strong> MENU</li>' +
+        '<li><strong>S1013</strong> Surat Publikasi</li>' +
+        '<li><strong>J1013</strong> Jadwal Penyegaran</li>' +
+        '<li><strong>M1013</strong> MENU</li>' +
         '</ul>';
       
       const box = document.getElementById('chatMessages');
