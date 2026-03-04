@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Perbarindo DPD Jateng — SK.01 Viewer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700&display=swap');
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0f1117;--card:#1a1d27;--border:#252836;--accent:#4f7cff;--text:#e2e6f0;--muted:#6b7280;}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);height:100vh;display:flex;flex-direction:column;overflow:hidden;}
+
+/* HEADER */
+header{display:flex;align-items:center;gap:10px;padding:9px 16px;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0;}
+.logo{width:26px;height:26px;background:var(--accent);border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#fff;}
+header h1{font-size:13px;font-weight:600;}
+header span{font-size:11px;color:var(--muted);margin-left:4px;}
+.hright{margin-left:auto;display:flex;gap:6px;}
+.hbtn{font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;padding:5px 12px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
+.hbtn:hover{background:var(--border);color:var(--text);}
+.hbtn.warn{border-color:#ffd16655;color:#ffd166;}
+.hbtn.warn:hover{background:rgba(255,209,102,.1);}
+
+/* TABS */
+.tabs{display:flex;gap:6px;padding:7px 16px;background:var(--card);border-bottom:1px solid var(--border);flex-shrink:0;}
+.tab{font-family:'DM Sans',sans-serif;font-size:11.5px;font-weight:600;padding:5px 14px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--muted);cursor:pointer;transition:all .15s;}
+.tab:hover{background:var(--border);color:var(--text);}
+.tab.active{background:var(--accent);color:#fff;border-color:var(--accent);}
+
+/* MAIN */
+.main{flex:1;display:flex;gap:6px;padding:8px;overflow:hidden;}
+.panel{flex:1;display:flex;flex-direction:column;background:var(--card);border:1px solid var(--border);border-radius:10px;overflow:hidden;min-width:0;transition:flex .25s;}
+.panel.hidden{display:none;}
+.pbar{display:flex;align-items:center;gap:7px;padding:6px 10px;border-bottom:1px solid var(--border);flex-shrink:0;}
+.dot{width:8px;height:8px;border-radius:50%;}
+.plabel{font-size:10.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--muted);flex:1;}
+.plink{font-size:10px;color:var(--muted);text-decoration:none;padding:2px 6px;border-radius:4px;border:1px solid transparent;transition:all .15s;}
+.plink:hover{border-color:var(--border);color:var(--text);}
+
+/* IFRAME WRAP */
+.wrap{flex:1;position:relative;}
+iframe{width:100%;height:100%;border:none;background:#fff;display:block;}
+
+/* LOADER */
+.loader{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--card);gap:10px;z-index:2;transition:opacity .3s;}
+.loader.gone{opacity:0;pointer-events:none;}
+.spinner{width:26px;height:26px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loader p{font-size:11px;color:var(--muted);}
+
+/* ERROR STATE */
+.errmsg{display:none;position:absolute;inset:0;flex-direction:column;align-items:center;justify-content:center;background:var(--card);gap:10px;z-index:3;padding:20px;text-align:center;}
+.errmsg.show{display:flex;}
+.errmsg p{font-size:12px;color:var(--muted);line-height:1.6;max-width:200px;}
+.errmsg a{font-size:12px;font-weight:600;color:var(--accent);text-decoration:none;}
+
+/* NOTICE BANNER */
+.notice{display:flex;align-items:center;gap:8px;padding:6px 16px;background:rgba(255,209,102,.07);border-bottom:1px solid rgba(255,209,102,.15);font-size:11px;color:#ffd166;flex-shrink:0;}
+.notice button{margin-left:auto;background:none;border:none;color:#ffd166;cursor:pointer;font-size:13px;opacity:.6;}
+.notice button:hover{opacity:1;}
+
+@media(max-width:700px){.main{flex-direction:column;overflow:auto;}.panel{min-height:400px;}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">P</div>
+  <h1>Perbarindo DPD Jateng</h1>
+  <span>— SK.01 · 2026-04-2130</span>
+  <div class="hright">
+    <button class="hbtn" onclick="reloadAll()">↺ Reload</button>
+    <button class="hbtn warn" onclick="bukaSmua()">⊞ Buka 3 Tab</button>
+  </div>
+</header>
+
+<div class="notice" id="notice">
+  ⚠️ Menggunakan proxy allorigins.win untuk menampilkan konten. Jika gagal, gunakan tombol "Buka 3 Tab".
+  <button onclick="document.getElementById('notice').remove()">✕</button>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="setView('all',this)">⊞ Semua</button>
+  <button class="tab" onclick="setView('bot',this)">Bot</button>
+  <button class="tab" onclick="setView('rekap',this)">Rekap</button>
+  <button class="tab" onclick="setView('input',this)">Input</button>
+</div>
+
+<div class="main">
+
+  <!-- BOT -->
+  <div class="panel" id="p-bot">
+    <div class="pbar">
+      <span class="dot" style="background:#ff6b6b"></span>
+      <span class="plabel">Bot</span>
+      <a class="plink" href="https://perbarindodpdjateng.github.io/Plt/2026/2026-04-2130_S.K.01_Bot.html" target="_blank">↗ Buka</a>
+    </div>
+    <div class="wrap">
+      <div class="loader" id="l-bot"><div class="spinner"></div><p>Memuat Bot…</p></div>
+      <div class="errmsg" id="e-bot">
+        <span style="font-size:28px">⚠️</span>
+        <p>Proxy gagal memuat.<br>Buka langsung di tab baru.</p>
+        <a href="https://perbarindodpdjateng.github.io/Plt/2026/2026-04-2130_S.K.01_Bot.html" target="_blank">Buka Bot ↗</a>
+      </div>
+      <iframe id="f-bot" title="Bot"></iframe>
+    </div>
+  </div>
+
+  <!-- REKAP -->
+  <div class="panel" id="p-rekap">
+    <div class="pbar">
+      <span class="dot" style="background:#ffd166"></span>
+      <span class="plabel">Rekap</span>
+      <a class="plink" href="https://perbarindodpdjateng.github.io/Plt/2026/2026-04-2130_S.K.01_Rekap.html" target="_blank">↗ Buka</a>
+    </div>
+    <div class="wrap">
+      <div class="loader" id="l-rekap"><div class="spinner"></div><p>Memuat Rekap…</p></div>
+      <div class="errmsg" id="e-rekap">
+        <span style="font-size:28px">⚠️</span>
+        <p>Proxy gagal memuat.<br>Buka langsung di tab baru.</p>
+        <a href="https://perbarindodpdjateng.github.io/Plt/2026/2026-04-2130_S.K.01_Rekap.html" target="_blank">Buka Rekap ↗</a>
+      </div>
+      <iframe id="f-rekap" title="Rekap"></iframe>
+    </div>
+  </div>
+
+  <!-- INPUT -->
+  <div class="panel" id="p-input">
+    <div class="pbar">
+      <span class="dot" style="background:#06d6a0"></span>
+      <span class="plabel">Input</span>
+      <a class="plink" href="https://perbarindodpdjateng.github.io/Plt/2026/2026-04-2130_S.K.01_Input.html" target="_blank">↗ Buka</a>
+    </div>
+    <div class="wrap">
+      <div class="loader" id="l-input"><div class="spinner"></div><p>Memuat Input…</p></div>
+      <div class="errmsg" id="e-input">
+        <span style="font-size:28px">⚠️</span>
+        <p>Proxy gagal memuat.<br>Buka langsung di tab baru.</p>
+        <a href="https://perbarindodpdjateng.github.io/Plt/2026/2026-04-2130_S.K.01_Input.html" target="_blank">Buka Input ↗</a>
+      </div>
+      <iframe id="f-input" title="Input"></iframe>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const pages = {
+  bot:   'https://perbarindodpdjateng.github.io/Plt/2026/2026-04-2130_S.K.01_Bot.html',
+  rekap: 'https://perbarindodpdjateng.github.io/Plt/2026/2026-04-2130_S.K.01_Rekap.html',
+  input: 'https://perbarindodpdjateng.github.io/Plt/2026/2026-04-2130_S.K.01_Input.html'
+};
+
+function proxy(url) {
+  return 'https://api.allorigins.win/raw?url=' + encodeURIComponent(url);
+}
+
+function loadFrame(key) {
+  const iframe = document.getElementById('f-' + key);
+  const loader = document.getElementById('l-' + key);
+  const err    = document.getElementById('e-' + key);
+  const TIMEOUT = 12000;
+
+  // timeout fallback — jika 12 detik belum load, tampilkan error
+  const timer = setTimeout(() => {
+    loader.classList.add('gone');
+    err.classList.add('show');
+  }, TIMEOUT);
+
+  iframe.onload = () => {
+    clearTimeout(timer);
+    // cek apakah konten benar-benar ada (blank = gagal)
+    try {
+      const doc = iframe.contentDocument || iframe.contentWindow.document;
+      if (!doc || doc.body.innerHTML.trim() === '') throw 'empty';
+    } catch(e) {
+      // cross-origin tapi berhasil load = ok (tidak bisa baca isi)
+    }
+    loader.classList.add('gone');
+  };
+
+  iframe.onerror = () => {
+    clearTimeout(timer);
+    loader.classList.add('gone');
+    err.classList.add('show');
+  };
+
+  iframe.src = proxy(pages[key]);
+}
+
+// Load semua dengan sedikit jeda
+['bot','rekap','input'].forEach((k, i) => setTimeout(() => loadFrame(k), i * 300));
+
+function reloadAll() {
+  ['bot','rekap','input'].forEach(k => {
+    const loader = document.getElementById('l-' + k);
+    const err    = document.getElementById('e-' + k);
+    loader.classList.remove('gone');
+    err.classList.remove('show');
+    setTimeout(() => loadFrame(k), 100);
+  });
+}
+
+function setView(view, btn) {
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const keys = ['bot','rekap','input'];
+  keys.forEach(k => {
+    const p = document.getElementById('p-' + k);
+    if (view === 'all' || view === k) {
+      p.classList.remove('hidden');
+    } else {
+      p.classList.add('hidden');
+    }
+  });
+}
+
+function bukaSmua() {
+  Object.values(pages).forEach((u, i) => setTimeout(() => window.open(u, '_blank'), i * 150));
+}
+</script>
+</body>
+</html>
