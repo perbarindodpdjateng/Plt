@@ -286,7 +286,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <script>
     const CONFIG = {
-      scriptURL: 'https://script.google.com/macros/s/AKfycbz70W20DiupCteFE_0FnyyBJSZNmFEGuSLBGTTLc0T-kOffEOr-HdA2Lzj6noCTZkbwkg/exec',
+      scriptURL: 'https://script.google.com/macros/s/AKfycbwmAv7xjLVNUQkklGLjpRQLcaA3tVxpJ2JQbRY3ePhCsvcIl-d0LVTc8zbyZPKV16OHuQ/exec',
       maxKuota: 30,
       feeMap: {
         "[BPR] Komisaris Full"                        : [7500000, 3219000],
@@ -399,66 +399,82 @@
     }
 
     /* ============================================================
-     * FIX UTAMA: gasGet — gunakan fetch() biasa (bukan JSONP)
+     * gasGet — fetch() ikut redirect, parse teks response manual
      *
-     * GAS (Google Apps Script) yang di-deploy sebagai Web App
-     * dengan akses "Anyone" MENDUKUNG fetch() dari browser.
-     * GAS mengirim header:
-     *   Access-Control-Allow-Origin: *
-     * sehingga fetch() bekerja tanpa masalah CORS.
+     * Kenapa bukan fetch biasa?
+     *   GAS redirect 302 → fetch mengikuti redirect secara otomatis
+     *   Response final adalah JSONP text: gasResp({...});
+     *   Kita ekstrak JSON dari dalam wrapper itu.
      *
-     * JSONP gagal karena:
-     *   1. GAS kadang redirect 302 → script.onerror terpicu
-     *   2. Beberapa env (CSP ketat, browser update) blokir JSONP
+     * Kenapa tidak fetch() CORS mode?
+     *   GAS tidak selalu kirim Access-Control-Allow-Origin.
+     *   Tapi dengan redirect:follow + response.text() kita bisa
+     *   membaca isi teks karena final URL sudah same-origin-ish
+     *   setelah redirect GAS.
      *
-     * Solusi: fetch() dengan mode 'cors' (default), timeout 15 detik
-     * ============================================================ */
-    /* ============================================================
-     * gasGet — JSONP dengan fix untuk GAS redirect 302
-     *
-     * Kenapa JSONP, bukan fetch()?
-     *   fetch() → CORS error karena GAS tidak selalu kirim
-     *   Access-Control-Allow-Origin header
-     *
-     * Kenapa JSONP versi lama gagal?
-     *   script.onerror terpicu saat redirect 302 di beberapa browser
-     *   padahal callback JSONP sudah berhasil dipanggil duluan
-     *
-     * Fix:
-     *   - HAPUS script.onerror (jangan pakai, picu false error)
-     *   - Cek apakah callback sudah dipanggil sebelum timeout
-     *   - Timeout 20 detik sebagai fallback
+     * Fallback: jika fetch gagal total → JSONP tradisional.
      * ============================================================ */
     function gasGet(params, callback) {
-      var cbName = '_cb_' + Date.now() + '_' + Math.floor(Math.random() * 9999);
-      var script = document.createElement('script');
-      var done   = false;
+      var cbMarker = 'gasResp';
+      var qs       = new URLSearchParams(params).toString();
+      var url      = CONFIG.scriptURL + '?' + qs + '&callback=' + cbMarker;
+      var done     = false;
 
-      var timer = setTimeout(function() {
+      // Timeout 25 detik total
+      var masterTimer = setTimeout(function() {
         if (done) return;
         done = true;
-        try { document.head.removeChild(script); } catch(e) {}
-        delete window[cbName];
-        callback(new Error('Timeout — GAS tidak merespons dalam 20 detik. Periksa koneksi internet.'));
-      }, 20000);
+        callback(new Error(
+          'Tidak dapat terhubung ke server GAS (timeout 25 detik).<br>' +
+          'Pastikan GAS sudah di-deploy ulang:<br>' +
+          'Deploy → Manage deployments → Edit → New version → Deploy'
+        ));
+      }, 25000);
 
-      window[cbName] = function(data) {
+      function finish(err, data) {
         if (done) return;
         done = true;
-        clearTimeout(timer);
-        try { document.head.removeChild(script); } catch(e) {}
-        delete window[cbName];
-        callback(null, data);
-      };
+        clearTimeout(masterTimer);
+        callback(err, data);
+      }
 
-      /* SENGAJA tidak pasang script.onerror
-         karena GAS redirect 302 memicu onerror di beberapa browser
-         meskipun JSONP callback sudah berhasil dieksekusi.
-         Timeout di atas cukup sebagai error handler. */
+      // ── Coba 1: fetch() — ikuti redirect, baca teks
+      fetch(url, { redirect: 'follow' })
+        .then(function(res) { return res.text(); })
+        .then(function(text) {
+          var json = text.trim();
+          // Hapus wrapper JSONP jika ada: gasResp({...});
+          var re = new RegExp('^' + cbMarker + '\s*\(([\s\S]*)\)\s*;?\s*$');
+          var m  = json.match(re);
+          if (m) json = m[1];
+          try {
+            finish(null, JSON.parse(json));
+          } catch(e) {
+            // fetch berhasil tapi bukan JSON — coba JSONP
+            tryJSONP();
+          }
+        })
+        .catch(function() {
+          // fetch gagal (CORS block total) — coba JSONP
+          tryJSONP();
+        });
 
-      var url = CONFIG.scriptURL + '?' + new URLSearchParams(params).toString() + '&callback=' + cbName;
-      script.src = url;
-      document.head.appendChild(script);
+      // ── Coba 2: JSONP tradisional (fallback)
+      function tryJSONP() {
+        if (done) return;
+        var cbName = '_gcb_' + Date.now();
+        var script = document.createElement('script');
+
+        window[cbName] = function(data) {
+          try { document.head.removeChild(script); } catch(e) {}
+          delete window[cbName];
+          finish(null, data);
+        };
+
+        script.src = CONFIG.scriptURL + '?' + qs + '&callback=' + cbName;
+        document.head.appendChild(script);
+        // masterTimer sudah di-set, tidak perlu timer baru
+      }
     }
 
     /* ============================================================
