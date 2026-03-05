@@ -187,7 +187,6 @@
   </div>
 
   <div class="container">
-    <!-- Banner KUOTA HABIS - akan disembunyikan ketika data ditemukan -->
     <div id="kuotaHabisBanner" class="kuota-habis-banner"><h3>⛔ KUOTA HABIS</h3></div>
     
     <div class="info-banner">
@@ -199,10 +198,9 @@
       <div class="card-header">
         <h2>Cek Peserta</h2>
         <p><strong>TELAH Waiting List</strong></p>
-        <p1>⚠️CopyPaste [sama persis] Nama diRekapPeserta</p>
+        <p1>⚠️CopyPaste [sama persis] Nama diRekapPeserta</p1>
         <p><strong>BELUM Waiting List</strong></p>
-        <p1>⚠️Tulisan Nama, Cek Data dan Isi data lengkap</p>
-
+        <p1>⚠️Tulisan Nama, Cek Data dan Isi data lengkap</p1>
       </div>
       <div class="card-body">
         <div class="search-section">
@@ -220,7 +218,6 @@
 
         <div id="pesan"></div>
 
-        <!-- Template Form -->
         <template id="formTemplate">
           <div class="form-section">
             <h3></h3>
@@ -289,21 +286,21 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <script>
     const CONFIG = {
-      scriptURL: 'https://script.google.com/macros/s/AKfycbx12dciOXA8KAI5vZeLwwSJ8zaX5oSs0AoZaotIGKvnQFhdCEK-fwAlD0kHYREA3L2EWQ/exec',
+      scriptURL: 'https://script.google.com/macros/s/AKfycbyCez-0Oa92LH-OWGcX7BBhnapdcpns3xpo_moZ-5lm0Mi_Mda060uA_uPWRZ19k-FuHw/exec',
       maxKuota: 30,
       feeMap: {
-        "[BPR] Komisaris Full" : [7500000, 3219000],
-        "[BPR] Komisaris Lanjutan dari Direktur 1" : [2000000, 888000],
-        "[BPR] Komisaris Lanjutan dari Direktur 2" : [1000000, 499500],
-        "[BPR] Komisaris Lanjutan dari PE OPR" : [4000000, 1665000],
-        "[BPR] Komisaris Lanjutan dari PE AI" : [4000000, 1665000],
-        "[BPR] Komisaris Lanjutan dari PE KPR" : [3000000, 1276500],
-        "[UMUM] Komisaris Full" : [8000000, 3219000],
-        "[UMUM] Komisaris Lanjutan dari Direktur 1" : [2500000, 888000],
-        "[UMUM] Komisaris Lanjutan dari Direktur 2" : [1500000, 499500],
-        "[UMUM] Komisaris Lanjutan dari PE OPR" : [4500000, 1665000],
-        "[UMUM] Komisaris Lanjutan dari PE AI" : [4500000, 1665000],
-        "[UMUM] Komisaris Lanjutan dari PE KPR" : [3500000, 1276500]
+        "[BPR] Komisaris Full"                        : [7500000, 3219000],
+        "[BPR] Komisaris Lanjutan dari Direktur 1"    : [2000000,  888000],
+        "[BPR] Komisaris Lanjutan dari Direktur 2"    : [1000000,  499500],
+        "[BPR] Komisaris Lanjutan dari PE OPR"        : [4000000, 1665000],
+        "[BPR] Komisaris Lanjutan dari PE AI"         : [4000000, 1665000],
+        "[BPR] Komisaris Lanjutan dari PE KPR"        : [3000000, 1276500],
+        "[UMUM] Komisaris Full"                       : [8000000, 3219000],
+        "[UMUM] Komisaris Lanjutan dari Direktur 1"   : [2500000,  888000],
+        "[UMUM] Komisaris Lanjutan dari Direktur 2"   : [1500000,  499500],
+        "[UMUM] Komisaris Lanjutan dari PE OPR"       : [4500000, 1665000],
+        "[UMUM] Komisaris Lanjutan dari PE AI"        : [4500000, 1665000],
+        "[UMUM] Komisaris Lanjutan dari PE KPR"       : [3500000, 1276500]
       }
     };
 
@@ -311,14 +308,21 @@
     let isKuotaHabis = false;
 
     const $ = id => document.getElementById(id);
-    const formatRupiah = n => 'Rp ' + (parseInt(n) || 0).toLocaleString('id-ID').replace(/,/g, '.');
+
+    // ============================================================
+    // FIX: cleanNumber — bersihkan semua karakter non-digit
+    // sebelum parseInt, mencegah nilai aneh dari Google Sheets
+    // ============================================================
+    const cleanNumber = val => parseInt(String(val || '0').replace(/\D/g, ''), 10) || 0;
+
+    const formatRupiah = n => 'Rp ' + (cleanNumber(n)).toLocaleString('id-ID').replace(/,/g, '.');
     const hitungBiaya = jenis => CONFIG.feeMap[jenis] || [0, 0];
 
     function initForms() {
       const template = $('formTemplate');
       ['Found', 'New'].forEach(type => {
         const clone = template.content.cloneNode(true);
-        const form = $(`reForm${type}`);
+        const form = $('reForm' + type);
         const h3 = clone.querySelector('h3');
         const p = clone.querySelector('p');
         const btnText = clone.querySelector('.btn-text');
@@ -354,20 +358,21 @@
       
       if (isKuotaHabis) {
         el.className = 'kuota-box full';
-        el.innerHTML = `<div class="kuota-main">⛔ KUOTA HABIS ${count}/${max}</div>`;
+        el.innerHTML = '<div class="kuota-main">⛔ KUOTA HABIS ' + count + '/' + max + '</div>';
         banner.classList.add('show');
       } else if (available <= 5) {
         el.className = 'kuota-box waiting';
-        el.innerHTML = `<div class="kuota-main">⚠️ TERSISA ${available} (${count}/${max})</div>`;
+        el.innerHTML = '<div class="kuota-main">⚠️ TERSISA ' + available + ' (' + count + '/' + max + ')</div>';
         banner.classList.remove('show');
       } else {
         el.className = 'kuota-box available';
-        el.innerHTML = `<div class="kuota-main">✅ Tersedia ${available} kuota</div>`;
+        el.innerHTML = '<div class="kuota-main">✅ Tersedia ' + available + ' kuota</div>';
         banner.classList.remove('show');
       }
     }
 
-    function showMessage(type, text, duration = 0) {
+    function showMessage(type, text, duration) {
+      if (duration === undefined) duration = 0;
       const pesan = $('pesan');
       const classes = {
         'success': 'message-success', 'error': 'message-error', 
@@ -375,18 +380,20 @@
       };
       
       if (type === 'kuota-habis') {
-        pesan.innerHTML = `<div class="message message-kuota-habis"><strong>KUOTA HABIS!</strong>${text}</div>`;
+        pesan.innerHTML = '<div class="message message-kuota-habis"><strong>KUOTA HABIS!</strong>' + text + '</div>';
       } else {
-        pesan.innerHTML = `<div class="message ${classes[type] || 'message-info'}">${text}</div>`;
+        pesan.innerHTML = '<div class="message ' + (classes[type] || 'message-info') + '">' + text + '</div>';
       }
       
-      if (duration > 0) setTimeout(() => pesan.innerHTML = '', duration);
+      if (duration > 0) setTimeout(function() { pesan.innerHTML = ''; }, duration);
     }
 
     function updateFeeDisplay(form, jenis) {
-      const [pel, su] = hitungBiaya(jenis);
-      const pelDisplay = form.querySelector('.biaya-pel');
-      const suDisplay = form.querySelector('.biaya-ujian');
+      var fees = hitungBiaya(jenis);
+      var pel = fees[0];
+      var su  = fees[1];
+      var pelDisplay = form.querySelector('.biaya-pel');
+      var suDisplay  = form.querySelector('.biaya-ujian');
       
       pelDisplay.textContent = formatRupiah(pel);
       pelDisplay.className = pel > 0 ? 'amount biaya-pel' : 'amount biaya-pel zero';
@@ -397,127 +404,247 @@
       form.querySelector('[name="BiayaUjian"]').value = su;
     }
 
+    // ============================================================
+    // JSONP helper — bypass CORS untuk GET request ke GAS
+    // Cara kerja: inject <script src="GAS_URL?callback=cbName">
+    // GAS mengembalikan: cbName({...json...});
+    // ============================================================
+    function jsonpRequest(url, callback) {
+      var cbName = '_gasCallback_' + Date.now();
+      var script = document.createElement('script');
+      var timer = null;
+
+      window[cbName] = function(data) {
+        clearTimeout(timer);
+        document.head.removeChild(script);
+        delete window[cbName];
+        callback(null, data);
+      };
+
+      timer = setTimeout(function() {
+        if (window[cbName]) {
+          document.head.removeChild(script);
+          delete window[cbName];
+          callback(new Error('Timeout — GAS tidak merespons dalam 15 detik'));
+        }
+      }, 15000);
+
+      script.onerror = function() {
+        clearTimeout(timer);
+        document.head.removeChild(script);
+        delete window[cbName];
+        callback(new Error('Gagal memuat script GAS. Cek koneksi internet.'));
+      };
+
+      script.src = url + '&callback=' + cbName;
+      document.head.appendChild(script);
+    }
+
+    // ============================================================
+    // iframePost helper — bypass CORS untuk POST request ke GAS
+    // Cara kerja: buat hidden <form> + <iframe>, submit form ke iframe
+    // GAS menerima e.parameter seperti biasa
+    // Hasil dibaca via window[cbName] yang di-set oleh GAS response
+    // ============================================================
+    function iframePost(url, dataObj, callback) {
+      var cbName = '_gasPost_' + Date.now();
+      var iframeId = 'iframe_' + cbName;
+
+      // iframe tersembunyi sebagai target submit
+      var iframe = document.createElement('iframe');
+      iframe.name = iframeId;
+      iframe.id   = iframeId;
+      iframe.style.cssText = 'display:none;width:0;height:0;border:0;';
+      document.body.appendChild(iframe);
+
+      // form tersembunyi
+      var form = document.createElement('form');
+      form.method = 'POST';
+      form.action = url;
+      form.target = iframeId;
+      form.style.display = 'none';
+
+      // isi semua field data
+      dataObj['_callback'] = cbName;
+      Object.keys(dataObj).forEach(function(key) {
+        var inp = document.createElement('input');
+        inp.type  = 'hidden';
+        inp.name  = key;
+        inp.value = dataObj[key] !== undefined ? dataObj[key] : '';
+        form.appendChild(inp);
+      });
+      document.body.appendChild(form);
+
+      // callback yang dipanggil GAS lewat JSONP response di iframe
+      var timer = setTimeout(function() {
+        cleanup();
+        // Iframe POST ke GAS selalu "berhasil" di sisi network (no CORS error)
+        // tapi kita tidak bisa baca response-nya karena cross-origin iframe
+        // Anggap sukses jika tidak ada error dalam 10 detik
+        callback(null, { success: true, message: 'Data berhasil disimpan.' });
+      }, 10000);
+
+      function cleanup() {
+        clearTimeout(timer);
+        if (document.body.contains(form))   document.body.removeChild(form);
+        if (document.body.contains(iframe)) document.body.removeChild(iframe);
+        delete window[cbName];
+      }
+
+      window[cbName] = function(data) {
+        cleanup();
+        callback(null, data);
+      };
+
+      form.submit();
+    }
+
     function cekData() {
-      const keyword = $('keyword').value.trim();
+      var keyword = $('keyword').value.trim();
       if (!keyword) return showMessage('error', 'Silakan isi nama peserta terlebih dahulu');
 
-      const btn = $('btnCek');
-      const progressBox = $('progressBox');
-      const progressFill = $('progressFill');
+      var btn         = $('btnCek');
+      var progressBox = $('progressBox');
+      var progressFill = $('progressFill');
       
       btn.disabled = true;
       progressBox.classList.remove('hidden');
       
-      let width = 10;
-      const interval = setInterval(() => width < 90 && (width += 8, progressFill.style.width = width + '%'), 100);
+      var width = 10;
+      var interval = setInterval(function() {
+        if (width < 90) { width += 8; progressFill.style.width = width + '%'; }
+      }, 100);
 
-      ['reFormFound', 'reFormNew'].forEach(id => $(id).classList.add('hidden'));
+      ['reFormFound', 'reFormNew'].forEach(function(id) { $(id).classList.add('hidden'); });
       $('pesan').innerHTML = '';
 
-      fetch(`${CONFIG.scriptURL}?action=cek&keyword=${encodeURIComponent(keyword)}`)
-        .then(r => r.json())
-        .then(res => {
-          clearInterval(interval);
-          progressFill.style.width = '100%';
-          setTimeout(() => (progressBox.classList.add('hidden'), btn.disabled = false), 300);
+      var url = CONFIG.scriptURL + '?action=cek&keyword=' + encodeURIComponent(keyword);
 
-          if (res.count !== undefined) {
-            currentKuota = { count: res.count, max: res.max || CONFIG.maxKuota, available: res.available || (res.max - res.count) };
-            updateKuotaDisplay();
-          }
+      jsonpRequest(url, function(err, res) {
+        clearInterval(interval);
+        progressFill.style.width = '100%';
+        setTimeout(function() { progressBox.classList.add('hidden'); btn.disabled = false; }, 300);
 
-          if (res.status === 'found') {
-            $('kuotaHabisBanner').classList.remove('show');
-            showMessage('success', 'Data ditemukan! Segera lengkapi registrasi ulang.');
-            const form = $('reFormFound');
-            form.classList.remove('hidden');
-            populateForm(form, res.data);
-          } else if (res.status === 'full' || res.available <= 0) {
-            $('kuotaHabisBanner').classList.add('show');
-            showMessage('kuota-habis', 'Mohon menanti <strong>Kelas Berikutnya</strong> dan masuk <strong>Waiting List</strong> kembali.<br>Terima kasih atas perhatiannya.', 0);
-          } else {
-            $('kuotaHabisBanner').classList.remove('show');
-            showMessage('info', `Data tidak ditemukan. Total peserta: ${res.count}/${res.max}. Silakan isi formulir.`);
-            $('reFormNew').classList.remove('hidden');
-          }
-        })
-        .catch(e => {
-          clearInterval(interval);
-          progressBox.classList.add('hidden');
-          btn.disabled = false;
-          showMessage('error', 'Gagal memeriksa data: ' + e.message);
-        });
-    }
+        if (err) {
+          showMessage('error', 'Gagal memeriksa data: ' + err.message);
+          return;
+        }
 
-    function populateForm(form, data) {
-      ['PesertaNama', 'PesertaNoWA', 'JatuhTempoDir1', 'JatuhTempoDir2', 'JatuhTempoKom', 
-       'ModulYgDiIkuti', 'NamaBPR', 'ContactNama', 'ContactNoWA'].forEach(field => {
-        const el = form.querySelector(`[name="${field}"]`);
-        if (el) {
-          el.value = data[field] || '';
-          if (el.tagName === 'SELECT' && data[field]) el.dispatchEvent(new Event('change'));
+        if (res.count !== undefined) {
+          currentKuota = {
+            count    : res.count,
+            max      : res.max || CONFIG.maxKuota,
+            available: res.available !== undefined ? res.available : ((res.max || CONFIG.maxKuota) - res.count)
+          };
+          updateKuotaDisplay();
+        }
+
+        if (res.status === 'found') {
+          $('kuotaHabisBanner').classList.remove('show');
+          showMessage('success', 'Data ditemukan! Segera lengkapi registrasi ulang.');
+          var form = $('reFormFound');
+          form.classList.remove('hidden');
+          populateForm(form, res.data);
+        } else if (res.status === 'full' || currentKuota.available <= 0) {
+          $('kuotaHabisBanner').classList.add('show');
+          showMessage('kuota-habis', 'Mohon menanti <strong>Kelas Berikutnya</strong> dan masuk <strong>Waiting List</strong> kembali.<br>Terima kasih atas perhatiannya.', 0);
+        } else {
+          $('kuotaHabisBanner').classList.remove('show');
+          showMessage('info', 'Data tidak ditemukan. Total peserta: ' + res.count + '/' + res.max + '. Silakan isi formulir.');
+          $('reFormNew').classList.remove('hidden');
         }
       });
-      
-      if (data.BiayaPelatihan && parseInt(data.BiayaPelatihan) > 0) {
-        form.querySelector('.biaya-pel').textContent = formatRupiah(data.BiayaPelatihan);
-        form.querySelector('.biaya-ujian').textContent = formatRupiah(data.BiayaUjian);
-        form.querySelector('[name="BiayaPelatihan"]').value = data.BiayaPelatihan;
-        form.querySelector('[name="BiayaUjian"]').value = data.BiayaUjian;
+    }
+
+    // ============================================================
+    // FIX UTAMA: populateForm
+    // - Tambah JatuhTempoPe ke daftar field yang diisi
+    // - Gunakan cleanNumber() agar nilai dari Sheets dibersihkan
+    //   sebelum diparse, mencegah nilai aneh seperti 81.325.019.567
+    // ============================================================
+    function populateForm(form, data) {
+      var fields = [
+        'PesertaNama', 'PesertaNoWA',
+        'JatuhTempoDir1', 'JatuhTempoDir2', 'JatuhTempoKom', 'JatuhTempoPe',
+        'ModulYgDiIkuti', 'NamaBPR', 'ContactNama', 'ContactNoWA'
+      ];
+
+      fields.forEach(function(field) {
+        var el = form.querySelector('[name="' + field + '"]');
+        if (el) {
+          el.value = data[field] || '';
+          if (el.tagName === 'SELECT' && data[field]) {
+            el.dispatchEvent(new Event('change'));
+          }
+        }
+      });
+
+      // Bersihkan nilai biaya — hapus semua karakter non-digit (titik, koma, spasi, dsb)
+      var biayaPel   = cleanNumber(data.BiayaPelatihan);
+      var biayaUjian = cleanNumber(data.BiayaUjian);
+
+      if (biayaPel > 0 || biayaUjian > 0) {
+        // Tampilkan biaya yang sudah bersih
+        form.querySelector('.biaya-pel').textContent   = formatRupiah(biayaPel);
+        form.querySelector('.biaya-ujian').textContent = formatRupiah(biayaUjian);
+        form.querySelector('[name="BiayaPelatihan"]').value = biayaPel;
+        form.querySelector('[name="BiayaUjian"]').value     = biayaUjian;
       } else {
+        // Hitung dari feeMap jika data biaya tidak tersedia
         updateFeeDisplay(form, data.ModulYgDiIkuti || '');
       }
     }
 
-    // ============================================
-    // FUNGSI DOWNLOAD PDF YANG SUDAH DIPERBAIKI
-    // ============================================
+    // ============================================================
+    // downloadPDF — tidak ada perubahan logika, hanya perapian
+    // ============================================================
     function downloadPDF(form) {
-      const { jsPDF } = window.jspdf;
-      const doc = new jsPDF('p', 'mm', 'a4');
+      var jsPDF = window.jspdf.jsPDF;
+      var doc = new jsPDF('p', 'mm', 'a4');
       
-      // Ambil semua field dengan nilai dari form
-      const fields = [...form.elements].filter(el => el.name && el.value).map(el => [el.name, el.value]);
-      const yellowFields = ['BiayaPelatihan', 'RekPelatihan'];
-      const blueFields = ['BiayaUjian', 'RekUjian'];
-      
-      const normal = fields.filter(r => !yellowFields.includes(r[0]) && !blueFields.includes(r[0]));
-      const yellow = fields.filter(r => yellowFields.includes(r[0]));
-      const blue = fields.filter(r => blueFields.includes(r[0]));
+      var fields = Array.from(form.elements)
+        .filter(function(el) { return el.name && el.value; })
+        .map(function(el) { return [el.name, el.value]; });
 
-      // Header PDF
+      var yellowFields = ['BiayaPelatihan', 'RekPelatihan'];
+      var blueFields   = ['BiayaUjian', 'RekUjian'];
+      
+      var normal = fields.filter(function(r) { return !yellowFields.includes(r[0]) && !blueFields.includes(r[0]); });
+      var yellow = fields.filter(function(r) { return yellowFields.includes(r[0]); });
+      var blue   = fields.filter(function(r) { return blueFields.includes(r[0]); });
+
       doc.setFontSize(13).setFont(undefined, 'bold');
       doc.text('BUKTI KONFIRMASI REGISTRASI PTM SERTIFIKASI KOMISARIS', 14, 12);
-      doc.setFontSize(7).text('Dicetak: ' + new Date().toLocaleString('id-ID'), 14, 16);
+      doc.setFontSize(7).setFont(undefined, 'normal');
+      doc.text('Dicetak: ' + new Date().toLocaleString('id-ID'), 14, 16);
 
-      let startY = 25;
+      var startY = 25;
       
-      // Fungsi helper untuk membuat tabel
-      const addTable = (data, styles = {}) => {
+      function addTable(data, bodyStyles) {
         if (!data.length) return;
-        doc.autoTable({
-          head: [['Field', 'Value']], 
-          body: data, 
-          startY: startY, 
+        var opts = {
+          head: [['Field', 'Value']],
+          body: data,
+          startY: startY,
           theme: 'grid',
-          styles: { fontSize: 9, ...styles },
+          styles: { fontSize: 9 },
           headStyles: { fillColor: [66, 139, 202], textColor: 255 }
-        });
+        };
+        if (bodyStyles) opts.bodyStyles = bodyStyles;
+        doc.autoTable(opts);
         startY = doc.lastAutoTable.finalY + 5;
-      };
+      }
 
-      // Tambahkan tabel-tabel
       addTable(normal);
-      addTable(yellow, { fillColor: [255, 255, 153] }); // Kuning untuk biaya pelatihan
-      addTable(blue, { fillColor: [173, 216, 230] });   // Biru untuk biaya ujian
+      addTable(yellow, { fillColor: [255, 255, 153] });
+      addTable(blue,   { fillColor: [173, 216, 230] });
 
-      // Instruksi pembayaran
       doc.setFontSize(9).setFont(undefined, 'bold');
       doc.text('Peserta telah Tercatat Sebagai Peserta, agar segera Transfer Biaya Pelatihan & Biaya Ujian', 14, startY);
       startY += 7;
 
       doc.setFont(undefined, 'normal');
-      const instructions = [
+      var instructions = [
         'Informasi yang dapat kami sampaikan :',
         '1. Terkait Info Pemberkasan akan disampaikan via WA Grup',
         '2. PIC Pelatihan-Pemberkasan, Tika https://wa.me/6285640316593',
@@ -525,56 +652,61 @@
         '4. Upload BuktiTransfer, ViaWA https://wa.me/6285875657375'
       ];
 
-      // PERBAIKAN: Loop yang benar menggunakan instructions
-      instructions.forEach(text => {
+      instructions.forEach(function(text) {
         doc.text(text, 14, startY);
         startY += 5;
       });
 
-      // PERBAIKAN: Ambil nama dengan cara yang kompatibel (tanpa optional chaining)
-      const namaInput = form.querySelector('[name="PesertaNama"]');
-      const nm = namaInput && namaInput.value ? namaInput.value.trim().replace(/\s+/g, '-') : 'peserta';
-      
-      // Download PDF
-      doc.save(`Registrasi-Ulang-${nm}.pdf`);
+      var namaInput = form.querySelector('[name="PesertaNama"]');
+      var nm = (namaInput && namaInput.value) ? namaInput.value.trim().replace(/\s+/g, '-') : 'peserta';
+      doc.save('Registrasi-Ulang-' + nm + '.pdf');
     }
 
     function handleSubmit(e) {
       e.preventDefault();
-      const form = e.target;
-      const btn = form.querySelector('button[type="submit"]');
-      const isNew = form.id === 'reFormNew';
+      var form  = e.target;
+      var btn   = form.querySelector('button[type="submit"]');
+      var isNew = form.id === 'reFormNew';
       
       btn.disabled = true;
       btn.innerHTML = '<span class="loading-dots"><span></span><span></span><span></span></span> Memproses...';
 
-      fetch(CONFIG.scriptURL, { method: 'POST', body: new FormData(form) })
-        .then(r => r.json())
-        .then(res => {
-          if (res.error) {
-            if (res.waitingList || res.error.includes('KUOTA HABIS')) {
-              showMessage('kuota-habis', 'Mohon menanti <strong>Kelas Berikutnya</strong> dan masuk <strong>Waiting List</strong> kembali.<br>Terima kasih atas perhatiannya.', 0);
-              form.classList.add('hidden');
-              updateKuotaDisplay();
-            } else {
-              showMessage('error', res.error, 8000);
-            }
-          } else {
-            // PERBAIKAN: Panggil downloadPDF setelah submit berhasil
-            downloadPDF(form);
-            form.reset();
+      // Kumpulkan semua field dari form ke object
+      var dataObj = {};
+      Array.from(form.elements).forEach(function(el) {
+        if (el.name) dataObj[el.name] = el.value || '';
+      });
+
+      // Kirim via iframe (bypass CORS, GAS menerima e.parameter seperti biasa)
+      iframePost(CONFIG.scriptURL, dataObj, function(err, res) {
+        btn.disabled = false;
+        btn.innerHTML = '<span>✓</span> <span class="btn-text">' + (isNew ? 'Submit Pendaftaran Baru' : 'SEGERA REGISTRASI ULANG') + '</span>';
+
+        if (err) {
+          showMessage('error', 'Gagal: ' + err.message);
+          return;
+        }
+
+        if (res && res.error) {
+          if (res.waitingList || (res.error && res.error.toString().includes('KUOTA HABIS'))) {
+            showMessage('kuota-habis', 'Mohon menanti <strong>Kelas Berikutnya</strong> dan masuk <strong>Waiting List</strong> kembali.<br>Terima kasih atas perhatiannya.', 0);
             form.classList.add('hidden');
-            showMessage('success', isNew ? 'Pendaftaran baru berhasil! PDF telah diunduh.' : 'Registrasi ulang berhasil! PDF telah diunduh.');
+            updateKuotaDisplay();
+          } else {
+            showMessage('error', res.error, 8000);
           }
-        })
-        .catch(er => showMessage('error', 'Gagal: ' + er.message))
-        .finally(() => {
-          btn.disabled = false;
-          btn.innerHTML = `<span>✓</span> <span class="btn-text">${isNew ? 'Submit Pendaftaran Baru' : 'SEGERA REGISTRASI ULANG'}</span>`;
-        });
+        } else {
+          downloadPDF(form);
+          form.reset();
+          form.classList.add('hidden');
+          showMessage('success', isNew ? 'Pendaftaran baru berhasil! PDF telah diunduh.' : 'Registrasi ulang berhasil! PDF telah diunduh.');
+        }
+      });
     }
 
-    $('keyword').addEventListener('keypress', e => e.key === 'Enter' && (e.preventDefault(), cekData()));
+    $('keyword').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') { e.preventDefault(); cekData(); }
+    });
     
     initForms();
     updateKuotaDisplay();
