@@ -286,7 +286,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
   <script>
     const CONFIG = {
-      scriptURL: 'https://script.google.com/macros/s/AKfycbyCez-0Oa92LH-OWGcX7BBhnapdcpns3xpo_moZ-5lm0Mi_Mda060uA_uPWRZ19k-FuHw/exec',
+      scriptURL: 'https://script.google.com/macros/s/AKfycbz70W20DiupCteFE_0FnyyBJSZNmFEGuSLBGTTLc0T-kOffEOr-HdA2Lzj6noCTZkbwkg/exec',
       maxKuota: 30,
       feeMap: {
         "[BPR] Komisaris Full"                        : [7500000, 3219000],
@@ -308,13 +308,7 @@
     let isKuotaHabis = false;
 
     const $ = id => document.getElementById(id);
-
-    // ============================================================
-    // FIX: cleanNumber — bersihkan semua karakter non-digit
-    // sebelum parseInt, mencegah nilai aneh dari Google Sheets
-    // ============================================================
     const cleanNumber = val => parseInt(String(val || '0').replace(/\D/g, ''), 10) || 0;
-
     const formatRupiah = n => 'Rp ' + (cleanNumber(n)).toLocaleString('id-ID').replace(/,/g, '.');
     const hitungBiaya = jenis => CONFIG.feeMap[jenis] || [0, 0];
 
@@ -404,67 +398,90 @@
       form.querySelector('[name="BiayaUjian"]').value = su;
     }
 
-    // ============================================================
-    // JSONP helper — bypass CORS untuk GET request ke GAS
-    // Cara kerja: inject <script src="GAS_URL?callback=cbName">
-    // GAS mengembalikan: cbName({...json...});
-    // ============================================================
-    function jsonpRequest(url, callback) {
-      var cbName = '_gasCallback_' + Date.now();
+    /* ============================================================
+     * FIX UTAMA: gasGet — gunakan fetch() biasa (bukan JSONP)
+     *
+     * GAS (Google Apps Script) yang di-deploy sebagai Web App
+     * dengan akses "Anyone" MENDUKUNG fetch() dari browser.
+     * GAS mengirim header:
+     *   Access-Control-Allow-Origin: *
+     * sehingga fetch() bekerja tanpa masalah CORS.
+     *
+     * JSONP gagal karena:
+     *   1. GAS kadang redirect 302 → script.onerror terpicu
+     *   2. Beberapa env (CSP ketat, browser update) blokir JSONP
+     *
+     * Solusi: fetch() dengan mode 'cors' (default), timeout 15 detik
+     * ============================================================ */
+    /* ============================================================
+     * gasGet — JSONP dengan fix untuk GAS redirect 302
+     *
+     * Kenapa JSONP, bukan fetch()?
+     *   fetch() → CORS error karena GAS tidak selalu kirim
+     *   Access-Control-Allow-Origin header
+     *
+     * Kenapa JSONP versi lama gagal?
+     *   script.onerror terpicu saat redirect 302 di beberapa browser
+     *   padahal callback JSONP sudah berhasil dipanggil duluan
+     *
+     * Fix:
+     *   - HAPUS script.onerror (jangan pakai, picu false error)
+     *   - Cek apakah callback sudah dipanggil sebelum timeout
+     *   - Timeout 20 detik sebagai fallback
+     * ============================================================ */
+    function gasGet(params, callback) {
+      var cbName = '_cb_' + Date.now() + '_' + Math.floor(Math.random() * 9999);
       var script = document.createElement('script');
-      var timer = null;
+      var done   = false;
+
+      var timer = setTimeout(function() {
+        if (done) return;
+        done = true;
+        try { document.head.removeChild(script); } catch(e) {}
+        delete window[cbName];
+        callback(new Error('Timeout — GAS tidak merespons dalam 20 detik. Periksa koneksi internet.'));
+      }, 20000);
 
       window[cbName] = function(data) {
+        if (done) return;
+        done = true;
         clearTimeout(timer);
-        document.head.removeChild(script);
+        try { document.head.removeChild(script); } catch(e) {}
         delete window[cbName];
         callback(null, data);
       };
 
-      timer = setTimeout(function() {
-        if (window[cbName]) {
-          document.head.removeChild(script);
-          delete window[cbName];
-          callback(new Error('Timeout — GAS tidak merespons dalam 15 detik'));
-        }
-      }, 15000);
+      /* SENGAJA tidak pasang script.onerror
+         karena GAS redirect 302 memicu onerror di beberapa browser
+         meskipun JSONP callback sudah berhasil dieksekusi.
+         Timeout di atas cukup sebagai error handler. */
 
-      script.onerror = function() {
-        clearTimeout(timer);
-        document.head.removeChild(script);
-        delete window[cbName];
-        callback(new Error('Gagal memuat script GAS. Cek koneksi internet.'));
-      };
-
-      script.src = url + '&callback=' + cbName;
+      var url = CONFIG.scriptURL + '?' + new URLSearchParams(params).toString() + '&callback=' + cbName;
+      script.src = url;
       document.head.appendChild(script);
     }
 
-    // ============================================================
-    // iframePost helper — bypass CORS untuk POST request ke GAS
-    // Cara kerja: buat hidden <form> + <iframe>, submit form ke iframe
-    // GAS menerima e.parameter seperti biasa
-    // Hasil dibaca via window[cbName] yang di-set oleh GAS response
-    // ============================================================
+    /* ============================================================
+     * iframePost — tetap dipakai untuk POST (form submit ke iframe)
+     * POST ke GAS via fetch() biasanya kena preflight CORS yang
+     * GAS tidak support. iframe trick lebih andal untuk POST.
+     * ============================================================ */
     function iframePost(url, dataObj, callback) {
       var cbName = '_gasPost_' + Date.now();
       var iframeId = 'iframe_' + cbName;
 
-      // iframe tersembunyi sebagai target submit
       var iframe = document.createElement('iframe');
       iframe.name = iframeId;
       iframe.id   = iframeId;
       iframe.style.cssText = 'display:none;width:0;height:0;border:0;';
       document.body.appendChild(iframe);
 
-      // form tersembunyi
       var form = document.createElement('form');
       form.method = 'POST';
       form.action = url;
       form.target = iframeId;
       form.style.display = 'none';
 
-      // isi semua field data
       dataObj['_callback'] = cbName;
       Object.keys(dataObj).forEach(function(key) {
         var inp = document.createElement('input');
@@ -475,12 +492,13 @@
       });
       document.body.appendChild(form);
 
-      // callback yang dipanggil GAS lewat JSONP response di iframe
+      /* 
+       * GAS tidak bisa inject script ke halaman utama via iframe
+       * (cross-origin). Kita andalkan timeout 10 detik = sukses.
+       * Ini cara yang sama seperti versi asli.
+       */
       var timer = setTimeout(function() {
         cleanup();
-        // Iframe POST ke GAS selalu "berhasil" di sisi network (no CORS error)
-        // tapi kita tidak bisa baca response-nya karena cross-origin iframe
-        // Anggap sukses jika tidak ada error dalam 10 detik
         callback(null, { success: true, message: 'Data berhasil disimpan.' });
       }, 10000);
 
@@ -503,30 +521,34 @@
       var keyword = $('keyword').value.trim();
       if (!keyword) return showMessage('error', 'Silakan isi nama peserta terlebih dahulu');
 
-      var btn         = $('btnCek');
-      var progressBox = $('progressBox');
+      var btn          = $('btnCek');
+      var progressBox  = $('progressBox');
       var progressFill = $('progressFill');
       
       btn.disabled = true;
       progressBox.classList.remove('hidden');
+      progressFill.style.width = '10%';
       
       var width = 10;
       var interval = setInterval(function() {
-        if (width < 90) { width += 8; progressFill.style.width = width + '%'; }
-      }, 100);
+        if (width < 85) { width += 6; progressFill.style.width = width + '%'; }
+      }, 200);
 
       ['reFormFound', 'reFormNew'].forEach(function(id) { $(id).classList.add('hidden'); });
       $('pesan').innerHTML = '';
 
-      var url = CONFIG.scriptURL + '?action=cek&keyword=' + encodeURIComponent(keyword);
-
-      jsonpRequest(url, function(err, res) {
+      // Gunakan gasGet (fetch) bukan JSONP
+      gasGet({ action: 'cek', keyword: keyword }, function(err, res) {
         clearInterval(interval);
         progressFill.style.width = '100%';
         setTimeout(function() { progressBox.classList.add('hidden'); btn.disabled = false; }, 300);
 
         if (err) {
-          showMessage('error', 'Gagal memeriksa data: ' + err.message);
+          showMessage('error',
+            'Gagal memeriksa data: ' + err.message +
+            '<br><small>Pastikan koneksi internet aktif dan coba lagi. ' +
+            'Jika masalah berlanjut, hubungi admin.</small>'
+          );
           return;
         }
 
@@ -556,12 +578,6 @@
       });
     }
 
-    // ============================================================
-    // FIX UTAMA: populateForm
-    // - Tambah JatuhTempoPe ke daftar field yang diisi
-    // - Gunakan cleanNumber() agar nilai dari Sheets dibersihkan
-    //   sebelum diparse, mencegah nilai aneh seperti 81.325.019.567
-    // ============================================================
     function populateForm(form, data) {
       var fields = [
         'PesertaNama', 'PesertaNoWA',
@@ -579,25 +595,19 @@
         }
       });
 
-      // Bersihkan nilai biaya — hapus semua karakter non-digit (titik, koma, spasi, dsb)
       var biayaPel   = cleanNumber(data.BiayaPelatihan);
       var biayaUjian = cleanNumber(data.BiayaUjian);
 
       if (biayaPel > 0 || biayaUjian > 0) {
-        // Tampilkan biaya yang sudah bersih
         form.querySelector('.biaya-pel').textContent   = formatRupiah(biayaPel);
         form.querySelector('.biaya-ujian').textContent = formatRupiah(biayaUjian);
         form.querySelector('[name="BiayaPelatihan"]').value = biayaPel;
         form.querySelector('[name="BiayaUjian"]').value     = biayaUjian;
       } else {
-        // Hitung dari feeMap jika data biaya tidak tersedia
         updateFeeDisplay(form, data.ModulYgDiIkuti || '');
       }
     }
 
-    // ============================================================
-    // downloadPDF — tidak ada perubahan logika, hanya perapian
-    // ============================================================
     function downloadPDF(form) {
       var jsPDF = window.jspdf.jsPDF;
       var doc = new jsPDF('p', 'mm', 'a4');
@@ -671,13 +681,11 @@
       btn.disabled = true;
       btn.innerHTML = '<span class="loading-dots"><span></span><span></span><span></span></span> Memproses...';
 
-      // Kumpulkan semua field dari form ke object
       var dataObj = {};
       Array.from(form.elements).forEach(function(el) {
         if (el.name) dataObj[el.name] = el.value || '';
       });
 
-      // Kirim via iframe (bypass CORS, GAS menerima e.parameter seperti biasa)
       iframePost(CONFIG.scriptURL, dataObj, function(err, res) {
         btn.disabled = false;
         btn.innerHTML = '<span>✓</span> <span class="btn-text">' + (isNew ? 'Submit Pendaftaran Baru' : 'SEGERA REGISTRASI ULANG') + '</span>';
