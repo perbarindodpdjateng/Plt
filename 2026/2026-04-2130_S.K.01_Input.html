@@ -470,7 +470,7 @@ function downloadPDF(fm){
   addT(normal); addT(yellow,{fillColor:[255,255,153]}); addT(blue,{fillColor:[173,216,230]});
   doc.setFontSize(9).setFont(undefined,'bold'); doc.text('Segera Transfer Biaya Pelatihan & Biaya Ujian',14,sy); sy+=7;
   doc.setFont(undefined,'normal');
-  ['Informasi:','1. Info Pemberkasan via WA Grup','2. PIC: Tika https://wa.me/6285640316593','3. Untuk Pemesanan Kamar Hotel dapat hub : Jati : https://wa.me/6281219632135','4. Tanggal hadir sesuai Modul di JADWAL PELATIHAN','5. Upload BuktiTransfer: https://wa.me/6285875657375']
+  ['Informasi:','1. Info Pemberkasan via WA Grup','2. PIC: Tika https://wa.me/6285640316593','3. U/Pemesanan Kamar Hotel dapat hub Marketing Hotel : Jati : https://wa.me/6281219632135','4. Tanggal hadir sesuai Modul di JADWAL PELATIHAN','5. Upload BuktiTransfer: https://wa.me/6285875657375']
   .forEach(function(t){doc.text(t,14,sy);sy+=5;});
   var nm=((fm.querySelector('[name="PesertaNama"]')||{}).value||'peserta').trim().replace(/\s+/g,'-');
   doc.save('Registrasi-Ulang-'+nm+'.pdf');
