@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rekap Peserta Realtime</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    
+    body{
+      font:9px/1.1 "Segoe UI",Roboto,Arial,sans-serif;
+      color:#2c3e50;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height:100vh;
+      padding:4px;
+    }
+    
+    .container{
+      background:rgba(255,255,255,0.95);
+      border-radius:8px;
+      box-shadow:0 8px 32px rgba(0,0,0,0.15);
+      padding:6px;
+      backdrop-filter:blur(10px);
+    }
+    
+    .top{display:flex;align-items:center;gap:4px;padding:2px;margin-bottom:4px}
+    .top h2{font-size:12px;color:#1a4e8a;white-space:nowrap;font-weight:700}
+    .top input{
+      flex:1;
+      font-size:9px;
+      padding:4px 6px;
+      border:1px solid #ddd;
+      border-radius:4px;
+      background:#fff;
+      outline:none;
+    }
+    .top input:focus{border-color:#667eea;box-shadow:0 0 0 2px rgba(102,126,234,0.1)}
+    
+    .boxes{display:flex;gap:6px;padding:2px;margin-bottom:4px;flex-wrap:wrap}
+    .box{
+      font-size:14px;
+      font-weight:700;
+      padding:5px 10px;
+      border-radius:6px;
+      background:#f8f9fa;
+      white-space:nowrap;
+      box-shadow:0 2px 4px rgba(0,0,0,0.05);
+      border:1px solid #e9ecef;
+    }
+    .box.ok{background:#d4edda;color:#155724;border-color:#c3e6cb}
+    .box.full{background:#f8d7da;color:#721c24;border-color:#f5c6cb}
+    
+    table{
+      width:100%;
+      border-collapse:collapse;
+      font-size:8px;
+      background:#fff;
+      border-radius:4px;
+      overflow:hidden;
+      box-shadow:0 1px 3px rgba(0,0,0,0.08);
+    }
+    th,td{padding:3px 4px;border:1px solid #e9ecef;text-align:left;vertical-align:middle}
+    th{
+      background:linear-gradient(180deg,#667eea 0%,#764ba2 100%);
+      color:#fff;
+      font-weight:600;
+      position:sticky;
+      top:0;
+      z-index:1;
+      text-transform:uppercase;
+      letter-spacing:0.3px;
+    }
+    tr:nth-child(even){background:#f8f9fa}
+    tr:hover{background:#e9ecef}
+    tr.new td{background:#d4edda;animation:fade 1s ease}
+    @keyframes fade{from{background:#a8e6cf}}
+    
+    .pg{display:flex;justify-content:center;gap:3px;padding:4px 2px;font-size:8px;margin-top:4px;flex-wrap:wrap}
+    .pg button{
+      border:1px solid #667eea;
+      background:#fff;
+      color:#667eea;
+      padding:3px 6px;
+      border-radius:4px;
+      cursor:pointer;
+      font-size:8px;
+      font-weight:600;
+      min-width:24px;
+      transition:all 0.2s;
+    }
+    .pg button:hover{background:#667eea;color:#fff}
+    .pg button.on{background:#667eea;color:#fff;box-shadow:0 2px 4px rgba(102,126,234,0.3)}
+    
+    #load{
+      font-size:9px;
+      padding:4px;
+      text-align:center;
+      color:#6c757d;
+      font-style:italic;
+    }
+    
+    /* Mobile optimization */
+    @media(max-width:480px){
+      body{padding:2px}
+      .container{padding:4px;border-radius:6px}
+      .boxes{gap:4px}
+      .box{font-size:12px;padding:4px 8px}
+      .top h2{font-size:11px}
+      table{font-size:7px}
+      th,td{padding:2px 3px}
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <div class="top">
+    <h2>RekapRealtime</h2>
+    <input id="search" placeholder="Cari ..." autocomplete="off"/>
+  </div>
+
+  <div class="boxes">
+    <span class="box">👥 Total:<b id="t">0</b></span>
+    <span id="sisa" class="box ok">✅ Sisa:<b id="r">30</b></span>
+  </div>
+
+  <table id="tbl"><thead></thead><tbody></tbody></table>
+  <div id="pg" class="pg"></div>
+  <p id="load">Memuat...</p>
+</div>
+
+<script>
+let prev='', lastR=[], ori=[], intv, rowsPer=14, curPage=1;
+
+async function pull(){
+  try{
+    const res=await fetch('https://script.google.com/macros/s/AKfycbyBX8NKwk18ddGhWCdELbEcS8dB4r6PU6vGk6fyWg1yKm-4rbpRe7EDE7jBE7Vu0F7_/exec ',{cache:'no-store'});
+    const json=await res.json();
+    const cur=JSON.stringify(json);
+    if(cur!==prev){prev=cur; ori=json; render();}
+    load.style.display='none';
+  }catch(e){console.error(e); load.textContent='Gagal memuat data';}
+}
+
+function render(){
+  const q   = search.value.toLowerCase(),
+        filt= ori.filter((r,i)=>!i||r.join(' ').toLowerCase().includes(q)),
+        total=filt.length-1,
+        pages=Math.ceil(total/rowsPer)||1;
+  if(curPage>pages) curPage=pages;
+
+  const h = tbl.tHead, b = tbl.tBodies[0];
+  h.innerHTML = '';
+  b.innerHTML = '';
+
+  /* ---------- HEADER ---------- */
+  if(filt.length){
+    const headTr = document.createElement('tr');
+    filt[0].forEach((txt,idx)=>{
+      const th = document.createElement('th');
+      th.textContent = idx===0 ? 'NAMA BPR' : txt.toUpperCase();
+      headTr.appendChild(th);
+    });
+    h.appendChild(headTr);
+  }
+
+  /* ---------- BODY ---------- */
+  filt.forEach((row,i)=>{
+    if(!i) return;
+    if(i>=(curPage-1)*rowsPer+1 && i<=curPage*rowsPer){
+      const tr = document.createElement('tr');
+      const rowKey = JSON.stringify(row);
+      if(!lastR.includes(rowKey)){ 
+        tr.className='new'; 
+        lastR.push(rowKey);
+      }
+      row.forEach((cel,j)=>{
+        const el = document.createElement('td');
+        el.textContent = cel;
+        tr.appendChild(el);
+      });
+      b.appendChild(tr);
+    }
+  });
+
+  /* ---------- INFO & PAGINATION ---------- */
+  t.textContent = total;
+  r.textContent = Math.max(0,30-total);
+  sisa.className = total<30 ? 'box ok' : 'box full';
+  drawPg(pages);
+}
+
+function drawPg(pages){
+  pg.innerHTML='';
+  for(let i=1;i<=pages;i++){
+    const b=document.createElement('button');
+    b.textContent=i;
+    b.className=i===curPage?'on':'';
+    b.onclick=()=>{curPage=i; render();};
+    pg.appendChild(b);
+  }
+}
+
+search.oninput=()=>{curPage=1; render();};
+
+pull(); intv=setInterval(pull,5000);
+</script>
+</body>
+</html>
