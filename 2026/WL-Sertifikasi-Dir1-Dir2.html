@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Waiting List PTM Sertifikasi Kom</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 10px;
+      margin: 0;
+      padding: 2px;
+      background: transparent;
+      color: #f7f2f2;
+    }
+    .judul {
+      text-align: center;
+      margin: 0 0 0px;
+    }
+    .judul h1 {
+      font-size: 16px;
+      margin: 0;
+      color: #1a237e;
+    }
+    .judul h2 {
+      font-size: 14px;
+      margin: 0px 0;
+      color: #0d47a1;
+    }
+    .judul h3 {
+      font-size: 10px;
+      margin: 0px 0;
+      color: black;
+    }
+    form {
+      background: #fff;
+      padding: 10px;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.8);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 7px;
+      font-size: 10px;
+      margin-bottom: 6px;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+    }
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    button:active {
+      background: #0056b3;
+    }
+    #loadingBar {
+      display: none;
+      height: 3px;
+      background: #e0e0e0;
+      border-radius: 2px;
+      overflow: hidden;
+      margin-top: 4px;
+    }
+    #progressBar {
+      height: 100%;
+      background: #007bff;
+      width: 0;
+      transition: width .3s;
+    }
+  </style>
+</head>
+<body>
+
+<div class="judul">
+  <h1>CLASS WAITING LIST</h1>
+  <h2>PTM SERTIFIKASI KOMISARIS</h2>
+  <h3>(Segera Input, untuk Segera Terlaksana)</h3><br>
+</div>
+
+<form id="Form">
+  <input name="PesertaNama" required placeholder="Peserta (Nama)">
+  <input type="tel" name="PesertaNoWA" required placeholder="Peserta (NoWA), contoh:85727051675">
+
+  <input name="JatuhTempoDir1" placeholder="JthTempoSertifikat Dir1 [30/12/2021 atau 00/00/0000]">
+  <input name="JatuhTempoDir2" placeholder="JthTempoSertifikat Dir2 [30/12/2021 atau 00/00/0000]">
+  <input name="JatuhTempoKom" placeholder="JthTempoSertifikat Kom [30/12/2021 atau 00/00/0000]">
+  <input name="JatuhTempoPe" placeholder="JthTempoSertifikat PE [30/12/2021 atau 00/00/0000]">
+
+  <select name="ModulYgDiikuti" required>
+    <option value="">-- Modul Yang Diikuti --</option>
+<option>[BPR] Komisaris Full</option>
+<option>[BPR] Komisaris Lanjutan dari Direktur 1</option>
+<option>[BPR] Komisaris Lanjutan dari Direktur 2</option>
+<option>[BPR] Komisaris Lanjutan dari PE OPR</option>
+<option>[BPR] Komisaris Lanjutan dari PE AI</option>
+<option>[BPR] Komisaris Lanjutan dari PE KPR</option>
+<option>[UMUM] Komisaris Full</option>
+<option>[UMUM] Komisaris Lanjutan dari Direktur 1</option>
+<option>[UMUM] Komisaris Lanjutan dari Direktur 2</option>
+<option>[UMUM] Komisaris Lanjutan dari PE OPR</option>
+<option>[UMUM] Komisaris Lanjutan dari PE AI</option>
+<option>[UMUM] Komisaris Lanjutan dari PE KPR</option>
+  </select>
+
+  <input name="NamaBPR" required placeholder="Nama BPR/Perusahaan">
+  <input name="ContactNama" placeholder="Contact Person (Nama)">
+  <input type="tel" name="ContactNoWA" placeholder="Contact Person (NoWA), contoh:85727051675">
+
+  <button>Kirim</button>
+  <div id="loadingBar"><div id="progressBar"></div></div>
+</form>
+
+<script>
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbz9LylvgTuXsieDWC8YxIYCjEAqJ-iD9tsEWymrQ_L_ZnrJDg7wFtskiz5XHnXjPUw/exec';
+  const form = document.getElementById('Form');
+  const loadingBar = document.getElementById('loadingBar');
+  const progressBar = document.getElementById('progressBar');
+
+  form.addEventListener('submit', e => {
+    e.preventDefault();
+    loadingBar.style.display = 'block';
+    progressBar.style.width = '30%';
+    fetch(scriptURL, { method: 'POST', body: new FormData(form) })
+      .then(() => {
+        progressBar.style.width = '100%';
+        setTimeout(() => {
+          loadingBar.style.display = 'none';
+          progressBar.style.width = '0%';
+          alert('✅ Data berhasil dikirim!');
+          form.reset();
+        }, 300);
+      })
+      .catch(() => {
+        loadingBar.style.display = 'none';
+        progressBar.style.width = '0%';
+        alert('❌ Terjadi kesalahan saat mengirim data!');
+      });
+  });
+</script>
+</body>
+</html>
