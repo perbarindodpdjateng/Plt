@@ -46,7 +46,7 @@ let prev='', lastR=[], ori=[], intv, rowsPer=10, curPage=1;
 
 async function pull(){
   try{
-    const res=await fetch('https://script.google.com/macros/s/AKfycbzJXPot0pu1a6c-veOBf_sJPK--zCaCiExbfutZzvy9TJW0SkPhO1o4cJ18lK8ORgLw3g/exec',{cache:'no-store'});
+    const res=await fetch('https://script.google.com/macros/s/AKfycbx4DZjRGE_maCzChEw15MMSVqMiFNdd4Ee-bkPgT39YaMAavSrE2djay3sg_BlcMdMyTA/exec',{cache:'no-store'});
     const json=await res.json();
     const cur=JSON.stringify(json);
     if(cur!==prev){prev=cur; ori=json; render();}
