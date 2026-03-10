@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Rekap Peserta Realtime</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font:10px/1.3 "Segoe UI",Roboto,Arial,sans-serif;color:#333;background:#fff}
+    .top{display:flex;align-items:center;gap:4px;padding:2px}
+    .top h2{font-size:14px;color:#1a4e8a;white-space:nowrap}
+    .top input{flex:1;font-size:10px;padding:3px 4px;border:1px solid #bbb;border-radius:2px}
+    .boxes{display:flex;gap:6px;padding:2px}
+    .box{font-size:18px;font-weight:700;padding:6px 12px;border-radius:4px;background:#f5f5f5;white-space:nowrap}
+    .box.ok{background:#d4edda;color:#155724}
+    .box.full{background:#f8d7da;color:#721c24}
+    table{width:100%;border-collapse:collapse;font-size:9px;box-shadow:0 1px 2px rgba(0,0,0,.05);margin-top:2px}
+    th,td{padding:3px 4px;border:1px solid #e5e5e5;text-align:left}
+    th{background:#f7f7f7;position:sticky;top:0;z-index:1}
+    tr.new td{background:#e6ffe6;animation:fade .6s}
+    @keyframes fade{from{background:#c4ffc4}}
+    .pg{display:flex;justify-content:center;gap:4px;padding:2px;font-size:9px}
+    .pg button{border:1px solid #bbb;background:#fff;padding:2px 5px;border-radius:2px;cursor:pointer}
+    .pg button.on{background:#1a4e8a;color:#fff;border-color:#1a4e8a}
+    #load{font-size:10px;padding:2px}
+  </style>
+</head>
+<body>
+
+<div class="top">
+  <h2>RekapRealtime</h2>
+  <input id="search" placeholder="Cari ..." autocomplete="off"/>
+</div>
+
+<div class="boxes">
+  <span class="box">👥 Total:<b id="t">0</b></span>
+  <span id="sisa" class="box ok">✅ Sisa:<b id="r">30</b></span>
+</div>
+
+<table id="tbl"><thead></thead><tbody></tbody></table>
+<div id="pg" class="pg"></div>
+<p id="load" style="padding:2px">Memuat...</p>
+
+<script>
+let prev='', lastR=[], ori=[], intv, rowsPer=10, curPage=1;
+
+async function pull(){
+  try{
+    const res=await fetch('https://script.google.com/macros/s/AKfycbzJXPot0pu1a6c-veOBf_sJPK--zCaCiExbfutZzvy9TJW0SkPhO1o4cJ18lK8ORgLw3g/exec',{cache:'no-store'});
+    const json=await res.json();
+    const cur=JSON.stringify(json);
+    if(cur!==prev){prev=cur; ori=json; render();}
+    load.style.display='none';
+  }catch(e){console.error(e); load.textContent='Gagal';}
+}
+
+function render(){
+  const q   = search.value.toLowerCase(),
+        filt= ori.filter((r,i)=>!i||r.join(' ').toLowerCase().includes(q)),
+        total=filt.length-1,
+        pages=Math.ceil(total/rowsPer)||1;
+  if(curPage>pages) curPage=pages;
+
+  const h = tbl.tHead, b = tbl.tBodies[0];
+  h.innerHTML = '';
+  b.innerHTML = '';
+
+  /* ---------- HEADER ---------- */
+  if(filt.length){
+    const headTr = document.createElement('tr');
+    filt[0].forEach((txt,idx)=>{
+      const th = document.createElement('th');
+      th.textContent = idx===0 ? 'NAMA BPR' : txt.toUpperCase();
+      headTr.appendChild(th);
+    });
+    h.appendChild(headTr);
+  }
+
+  /* ---------- BODY ---------- */
+  filt.forEach((row,i)=>{
+    if(!i) return;                 // lewati header
+    if(i>=(curPage-1)*rowsPer+1 && i<=curPage*rowsPer){
+      const tr = document.createElement('tr');
+      if(!lastR.includes(JSON.stringify(row))){ 
+        tr.className='new'; 
+        lastR.push(JSON.stringify(row));
+      }
+      row.forEach((cel,j)=>{
+        const el = document.createElement(j?'td':'td'); // pakai td saja
+        el.textContent = cel;
+        tr.appendChild(el);
+      });
+      b.appendChild(tr);
+    }
+  });
+
+  /* ---------- INFO & PAGINATION ---------- */
+  t.textContent = total;
+  r.textContent = Math.max(0,30-total);
+  sisa.className = total<30 ? 'box ok' : 'box full';
+  drawPg(pages);
+}
+
+function drawPg(pages){
+  pg.innerHTML='';
+  for(let i=1;i<=pages;i++){
+    const b=document.createElement('button');
+    b.textContent=i;
+    b.className=i===curPage?'on':'';
+    b.onclick=()=>{curPage=i; render();};
+    pg.appendChild(b);
+  }
+}
+
+search.oninput=()=>{curPage=1; render();};
+
+pull(); intv=setInterval(pull,5000);
+</script>
+</body>
+</html>
