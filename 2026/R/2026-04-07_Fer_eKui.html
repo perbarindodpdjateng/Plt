@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Formulir Tertanam</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+    }
+    .container {
+      text-align: left;
+    }
+    iframe {
+      width: 100%;
+      height: 85vh;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <iframe
+      id="gform"
+      src="https://docs.google.com/forms/d/e/1FAIpQLSfkh2rmK-_-VBcDrMnneHo5BApQwjrjYBrsLpxHXvSbeGKHdg/viewform?embedded=true"
+      loading="lazy"
+      sandbox="allow-same-origin allow-scripts allow-forms"
+    >
+    Memuat…
+    </iframe>
+  </div>
+
+  <script>
+    let loadCount = 0;
+    document.getElementById("gform").addEventListener("load", function () {
+      if (++loadCount > 1) {
+        window.location.href = "https://docs.google.com/spreadsheets/d/1kyTRAlaXgPVXizkzlQvkRYH_pmUczfGNptdWZp82Yjs/export?format=pdf&size=7&gid=129984091&gridlines=false";
+      }
+    });
+  </script>
+</body>
+</html>
