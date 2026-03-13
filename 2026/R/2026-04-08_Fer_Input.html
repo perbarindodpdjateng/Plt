@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Konfirmasi Kehadiran</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-size: 10px;
+      margin: 0;
+      padding: 2px;
+      background: transparent;
+    }
+    .judul { text-align: center; margin: 0 0 0px; }
+    .judul h2 { font-size: 14px; margin: 0; color: #0d47a1; }
+    .judul h3 { font-size: 10px; margin: 0; color: black; }
+    form {
+      background: #fff;
+      padding: 10px;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.8);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 7px;
+      font-size: 10px;
+      margin-bottom: 6px;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+    }
+    button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+    }
+    button:disabled { background: #ccc; cursor: not-allowed; }
+    button.secondary { background: #6c757d; margin-top: 5px; }
+    button.success { background: #28a745; }
+    button.pdf { background: #dc3545; }
+    
+    .message {
+      display: none;
+      text-align: center;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 4px;
+      font-weight: bold;
+      font-size: 12px;
+    }
+    .message.success { background: #d4edda; color: #155724; }
+    .message.error { background: #f8d7da; color: #721c24; }
+    .message.warning { background: #fff3cd; color: #856404; }
+    
+    .searchable-select { position: relative; margin-bottom: 6px; }
+    .dropdown-list {
+      display: none;
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      max-height: 150px;
+      overflow-y: auto;
+      background: white;
+      border: 1px solid #bbb;
+      z-index: 1000;
+    }
+    .dropdown-list.active { display: block; }
+    .dropdown-item { padding: 7px; cursor: pointer; }
+    .dropdown-item:hover { background: #007bff; color: white; }
+
+    #pesertaContainer { margin-bottom: 6px; }
+    .peserta-item {
+      background: #f8f9fa;
+      border: 1px solid #dee2e6;
+      border-radius: 4px;
+      padding: 8px;
+      margin-bottom: 8px;
+      border-left: 3px solid #007bff;
+    }
+    .peserta-label {
+      font-size: 9px;
+      font-weight: bold;
+      color: #495057;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .loading {
+      display: none;
+      text-align: center;
+      padding: 10px;
+    }
+    .spinner {
+      border: 3px solid #f3f3f3;
+      border-top: 3px solid #007bff;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      animation: spin 1s linear infinite;
+      display: inline-block;
+      vertical-align: middle;
+      margin-right: 10px;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+<div class="judul">
+  <h2>INPUT DAFTAR PELATIHAN</h2>
+  <h3>Perbarindo DPD Jateng - Yandora</h3><br>
+</div>
+
+<form id="Form">
+
+  <select name="Pelatihan" id="Pelatihan" required>
+    <option>PTM Aplikasi Digital SIPETA (Sistem Informasi Pelaporan Tahunan) Versi 2 untuk Menyusun dan Menyampaikan Laporan Tahunan BPR/BPRS Tahun 2025 ke OJK One Click Melalui APOLO</option>
+  </select>
+  
+  <select name="Tgl" id="Tgl" required>
+    <option>07 April 2026, Metro Park View Hotel Semarang</option>
+  </select>
+  
+  <select name="Paket" id="Paket" required>
+    <option value="">-- Pilih Paket 1/2/3 --</option>
+<option>PAKET 1 : 3.150.000; 1 Org + SIPETA VER.2 (hemat 0)</option>
+<option>PAKET 1 : 4.400.000; 2 Org + SIPETA VER.2 (hemat 1.900.000)</option>
+<option>PAKET 1 : 5.650.000; 3 Org + SIPETA VER.2 (hemat 3.800.000)</option>
+<option>PAKET 1 : 6.900.000; 4 Org + SIPETA VER.2 (hemat 5.700.000)</option>
+<option>PAKET 1 : 8.150.000; 5 Org + SIPETA VER.2 (hemat 7.600.000)</option>
+<option>PAKET 1 : 9.400.000; 6 Org + SIPETA VER.2 (hemat 9.500.000)</option>
+<option>PAKET 1 : 10.650.000; 7 Org + SIPETA VER.2 (hemat 11.400.000)</option>
+<option>PAKET 1 : 11.900.000; 8 Org + SIPETA VER.2 (hemat 13.300.000)</option>
+<option>PAKET 1 : 13.150.000; 9 Org + SIPETA VER.2 (hemat 15.200.000)</option>
+<option>PAKET 1 : 14.400.000; 10 Org + SIPETA VER.2 (hemat 17.100.000)</option>
+<option>PAKET 1 : ------------</option>    
+<option>PAKET 2 : 2.150.000; 1 Org + Upgrade SIPETA Ver1 ke Ver2 (hemat 0)</option>
+<option>PAKET 2 : 3.400.000; 2 Org + Upgrade SIPETA Ver1 ke Ver2 (hemat 900.000)</option>
+<option>PAKET 2 : 4.650.000; 3 Org + Upgrade SIPETA Ver1 ke Ver2 (hemat 1.800.000)</option>
+<option>PAKET 2 : 5.900.000; 4 Org + Upgrade SIPETA Ver1 ke Ver2 (hemat 2.700.000)</option>
+<option>PAKET 2 : 7.150.000; 5 Org + Upgrade SIPETA Ver1 ke Ver2 (hemat 3.600.000)</option>
+<option>PAKET 2 : 8.400.000; 6 Org + Upgrade SIPETA Ver1 ke Ver2 (hemat 4.500.000)</option>
+<option>PAKET 2 : 9.650.000; 7 Org + Upgrade SIPETA Ver1 ke Ver2 (hemat 5.400.000)</option>
+<option>PAKET 2 : 10.900.000; 8 Org + Upgrade SIPETA Ver1 ke Ver2 (hemat 6.300.000)</option>
+<option>PAKET 2 : 12.150.000; 9 Org + Upgrade SIPETA Ver1 ke Ver2 (hemat 7.200.000)</option>
+<option>PAKET 2 : 13.400.000; 10 Org + Upgrade SIPETA Ver1 ke Ver2 (hemat 8.100.000)</option>
+
+  </select>
+
+  <select name="DPK" id="DPK" required>
+    <option value="">-- DPK/Eks.Karesidenan/LuarJateng/Umum --</option>
+    <option>DPK Soloraya</option>
+    <option>DPK Semarang</option>
+    <option>DPK Kedu</option>
+    <option>DPK Banyumas</option>
+    <option>DPK Pati</option>
+    <option>DPK Tegal (Pekalongan)</option>
+    <option>Luar Jateng</option>
+    <option>Umum</option>
+  </select>
+  
+  <div class="searchable-select">
+    <input type="text" id="NamaBPRInput" placeholder="Cari-Pilih NamaBPR / Ketik (klo tdk ada)" autocomplete="off" required>
+    <input type="hidden" name="NamaBPR" id="NamaBPRHidden">
+    <div class="dropdown-list" id="BPRDropdown"></div>
+  </div>
+
+  <input type="text" name="ContactNama" id="ContactNama" placeholder="Contact Person (Nama)">
+  <input type="tel" name="ContactNoWA" id="ContactNoWA" placeholder="Contact Person (NoWA), contoh:85727051675">
+  <input type="email" name="EmailBPR" id="EmailBPR" placeholder="Alamat Email BPR-BPRS" required>
+  
+  <select name="JumlahPeserta" id="JumlahPeserta" required>
+    <option value="">-- Pilih Jumlah Peserta --</option>
+    <option value="1">Peserta 1 Orang</option>
+    <option value="2">Peserta 2 Orang</option>
+    <option value="3">Peserta 3 Orang</option>
+    <option value="4">Peserta 4 Orang</option>
+    <option value="5">Peserta 5 Orang</option>
+    <option value="6">Peserta 6 Orang</option>
+    <option value="7">Peserta 7 Orang</option>
+    <option value="8">Peserta 8 Orang</option>
+    <option value="9">Peserta 9 Orang</option>
+    <option value="10">Peserta 10 Orang</option>
+  </select>
+
+  <div id="pesertaContainer"></div>
+  
+  <div id="loadingDiv" class="loading">
+    <div class="spinner"></div>
+    <span>Menyimpan data...</span>
+  </div>
+  
+  <div id="successMessage" class="message success">
+    ✅ Data berhasil disimpan!
+  </div>
+  <div id="errorMessage" class="message error">❌ Gagal menyimpan data!</div>
+  
+  <button type="submit" id="submitBtn">Kirim & Download PDF</button>
+</form>
+
+<script>
+  // GANTI DENGAN URL WEB APP ANDA
+  const scriptURL = 'https://script.google.com/macros/s/AKfycbwQ2hKDQMo_MUzhQ1SP2FksalisF8XlxpEejsg8hv0PLXvN3ptjGsoc-VbSfmG-ybkbxA/exec';
+  
+  const { jsPDF } = window.jspdf;
+  
+  const form = document.getElementById('Form');
+  const submitBtn = document.getElementById('submitBtn');
+  const loadingDiv = document.getElementById('loadingDiv');
+  const successMsg = document.getElementById('successMessage');
+  const errorMsg = document.getElementById('errorMessage');
+  const jumlahPesertaSelect = document.getElementById('JumlahPeserta');
+  const pesertaContainer = document.getElementById('pesertaContainer');
+  const namaBPRInput = document.getElementById('NamaBPRInput');
+  const namaBPRHidden = document.getElementById('NamaBPRHidden');
+  const dropdown = document.getElementById('BPRDropdown');
+
+  const bprList = [
+"PT. BPR Gunung Kawi",
+"PT. BPR Setia Karib Abadi",
+"BANK PEMALANG"
+  ];
+
+
+
+
+
+
+
+  
+  function renderDropdown(filter = '') {
+    dropdown.innerHTML = '';
+    const filtered = bprList.filter(item => 
+      item.toLowerCase().includes(filter.toLowerCase())
+    );
+    
+    if (filtered.length === 0) {
+      const div = document.createElement('div');
+      div.className = 'dropdown-item';
+      div.textContent = 'Ketik manual';
+      div.onclick = () => {
+        dropdown.classList.remove('active');
+      };
+      dropdown.appendChild(div);
+    } else {
+      filtered.forEach(item => {
+        const div = document.createElement('div');
+        div.className = 'dropdown-item';
+        div.textContent = item;
+        div.onclick = () => {
+          namaBPRInput.value = item;
+          namaBPRHidden.value = item;
+          dropdown.classList.remove('active');
+        };
+        dropdown.appendChild(div);
+      });
+    }
+  }
+  
+  namaBPRInput.addEventListener('focus', () => {
+    renderDropdown(namaBPRInput.value);
+    dropdown.classList.add('active');
+  });
+  
+  namaBPRInput.addEventListener('input', (e) => {
+    renderDropdown(e.target.value);
+    dropdown.classList.add('active');
+    namaBPRHidden.value = e.target.value;
+  });
+  
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.searchable-select')) {
+      dropdown.classList.remove('active');
+    }
+  });
+
+  function renderPesertaFields(jumlah) {
+    pesertaContainer.innerHTML = '';
+    const count = parseInt(jumlah) || 0;
+    
+    for (let i = 1; i <= count; i++) {
+      const div = document.createElement('div');
+      div.className = 'peserta-item';
+      div.innerHTML = `
+        <span class="peserta-label">Data Peserta ${i}</span>
+        <input type="text" name="PesertaNama${i}" id="PesertaNama${i}" placeholder="Peserta ${i} (Nama)" required>
+        <input type="tel" name="PesertaNoWA${i}" id="PesertaNoWA${i}" placeholder="Peserta ${i} (NoWA)" required>
+      `;
+      pesertaContainer.appendChild(div);
+    }
+  }
+
+  jumlahPesertaSelect.addEventListener('change', function() {
+    renderPesertaFields(this.value);
+  });
+
+  // FUNGSI GENERATE PDF CLIENT-SIDE
+  function generatePDF(data) {
+    const doc = new jsPDF();
+    
+    // Header
+    doc.setFontSize(16);
+    doc.setTextColor(26, 35, 126);
+    doc.text('KONFIRMASI PENDAFTARAN PELATIHAN', 105, 10, { align: 'center' });
+    
+    doc.setFontSize(12);
+    doc.setTextColor(0, 0, 0);
+    doc.text('PERBARINDO DPD JATENG - YANDORA', 105, 15, { align: 'center' });
+    
+    // Garis pemisah
+    doc.setDrawColor(26, 35, 126);
+    doc.line(15, 20, 195, 20);
+    
+    // Info Pendaftaran
+    doc.setFontSize(11);
+    doc.setFont(undefined, 'bold');
+    doc.text('INFORMASI PENDAFTARAN', 15, 30);
+    doc.setFont(undefined, 'normal');
+    
+    const infoData = [
+      ['Pelatihan', data.Pelatihan],
+      ['Tanggal', data.Tgl],
+      ['Paket', data.Paket],
+      ['DPK', data.DPK],
+      ['Nama BPR', data.NamaBPR],
+      ['Contact Person', data.ContactNama + ' / ' + data.ContactNoWA],
+      ['Email BPR-BPRS', data.EmailBPR],
+      ['Jumlah Peserta', data.JumlahPeserta + ' Orang']
+    ];
+    
+    doc.autoTable({
+      startY: 35,
+      head: [['Field', 'Value']],
+      body: infoData,
+      theme: 'grid',
+      headStyles: { fillColor: [26, 35, 126], textColor: 255 },
+      styles: { fontSize: 10 },
+      columnStyles: {
+        0: { cellWidth: 40, fontStyle: 'bold' },
+        1: { cellWidth: 'auto' }
+      }
+    });
+    
+    // Daftar Peserta
+    const finalY = doc.lastAutoTable.finalY + 10;
+    doc.setFont(undefined, 'bold');
+    doc.text('DAFTAR PESERTA', 15, finalY);
+    doc.setFont(undefined, 'normal');
+    
+    const pesertaData = [];
+    for (let i = 1; i <= parseInt(data.JumlahPeserta); i++) {
+      pesertaData.push([
+        i,
+        data['PesertaNama' + i],
+        data['PesertaNoWA' + i]
+      ]);
+    }
+    
+    doc.autoTable({
+      startY: finalY + 3,
+      head: [['No', 'Nama Peserta', 'No. WhatsApp']],
+      body: pesertaData,
+      theme: 'grid',
+      headStyles: { fillColor: [26, 35, 126], textColor: 255 },
+      styles: { fontSize: 10 },
+      columnStyles: {
+        0: { cellWidth: 15, halign: 'center' },
+        1: { cellWidth: 'auto' },
+        2: { cellWidth: 50 }
+      },
+      alternateRowStyles: { fillColor: [245, 245, 245] }
+    });
+    
+    // Info Pembayaran
+    const bayarY = doc.lastAutoTable.finalY + 10;
+    doc.setFillColor(227, 242, 253);
+    doc.rect(15, bayarY - 5, 180, 8, 'F');
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(13, 71, 161);
+    doc.text('INFORMASI PEMBAYARAN', 15, bayarY);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont(undefined, 'normal');
+    
+    const bayarData = [
+      ['   Berita Transfer', '060426 ' + data.NamaBPR],
+      ['   Transfer Ke', 'Bank MANDIRI 135.00.1500.2015 an. YAY.PERBARINDO SEJAHTER']
+    ];
+    
+    doc.autoTable({
+      startY: bayarY + 3,
+      body: bayarData,
+      theme: 'plain',
+      styles: { fontSize: 10 },
+      columnStyles: {
+        0: { cellWidth: 40, fontStyle: 'bold' },
+        1: { cellWidth: 'auto', fontStyle: 'bold' }
+      }
+    });
+    
+    // Info Tambahan
+    const infoY = doc.lastAutoTable.finalY + 10;
+    doc.setFillColor(232, 245, 233);
+    doc.rect(15, infoY - 5, 180, 8, 'F');
+    doc.setFont(undefined, 'bold');
+    doc.setTextColor(27, 94, 32);
+    doc.text('INFORMASI TAMBAHAN', 15, infoY);
+    doc.setTextColor(0, 0, 0);
+    doc.setFont(undefined, 'normal');
+    
+    doc.setFontSize(9);
+    const infoText = [
+      'CETAK KUITANSI:',
+      '• Tombol telah tertampil di website publikasi pelatihan',
+      '• Syarat Cetak : Telah membayar & bukti transfer telah dikirim ke WA Irin https://wa.me/6285865595963',
+      '• eKwitansi yg tercetak, akan tersimpan otomatis ke PC / HP (sesuai perangkat yg digunakan cetak)',
+      '',
+      'CETAK SERTIFIKAT:',
+      '• Akan dikirim via WA PIC & Peserta maks. H+5',
+      '',
+      'PESAN KAMAR HOTEL TEMPAT PELATIHAN :',
+      '• Via No WA Marketing Hotel, telah tertampil di Website Publikasi pelatihan dan Surat Publikasi Pelatihan'
+    ];
+    
+    let textY = infoY + 10;
+    infoText.forEach(line => {
+      if (line === '') {
+        textY += 3;
+      } else {
+        const isBold = line.startsWith('CETAK') || line.startsWith('PESAN');
+        const isLink = line.includes('http');
+        
+        if (isBold) doc.setFont(undefined, 'bold');
+        if (isLink) doc.setTextColor(21, 101, 192);
+        
+        doc.text(line, 20, textY);
+        
+        doc.setFont(undefined, 'normal');
+        doc.setTextColor(0, 0, 0);
+        textY += 5;
+      }
+    });
+    
+    // Footer
+    doc.setFontSize(8);
+    doc.setTextColor(102, 102, 102);
+    doc.text('Dicetak: ' + new Date().toLocaleString('id-ID'), 180, 285, { align: 'right' });
+    
+    // Save PDF
+    const fileName = 'Konfirmasi_' + (data.NamaBPR || 'BPR').replace(/[^a-zA-Z0-9]/g, '_') + '_' + 
+                     new Date().toISOString().slice(0,10).replace(/-/g,'') + '.pdf';
+    
+    doc.save(fileName);
+    return fileName;
+  }
+
+  // Submit handler
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    if (!form.checkValidity()) {
+      form.reportValidity();
+      return;
+    }
+    
+    if (!namaBPRHidden.value) {
+      namaBPRHidden.value = namaBPRInput.value;
+    }
+    
+    // Collect data
+    const formData = new FormData(form);
+    const data = {};
+    formData.forEach((value, key) => {
+      data[key] = value;
+    });
+    
+    console.log('Submitting data:', data);
+    
+    // Reset UI
+    submitBtn.disabled = true;
+    loadingDiv.style.display = 'block';
+    successMsg.style.display = 'none';
+    errorMsg.style.display = 'none';
+    
+    try {
+      // Send to Google Sheets
+      const response = await fetch(scriptURL, {
+        method: 'POST',
+        body: new URLSearchParams(data)
+      });
+      
+      if (!response.ok) {
+        throw new Error('HTTP error! status: ' + response.status);
+      }
+      
+      const result = await response.json();
+      console.log('Server response:', result);
+      
+      loadingDiv.style.display = 'none';
+      submitBtn.disabled = false;
+      
+      if (result.status === 'success') {
+        // SUKSES - Generate dan download PDF
+        successMsg.innerHTML = `✅ ${result.message}<br>Baris: ${result.row}`;
+        successMsg.style.display = 'block';
+        
+        try {
+          const pdfName = generatePDF(data);
+          console.log('PDF generated:', pdfName);
+        } catch (pdfError) {
+          console.error('PDF generation error:', pdfError);
+          alert('Data tersimpan, tapi PDF gagal dibuat. Error: ' + pdfError.message);
+        }
+        
+        // Reset form
+        setTimeout(() => {
+          form.reset();
+          namaBPRHidden.value = '';
+          pesertaContainer.innerHTML = '';
+          successMsg.style.display = 'none';
+        }, 5000);
+        
+      } else {
+        throw new Error(result.message);
+      }
+      
+    } catch (error) {
+      console.error('Error:', error);
+      loadingDiv.style.display = 'none';
+      submitBtn.disabled = false;
+      errorMsg.innerHTML = '❌ Error: ' + error.message + '<br>Coba refresh halaman dan kirim ulang';
+      errorMsg.style.display = 'block';
+    }
+  });
+</script>
+</body>
+</html>
