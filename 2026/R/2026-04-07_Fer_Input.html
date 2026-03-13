@@ -172,6 +172,7 @@
 
   <input type="text" name="ContactNama" id="ContactNama" placeholder="Contact Person (Nama)">
   <input type="tel" name="ContactNoWA" id="ContactNoWA" placeholder="Contact Person (NoWA), contoh:85727051675">
+  <input type="email" name="EmailBPR" id="EmailBPR" placeholder="Alamat Email BPR-BPRS" required>
   
   <select name="JumlahPeserta" id="JumlahPeserta" required>
     <option value="">-- Pilih Jumlah Peserta --</option>
@@ -224,6 +225,7 @@
 "PT. BPR Setia Karib Abadi",
 "BANK PEMALANG"
   ];
+
 
 
 
@@ -327,6 +329,7 @@
       ['DPK', data.DPK],
       ['Nama BPR', data.NamaBPR],
       ['Contact Person', data.ContactNama + ' / ' + data.ContactNoWA],
+      ['Email BPR-BPRS', data.EmailBPR],
       ['Jumlah Peserta', data.JumlahPeserta + ' Orang']
     ];
     
