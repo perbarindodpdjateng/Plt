@@ -10,26 +10,21 @@
     *{box-sizing:border-box;margin:0;padding:0}
     html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;font-size:10px;background:#fff}
 
-    /* Container rapat, proporsional */
+    /* Container full bleed - tanpa padding, tanpa centering */
     .gform-wrapper{
-      display:start;
       width:100vw;
       height:100vh;
-      align-items:center;      /* tengah vertikal */
-      justify-content:center;  /* tengah horizontal */
     }
 
-    /* Iframe lebih kecil, tetap fleksibel */
+    /* Iframe full screen - tanpa shadow, tanpa radius, tanpa max-width */
     #gform{
-      width:90vw;               /* 90% lebar viewport */
-      max-width:680px;          /* batas maksimal agar tidak terlalu lebar di desktop */
-      height:90vh;              /* 90% tinggi viewport */
+      width:100vw;
+      height:100vh;
       border:none;
-      box-shadow:0 4px 18px rgba(0,0,0,.08);
-      border-radius:6px;
+      /* box-shadow dan border-radius dihapus */
     }
 
-    /* Loader ringan (bisa dihapus jika tidak perlu) */
+    /* Loader */
     .skeleton{
       position:fixed;
       inset:0;
