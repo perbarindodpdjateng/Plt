@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <title>Formulir Google</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    /* Reset & fullscreen */
+    *{box-sizing:border-box;margin:0;padding:0}
+    html,body{height:100%;font-family:system-ui,Segoe UI,Roboto,sans-serif;font-size:10px;background:#fff}
+
+    /* Container rapat, proporsional */
+    .gform-wrapper{
+      display:start;
+      width:100vw;
+      height:100vh;
+      align-items:center;      /* tengah vertikal */
+      justify-content:center;  /* tengah horizontal */
+    }
+
+    /* Iframe lebih kecil, tetap fleksibel */
+    #gform{
+      width:90vw;               /* 90% lebar viewport */
+      max-width:680px;          /* batas maksimal agar tidak terlalu lebar di desktop */
+      height:90vh;              /* 90% tinggi viewport */
+      border:none;
+      box-shadow:0 4px 18px rgba(0,0,0,.08);
+      border-radius:6px;
+    }
+
+    /* Loader ringan (bisa dihapus jika tidak perlu) */
+    .skeleton{
+      position:fixed;
+      inset:0;
+      background:#fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      z-index:10;
+    }
+    .skeleton::after{
+      content:"";
+      width:36px;
+      height:36px;
+      border:3px solid #e0e0e0;
+      border-top-color:#1976d2;
+      border-radius:50%;
+      animation:spin .6s linear infinite;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+    .hidden{display:none}
+  </style>
+</head>
+
+<body oncontextmenu="return false"
+      onkeydown="return false"
+      onmousedown="return false">
+
+  <!-- Loader -->
+  <div id="loader" class="skeleton"></div>
+
+  <!-- Frame -->
+  <div class="gform-wrapper">
+    <iframe id="gform"
+            src="https://docs.google.com/forms/d/e/1FAIpQLScECj1uhBWfxTonvEp7RFBAY9Ro0IHAK7DdYy--_EgYFj8OcA/viewform?embedded=true"
+            loading="lazy"
+            title="Google Form">
+    </iframe>
+  </div>
+
+  <script>
+    const iframe = document.getElementById('gform');
+    const loader = document.getElementById('loader');
+    let loadCount = 0;
+
+    iframe.onload = () => {
+      loadCount++;
+      if (loadCount === 1) loader.classList.add('hidden');
+      if (loadCount > 1) {
+        window.location.href =
+          "https://docs.google.com/spreadsheets/d/1CTciRyNt6MmuvOaViYrBOOK8bX5KavfiO9T_fQBo6is/export?format=pdf&size=7&gid=488075054&gridlines=false";
+      }
+    };
+  </script>
+</body>
+</html>
