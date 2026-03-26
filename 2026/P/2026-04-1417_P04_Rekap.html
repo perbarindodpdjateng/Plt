@@ -75,6 +75,18 @@
       flex-shrink:0;
       line-height:1;
     }
+
+    header h2{
+      font-size:0.7rem;
+      font-weight:600;
+      background:linear-gradient(135deg,var(--accent) 0%,var(--accent-light) 100%);
+      -webkit-background-clip:text;
+      -webkit-text-fill-color:transparent;
+      background-clip:text;
+      white-space:nowrap;
+      flex-shrink:0;
+      line-height:1;
+    }
     
     .info-box-group{
       display:flex;
@@ -444,6 +456,7 @@
 <body>
   <header>
     <h1>📋 Rekap Peserta</h1>
+    <h2>Telah berhasil Registrasi Ulang ditandai dengan telah diterimanya PDF Konfirmasi, dan di Rekap Peserta kolom paling kanan [RU] telah muncul tanggal pelaksanaan</h2>
     <div class="info-box-group">
       <div id="infoBoxTotal" class="info-box">👥 Total: <span id="totalCount">0</span></div>
       <div id="infoBoxRemaining" class="info-box sisa-ok">✅ Sisa: <span id="remainingCount">30</span></div>
