@@ -484,7 +484,7 @@
       doc.text('BUKTI KONFIRMASI REGISTRASI PJJ PENYEGARAN DIREKTUR-KOMISARIS', 14, 12);
       doc.setFontSize(7).text('Dicetak: ' + new Date().toLocaleString('id-ID'), 14, 16);
 
-      let startY = 25;
+      let startY = 22;
       const addTable = (data, styles = {}) => {
         if (!data.length) return;
         doc.autoTable({
@@ -501,6 +501,8 @@
 
       doc.setFontSize(9).setFont(undefined, 'bold');
       doc.text('Segera Transfer Biaya : PJJ (berita : NamaPeserta PJJ) & Sertifikasi Ulang (berita : NamaPeserta SU)', 14, startY);
+      doc.text('2 BIAYA TERSEBUT DIATAS TIDAK MERUPAKAN PILIHAN PEMBAYARAN, NAMUN MERUPAKAN BIAYA SATU PAKET PEMELIHARAAN SERTIFIKAT / PENYEGARAN / PERPANJANGAN YANG HARUS DI BAYARKAN SEMUANYA, BAIK BIAYA PELATIHAN MAUPUN BIAYA SERTIFIKASI ULANG KE 2 NOMOR REKENING YG BERBEDA', 14, startY);
+
       startY += 5;
 
       doc.setFont(undefined, 'normal');
