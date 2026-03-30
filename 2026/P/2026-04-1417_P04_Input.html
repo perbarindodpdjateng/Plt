@@ -501,10 +501,10 @@
 
       doc.setFontSize(11).setFont(undefined, 'bold');
       doc.text('Segera Transfer Biaya : PJJ (berita : NamaPeserta PJJ) & Sertifikasi Ulang (berita : NamaPeserta SU)', 14, startY += 5);
-      doc.text('2 BIAYA TERSEBUT DIATAS BUKAN PILIHAN BAYAR, NAMUN BIAYA SATU PAKET YANG HARUS DI BAYARKAN SEMUANYA,', 14, startY += 5);
+      doc.text('2 BIAYA TSB DIATAS BUKAN PILIHAN BAYAR, NAMUN BIAYA  YG HARUS DI BAYARKAN SEMUANYA,', 14, startY += 5);
       doc.text('BAIK BIAYA PELATIHAN & BIAYA SERTIFIKASI ULANG KE 2 NOMOR REKENING YG BERBEDA', 14, startY += 5);
 
-      startY += 5;
+      startY += 10;
 
       doc.setFont(undefined, 'normal');
       const instructions = [
@@ -529,7 +529,7 @@
         startY += 4;
       });
 
-      doc.setFontSize(9).text('6. Surat Permohonan Perpanjangan Sertifikat Kompetensi BPR (pilih sesuai yg diperpanjang)', 14, startY + 2);
+      doc.setFontSize(11).text('6. Surat Permohonan Perpanjangan Sertifikat Kompetensi BPR (pilih sesuai yg diperpanjang)', 14, startY + 2);
       startY += 7;
 
       const moreLinks = [
@@ -551,9 +551,10 @@
         '8. FC Bukti Transfer By Sertifikasi Ulang (ke No.Rek. LSP CERTIF)',
         '9. FC NPWP BPR (bila dari BPR) atau NPWP Personal (bila dari Umum/pribadi)', '',
         'Kirim Berkas Persyaratan Fisik (Paling Lambat H-7) Ke:',
-        'Kepada Yth. Perbarindo DPD Jawa Tengah, Jl. Sendangsari Utara XIII No.187, Kel.Kalicari, Kec.Pedurungan, Semarang 50198', '',
+        'Kepada Yth. Perbarindo DPD Jateng, Jl. Sendangsari Utara 13 / 187, Kel.Kalicari, Kec.Pedurungan, Semarang 50198', '',
         'Info Lainnya: H-3 Akan dimasukkan ke WAGrup (Tersampai Modul, Jadwal serta Info Penting lainnya)',
-        'Kirim Bukti Transfer, Via WA https://wa.me/6285640316593, PIC Tanya Daftar-Berkas: Tika https://wa.me/6285640316593'
+        'Kirim Bukti Transfer, ke WA Ari https://wa.me/6285640316593',
+        'PIC Pelatihan : Tika https://wa.me/6285640316593'
       ];
       finalText.forEach(t => { doc.text(t, 14, startY); startY += (t === '' ? 3 : 5); });
 
