@@ -113,9 +113,9 @@
 <body>
 <div class="header">
   <h1>REGISTRASI ULANG</h1>
-  <h3>PTM Sertifikasi PE KPR (Kepatuhan & Pemantau Risiko)</h1>
+  <h3>PTM Sertifikasi PE KPR</h1>
   <h3>Semarang, 05-12 Mei 2026</h1>
-  <p class="subtitle">Karena Kuota hanya 30 org, Mohon Segera Registrasi Ulang</p>
+  <p class="subtitle">Kuota hanya 30 org, Segera Registrasi Ulang</p>
 </div>
 
 <div class="container">
@@ -136,7 +136,7 @@
     </div>
     <div class="card-body">
       <div class="search-section">
-        <label for="keyword">Nama Peserta Waiting List</label>
+        <label for="keyword">Nama Peserta</label>
         <div class="search-box">
           <input type="text" id="keyword" placeholder="Ketik Nama Peserta" autocomplete="off">
           <button class="btn btn-primary" onclick="cekData()" id="btnCek"><span>🔍</span> Cek Data</button>
@@ -165,18 +165,24 @@
               <label>Modul Yg DiIkuti <span class="required">*</span></label>
               <select name="ModulYgDiIkuti" required class="sertifikat-select">
                 <option value="">-- Pilih Sertifikat --</option>
-                <option>[BPR] Komisaris Full</option>
-                <option>[BPR] Komisaris Lanjutan dari Direktur 1</option>
-                <option>[BPR] Komisaris Lanjutan dari Direktur 2</option>
-                <option>[BPR] Komisaris Lanjutan dari PE OPR</option>
-                <option>[BPR] Komisaris Lanjutan dari PE AI</option>
-                <option>[BPR] Komisaris Lanjutan dari PE KPR</option>
-                <option>[UMUM] Komisaris Full</option>
-                <option>[UMUM] Komisaris Lanjutan dari Direktur 1</option>
-                <option>[UMUM] Komisaris Lanjutan dari Direktur 2</option>
-                <option>[UMUM] Komisaris Lanjutan dari PE OPR</option>
-                <option>[UMUM] Komisaris Lanjutan dari PE AI</option>
-                <option>[UMUM] Komisaris Lanjutan dari PE KPR</option>
+<option>[BPR] PeKPR Full Modul</option>
+<option>[BPR] PeKPR Lanjutan dari Kom</option>
+<option>[BPR] PeKPR Lanjutan dari Dir1</option>
+<option>[BPR] PeKPR Lanjutan dari Dir2</option>
+<option>[BPR] PeKPR Lanjutan dari PeAI</option>
+<option>[BPR] PeKPR Lanjutan dari PeOPR</option>
+<option>[BPR] PeKPR Lanjutan dari SP-KR</option>
+<option>[BPR] PeKPR Lanjutan dari SP-OP</option>
+<option>[BPR] PeKPR Lanjutan dari SP-AI</option>
+<option>[UMUM] PeKPR Full Modul</option>
+<option>[UMUM] PeKPR Lanjutan dari Kom</option>
+<option>[UMUM] PeKPR Lanjutan dari Dir1</option>
+<option>[UMUM] PeKPR Lanjutan dari Dir2</option>
+<option>[UMUM] PeKPR Lanjutan dari PeAI</option>
+<option>[UMUM] PeKPR Lanjutan dari PeOPR</option>
+<option>[UMUM] PeKPR Lanjutan dari SP-KR</option>
+<option>[UMUM] PeKPR Lanjutan dari SP-OP</option>
+<option>[UMUM] PeKPR Lanjutan dari SP-AI</option>
               </select>
             </div>
             <div class="form-group"><label>Nama BPR/Umum <span class="required">*</span></label><input name="NamaBPR" required placeholder="Nama BPR atau Umum"></div>
@@ -196,8 +202,8 @@
           </div>
           <input type="hidden" name="RekPelatihan" value="Mandiri KCP Semarang Gayamsari, 135-00-1871870-8, DPD Perbarindo Jateng.Sertifikasi">
           <input type="hidden" name="RekUjian" value="Bank Mandiri, 126.000.437.6165 Cab.Kemang Raya, PT. Lembaga Sertifikasi Profesi Certif">
-          <input type="hidden" name="Pelatihan" value="PTM Sertifikasi Komisaris">
-          <input type="hidden" name="Tanggal" value="21-30 April">
+          <input type="hidden" name="Pelatihan" value="PTM Sertifikasi PE KPR">
+          <input type="hidden" name="Tanggal" value="05-12 Mei 2026">
           <input type="hidden" name="RegistrasiUlang" value="Proses Registrasi Ulang">
           <div class="submit-section"><button type="submit" class="btn-submit"><span>✓</span> <span class="btn-text">Submit</span></button></div>
         </div>
@@ -209,7 +215,8 @@
   </div>
 
   <div class="footer">
-    <p>Info: <a href="https://wa.me/6285640316593" target="_blank">WA 0856-4031-6593 (Tika)</a></p>
+    <p>PIC Pelatihan : <a href="https://wa.me/6285640316593" target="_blank">0856-4031-6593 (Tika)</a></p>
+    <p>PIC KirimBuktiTransfer : <a href="https://wa.me/6285875657375" target="_blank">0858-7565-7375 (Ari)</a></p>
     <p style="margin-top:4px;">© 2026 DPD Perbarindo Jawa Tengah</p>
   </div>
 </div>
@@ -225,18 +232,24 @@ var CONFIG = {
   scriptURL : 'https://script.google.com/macros/s/AKfycbzgvwRQgYK4s1viij3ebluMJ9JH2l4bdLJO-YtJQHyYfNha5nIk0Ac2f8ZhTVsL2gMN5w/exec',   // ← GANTI INI
   maxKuota  : 30,
   feeMap    : {
-    '[BPR] Komisaris Full'                      : [7500000, 3219000],
-    '[BPR] Komisaris Lanjutan dari Direktur 1'  : [2000000,  888000],
-    '[BPR] Komisaris Lanjutan dari Direktur 2'  : [1000000,  499500],
-    '[BPR] Komisaris Lanjutan dari PE OPR'      : [4000000, 1665000],
-    '[BPR] Komisaris Lanjutan dari PE AI'       : [4000000, 1665000],
-    '[BPR] Komisaris Lanjutan dari PE KPR'      : [3000000, 1276500],
-    '[UMUM] Komisaris Full'                     : [8000000, 3219000],
-    '[UMUM] Komisaris Lanjutan dari Direktur 1' : [2500000,  888000],
-    '[UMUM] Komisaris Lanjutan dari Direktur 2' : [1500000,  499500],
-    '[UMUM] Komisaris Lanjutan dari PE OPR'     : [4500000, 1665000],
-    '[UMUM] Komisaris Lanjutan dari PE AI'      : [4500000, 1665000],
-    '[UMUM] Komisaris Lanjutan dari PE KPR'     : [3500000, 1276500]
+"[BPR] PeKPR Full Modul" : [5500000, 2442000],
+"[BPR] PeKPR Lanjutan dari Kom" : [1000000, 499500],
+"[BPR] PeKPR Lanjutan dari Dir1" : [1000000, 499500],
+"[BPR] PeKPR Lanjutan dari Dir2" : [1000000, 499500],
+"[BPR] PeKPR Lanjutan dari PeAI" : [2000000, 888000],
+"[BPR] PeKPR Lanjutan dari PeOPR" : [2000000, 888000],
+"[BPR] PeKPR Lanjutan dari SP-KR" : [4500000, 2053500],
+"[BPR] PeKPR Lanjutan dari SP-OP" : [4500000, 2053500],
+"[BPR] PeKPR Lanjutan dari SP-AI" : [4000000, 1665000],
+"[UMUM] PeKPR Full Modul" : [6000000, 2442000],
+"[UMUM] PeKPR Lanjutan dari Kom" : [1500000, 499500],
+"[UMUM] PeKPR Lanjutan dari Dir1" : [1500000, 499500],
+"[UMUM] PeKPR Lanjutan dari Dir2" : [1500000, 499500],
+"[UMUM] PeKPR Lanjutan dari PeAI" : [2500000, 888000],
+"[UMUM] PeKPR Lanjutan dari PeOPR" : [2500000, 888000],
+"[UMUM] PeKPR Lanjutan dari SP-KR" : [5000000, 2053500],
+"[UMUM] PeKPR Lanjutan dari SP-OP" : [5000000, 2053500],
+"[UMUM] PeKPR Lanjutan dari SP-AI" : [4500000, 1665000]
   }
 };
 
@@ -471,7 +484,7 @@ function downloadPDF(fm){
   addT(normal); addT(yellow,{fillColor:[255,255,153]}); addT(blue,{fillColor:[173,216,230]});
   doc.setFontSize(9).setFont(undefined,'bold'); doc.text('Segera Transfer Biaya Pelatihan & Biaya Ujian',14,sy); sy+=7;
   doc.setFont(undefined,'normal');
-  ['Informasi:','1. Info Pemberkasan via WA Grup','2. PIC: Tika https://wa.me/6285640316593','3. U/Pemesanan Kamar Hotel dapat hub Marketing Hotel : Jati : https://wa.me/6281219632135','4. Tanggal hadir sesuai Modul di JADWAL PELATIHAN','5. Upload BuktiTransfer: https://wa.me/6285875657375']
+  ['Informasi:','1. Maks. H-3, akan segera dibuatkan WA Grup Peserta, u/kirim Modul, ketentuan PTM, Pemberkasan dan info penting lainnya','2. PIC Pelatihan : Tika https://wa.me/6285640316593','3. PIC Kirim BuktiTransfer : Ari https://wa.me/6285875657375','4. Pesan Kamar Hotel, hub Marketing Hotel : Ayu https://wa.me/6282245959534','5. Tanggal hadir sesuai Modul di JADWAL PELATIHAN']
   .forEach(function(t){doc.text(t,14,sy);sy+=5;});
   var nm=((fm.querySelector('[name="PesertaNama"]')||{}).value||'peserta').trim().replace(/\s+/g,'-');
   doc.save('Registrasi-Ulang-'+nm+'.pdf');
