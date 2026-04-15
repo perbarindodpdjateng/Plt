@@ -490,6 +490,35 @@ function downloadPDF(fm){
   doc.save('Registrasi-Ulang-'+nm+'.pdf');
 }
 
+/*======================================== */
+ 
+      doc.setFont(undefined, 'normal');
+      const instructions = [
+        'Mohon Dilengkapi dan DIbawa saat Pelatihan (berkas Tidak Perlu distaples, cukup diklip saja):',
+        '1. FC KTP', 
+        '2. Pas foto berwarna 3x4 = 3 lbr (bag.belakang mohon diberi nama Peserta & BPR)',
+        '3. FC Sertifikat (Dir1 / Dir2 / Kom) yang dimiliki',
+        '4. Surat Keterangan Bekerja (print dengan Kop BPR)',
+        '5. FC Bukti Transfer By Pelatihan (ke No.Rek.PerbarindoJateng)',
+        '6. FC Bukti Transfer By Sertifikasi Ulang (ke No.Rek. LSP CERTIF)',
+        '7. FC NPWP BPR',
+        '8. Surat Keterangan Penugasan Kerja level 5 (form.khusus dr LSP Certif) print dengan Kop BPR'
+      ];
+      instructions.forEach(t => { doc.text(t, 14, startY); startY += 5; });
+
+      const links = [
+        { t: 'PE KPR', l: 'https://docs.google.com/document/d/1bzqdw4D5rkhi40ocg5ADb4Icg1wMuXWF/edit?usp=drive_link&ouid=101024212609727743125&rtpof=true&sd=true' }
+      ];
+      links.forEach(it => {
+        const txt = '   ' + it.t + ', klik link --> ';
+        doc.text(txt, 14, startY);
+        doc.setTextColor(0, 102, 204).textWithLink(it.t, 14 + doc.getTextWidth(txt), startY, { url: it.l });
+        doc.setTextColor(0, 0, 0);
+        startY += 4;
+      });
+  
+/*======================================== */
+    
 function handleSubmit(e){
   e.preventDefault();
   var fm=e.target, btn=fm.querySelector('button[type="submit"]'), isNew=fm.id==='reFormNew';
