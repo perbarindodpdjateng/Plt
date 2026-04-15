@@ -484,16 +484,7 @@ function downloadPDF(fm){
   addT(normal); addT(yellow,{fillColor:[255,255,153]}); addT(blue,{fillColor:[173,216,230]});
   doc.setFontSize(9).setFont(undefined,'bold'); doc.text('Segera Transfer Biaya Pelatihan & Biaya Ujian',14,sy); sy+=7;
   doc.setFont(undefined,'normal');
-  ['Informasi:','1. Maks. H-3, akan segera dibuatkan WA Grup Peserta, u/kirim Modul, ketentuan PTM, Pemberkasan dan info penting lainnya','2. PIC Pelatihan : Tika https://wa.me/6285640316593','3. PIC Kirim BuktiTransfer : Ari https://wa.me/6285875657375','4. Pesan Kamar Hotel, hub Marketing Hotel : Ayu https://wa.me/6282245959534','5. Tanggal hadir sesuai Modul di JADWAL PELATIHAN']
-  .forEach(function(t){doc.text(t,14,sy);sy+=5;});
-  var nm=((fm.querySelector('[name="PesertaNama"]')||{}).value||'peserta').trim().replace(/\s+/g,'-');
-  doc.save('Registrasi-Ulang-'+nm+'.pdf');
-}
-
-/*======================================== */
- 
-      doc.setFont(undefined, 'normal');
-      const instructions = [
+  ['Informasi:','1. Maks. H-3, akan segera dibuatkan WA Grup Peserta, u/kirim Modul, ketentuan PTM, Pemberkasan dan info penting lainnya','2. PIC Pelatihan : Tika https://wa.me/6285640316593','3. PIC Kirim BuktiTransfer : Ari https://wa.me/6285875657375','4. Pesan Kamar Hotel, hub Marketing Hotel : Ayu https://wa.me/6282245959534','5. Tanggal hadir sesuai Modul di JADWAL PELATIHAN'
         'Mohon Dilengkapi dan DIbawa saat Pelatihan (berkas Tidak Perlu distaples, cukup diklip saja):',
         '1. FC KTP', 
         '2. Pas foto berwarna 3x4 = 3 lbr (bag.belakang mohon diberi nama Peserta & BPR)',
@@ -502,10 +493,8 @@ function downloadPDF(fm){
         '5. FC Bukti Transfer By Pelatihan (ke No.Rek.PerbarindoJateng)',
         '6. FC Bukti Transfer By Sertifikasi Ulang (ke No.Rek. LSP CERTIF)',
         '7. FC NPWP BPR',
-        '8. Surat Keterangan Penugasan Kerja level 5 (form.khusus dr LSP Certif) print dengan Kop BPR'
-      ];
-      instructions.forEach(t => { doc.text(t, 14, startY); startY += 5; });
-
+        '8. Surat Keterangan Penugasan Kerja level 5 (form.khusus dr LSP Certif) print dengan Kop BPR' 
+  ];
       const links = [
         { t: 'Surat Keterangan Penugasan Kerja Level 5', l: 'https://docs.google.com/document/d/1bzqdw4D5rkhi40ocg5ADb4Icg1wMuXWF/edit?usp=drive_link&ouid=101024212609727743125&rtpof=true&sd=true' }
       ];
@@ -516,7 +505,9 @@ function downloadPDF(fm){
         doc.setTextColor(0, 0, 0);
         startY += 4;
       });
+
   
+   
 /*======================================== */
     
 function handleSubmit(e){
