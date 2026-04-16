@@ -18,42 +18,42 @@
     --accent: #F59E0B;
   }
   * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
-  html,body { width:100%; min-height:100vh; background:var(--navy); font-family:'Plus Jakarta Sans',sans-serif; color:var(--text); }
+  html,body { width:100%; height:100%; overflow:hidden; background:var(--navy); font-family:'Plus Jakarta Sans',sans-serif; color:var(--text); }
 
-  .header { background:var(--navy); padding:22px 20px 16px; text-align:center; }
-  .header h1 { font-size:20px; font-weight:800; color:var(--white); line-height:1.2; }
-  .header h2 { font-size:12.5px; font-weight:500; color:var(--white); margin-top:3px; }
+  .header { background:var(--navy); padding:10px 20px 8px; text-align:center; }
+  .header h1 { font-size:17px; font-weight:800; color:var(--white); line-height:1.2; }
+  .header h2 { font-size:11px; font-weight:500; color:rgba(255,255,255,.45); margin-top:2px; }
 
-  .card { background:var(--white); border-radius:20px 20px 0 0; padding:18px 16px 48px; min-height:calc(100vh - 82px); }
+  .card { background:var(--white); border-radius:16px 16px 0 0; padding:12px 14px 14px; height:calc(100vh - 62px); overflow-y:auto; }
 
-  .field { margin-bottom:11px; }
-  .field label { display:block; font-size:11px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:4px; }
+  .field { margin-bottom:7px; }
+  .field label { display:block; font-size:10px; font-weight:700; color:var(--muted); text-transform:uppercase; letter-spacing:.06em; margin-bottom:3px; }
   .field label .req { color:#EF4444; }
 
   select, input[type="text"] {
     width:100%; background:var(--surface); border:1.5px solid var(--border);
-    border-radius:10px; padding:10px 12px; font-size:14px;
+    border-radius:8px; padding:7px 10px; font-size:13.5px;
     font-family:'Plus Jakarta Sans',sans-serif; color:var(--text);
     outline:none; appearance:none; -webkit-appearance:none;
     transition:border-color .2s, box-shadow .2s;
   }
   select:focus, input[type="text"]:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(26,86,219,.1); background:var(--white); }
   .select-wrap { position:relative; }
-  .select-wrap::after { content:'▾'; position:absolute; right:12px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; font-size:12px; }
+  .select-wrap::after { content:'▾'; position:absolute; right:10px; top:50%; transform:translateY(-50%); color:var(--muted); pointer-events:none; font-size:12px; }
 
-  .radio-group { display:grid; gap:7px; }
+  .radio-group { display:grid; gap:5px; }
   .radio-group.col2 { grid-template-columns:1fr 1fr; }
   .radio-group.col4 { grid-template-columns:1fr 1fr 1fr 1fr; }
   .radio-opt input { display:none; }
-  .radio-opt label { display:flex; align-items:center; justify-content:center; padding:9px 6px; border:1.5px solid var(--border); border-radius:10px; font-size:13px; font-weight:500; color:var(--muted); cursor:pointer; transition:all .15s; text-align:center; line-height:1.2; }
+  .radio-opt label { display:flex; align-items:center; justify-content:center; padding:6px 4px; border:1.5px solid var(--border); border-radius:8px; font-size:12.5px; font-weight:500; color:var(--muted); cursor:pointer; transition:all .15s; text-align:center; line-height:1.2; }
   .radio-opt input:checked + label { border-color:var(--blue); background:#EFF6FF; color:var(--blue); font-weight:700; }
 
-  #nama-custom { margin-top:7px; display:none; }
+  #nama-custom { margin-top:5px; display:none; }
   #nama-custom.visible { display:block; }
 
-  .divider { height:1px; background:var(--border); margin:13px 0; }
+  .divider { height:1px; background:var(--border); margin:8px 0; }
 
-  .btn-submit { width:100%; background:linear-gradient(135deg,var(--blue) 0%,#1e40af 100%); color:var(--white); font-family:'Plus Jakarta Sans',sans-serif; font-size:15px; font-weight:700; padding:14px; border:none; border-radius:12px; cursor:pointer; margin-top:18px; box-shadow:0 6px 20px rgba(26,86,219,.35); transition:transform .15s; display:flex; align-items:center; justify-content:center; gap:8px; }
+  .btn-submit { width:100%; background:linear-gradient(135deg,var(--blue) 0%,#1e40af 100%); color:var(--white); font-family:'Plus Jakarta Sans',sans-serif; font-size:14px; font-weight:700; padding:11px; border:none; border-radius:10px; cursor:pointer; margin-top:10px; box-shadow:0 4px 14px rgba(26,86,219,.35); transition:transform .15s; display:flex; align-items:center; justify-content:center; gap:8px; }
   .btn-submit:active { transform:scale(.98); }
   .btn-submit:disabled { opacity:.6; pointer-events:none; }
   .spinner { width:16px; height:16px; border:2.5px solid rgba(255,255,255,.3); border-top-color:#fff; border-radius:50%; animation:spin .7s linear infinite; display:none; }
@@ -77,7 +77,7 @@
 <body>
 
 <div class="header">
-  <h1>DAFTAR HADIR BATCH 2</h1>
+  <h1>Daftar Hadir</h1>
   <h2>PTM Manajemen Risiko Modul 1-2</h2>
   <h2>23-24 Apr'26, Kantor Perbarindo DPD Jateng</h2>
 </div>
@@ -181,7 +181,7 @@
 
 <script>
   // ── GANTI URL INI dengan URL deployment GAS Anda ──────────────
-  const GAS_URL = "https://script.google.com/macros/s/AKfycby50p2UMkXHCM2H9SfdZUFb2Us-Uln_spGzUuf6o84iXEq_UUORBzoSDyElvNBfGGZFQA/exec";
+  const GAS_URL = "https://script.google.com/macros/s/AKfycbwN5W6KvhhMyHpSpArDgubfEazZUh4jCMHLgqEKsOF_eLJx4LsowT50CHlkjA7LHNdYIg/exec";
   // ──────────────────────────────────────────────────────────────
 
   const PELATIHAN = "PTM Manajemen Risiko Modul 1-2, Implementasi GRC & Budaya Sadar Risiko sesuai Roadmap OJK 2024-2027";
