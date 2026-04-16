@@ -80,7 +80,6 @@
   <h1>Daftar Hadir</h1>
   <h2>PTM Manajemen Risiko Modul 1-2</h2>
   <h2>23-24 Apr'26, Kantor Perbarindo DPD Jateng</h2>
-
 </div>
 
 <div class="card">
@@ -157,10 +156,10 @@
     <div class="field">
       <label>Rentang Umur <span class="req">*</span></label>
       <div class="radio-group col4">
-        <div class="radio-opt"><input type="radio" name="umur" id="u1" value="<15 tahun"><label for="u1">&lt;15</label></div>
+        <div class="radio-opt"><input type="radio" name="umur" id="u1" value="&lt;15 tahun"><label for="u1">&lt;15</label></div>
         <div class="radio-opt"><input type="radio" name="umur" id="u2" value="15-24 tahun"><label for="u2">15–24</label></div>
         <div class="radio-opt"><input type="radio" name="umur" id="u3" value="25-55 tahun"><label for="u3">25–55</label></div>
-        <div class="radio-opt"><input type="radio" name="umur" id="u4" value=">55 tahun"><label for="u4">&gt;55</label></div>
+        <div class="radio-opt"><input type="radio" name="umur" id="u4" value="&gt;55 tahun"><label for="u4">&gt;55</label></div>
       </div>
     </div>
 
@@ -181,12 +180,15 @@
 <div id="toast"></div>
 
 <script>
-  const GAS_URL = "https://script.google.com/macros/s/AKfycbwN5W6KvhhMyHpSpArDgubfEazZUh4jCMHLgqEKsOF_eLJx4LsowT50CHlkjA7LHNdYIg/exec";
-  const PELATIHAN = "PTM Manajemen Risiko Modul 1-2, Implementasi GRC & Budaya Sadar Risiko sesuai Roadmap OJK 2024-2027";
-  const TANGGAL = "23-24 April 2026";
-  const TEMPAT = "Kantor Perbarindo DPD Jawa Tengah";
+  // ── GANTI URL INI dengan URL deployment GAS Anda ──────────────
+  const GAS_URL = "https://script.google.com/macros/s/AKfycby50p2UMkXHCM2H9SfdZUFb2Us-Uln_spGzUuf6o84iXEq_UUORBzoSDyElvNBfGGZFQA/exec";
+  // ──────────────────────────────────────────────────────────────
 
-  const sel = document.getElementById('nama_peserta_select');
+  const PELATIHAN = "PTM Manajemen Risiko Modul 1-2, Implementasi GRC & Budaya Sadar Risiko sesuai Roadmap OJK 2024-2027";
+  const TANGGAL   = "23-24 April 2026";
+  const TEMPAT    = "Kantor Perbarindo DPD Jawa Tengah";
+
+  const sel    = document.getElementById('nama_peserta_select');
   const custom = document.getElementById('nama-custom');
 
   sel.addEventListener('change', () => {
@@ -213,24 +215,40 @@
   document.getElementById('mainForm').addEventListener('submit', async (e) => {
     e.preventDefault();
     if (!validate()) return;
+
     const btn = document.getElementById('btnSubmit');
     btn.classList.add('loading'); btn.disabled = true;
+
     const nama = sel.value === '__lainnya__' ? custom.value.trim() : sel.value;
-    const payload = {
-      pelatihan: PELATIHAN, tanggal: TANGGAL, tempat: TEMPAT,
-      nama_bpr: document.getElementById('nama_bpr').value,
-      nama_peserta: nama,
-      jabatan: document.getElementById('jabatan').value.trim(),
+    const ts   = new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' });
+
+    // ── FIX: kirim sebagai application/x-www-form-urlencoded ──
+    // Format ini paling reliable dengan mode:'no-cors' + GAS e.parameter
+    const params = new URLSearchParams({
+      pelatihan    : PELATIHAN,
+      tanggal      : TANGGAL,
+      tempat       : TEMPAT,
+      nama_bpr     : document.getElementById('nama_bpr').value,
+      nama_peserta : nama,
+      jabatan      : document.getElementById('jabatan').value.trim(),
       jenis_kelamin: document.querySelector('input[name="jk"]:checked').value,
-      rentang_umur: document.querySelector('input[name="umur"]:checked').value,
-      timestamp: new Date().toLocaleString('id-ID', { timeZone: 'Asia/Jakarta' })
-    };
+      rentang_umur : document.querySelector('input[name="umur"]:checked').value,
+      timestamp    : ts
+    });
+
     try {
-      await fetch(GAS_URL, { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
-      document.getElementById('success-msg').innerHTML = '<b>' + nama + '</b> berhasil dicatat. Selamat mengikuti pelatihan! 🎉';
+      await fetch(GAS_URL, {
+        method : 'POST',
+        mode   : 'no-cors',                                        // wajib untuk GAS
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body   : params.toString()
+      });
+      // no-cors → response selalu opaque, anggap sukses jika tidak throw
+      document.getElementById('success-msg').innerHTML =
+        '<b>' + nama + '</b> berhasil dicatat.<br>Selamat mengikuti pelatihan! 🎉';
       document.getElementById('success-overlay').classList.add('show');
-    } catch {
-      toast('❌ Gagal mengirim. Periksa koneksi.');
+    } catch (err) {
+      toast('❌ Gagal mengirim. Periksa koneksi internet.');
     } finally {
       btn.classList.remove('loading'); btn.disabled = false;
     }
