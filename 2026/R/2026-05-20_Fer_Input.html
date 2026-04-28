@@ -111,36 +111,25 @@
 <form id="Form">
 
   <select name="Pelatihan" id="Pelatihan" required>
-    <option>PTM Analisis Kredit Berbasis Prinsip 5C dengan Pemanfaatan Aplikasi Pendukung ALMA - Kredit Analisis dan Lifecycle Berbasis Risiko (ALMA - KALIBER) Versi 1.4 sebagai alat bantu dokumentasi dan standardisasi proses analisis kredit di BPR</option>
+    <option>PTM Aplikasi Digital SIP-PTI (Sistem Informasi Pendukung Penyelenggaraan Teknologi Informasi) BPR/BPRS sesuai POJK No. 34 Tahun 2025 dan PADK No. 43/PADK.03/2025 tentang Penyelenggaraan Teknologi Informasi oleh BPR dan BPRS</option>
   </select>
   
   <select name="Tgl" id="Tgl" required>
-    <option>08 Mei 2026, Front One HK Resort Simpang Lima Semarang</option>
+    <option>22 Mei 2026, Hotel Metro Park View Semarang</option>
   </select>
   
   <select name="Paket" id="Paket" required>
     <option value="">-- Pilih Paket 1/2/3 --</option>
-<option>PAKET 1 : 2.650.000; 1 Org + ALMA KALIBER Versi 1.4  (hemat 0)</option>
-<option>PAKET 1 : 4.200.000; 2 Org + ALMA KALIBER Versi 1.4  (hemat 1.100.000)</option>
-<option>PAKET 1 : 5.750.000; 3 Org + ALMA KALIBER Versi 1.4  (hemat 2.200.000)</option>
-<option>PAKET 1 : 7.300.000; 4 Org + ALMA KALIBER Versi 1.4  (hemat 3.300.000)</option>
-<option>PAKET 1 : 8.850.000; 5 Org + ALMA KALIBER Versi 1.4  (hemat 4.400.000)</option>
-<option>PAKET 1 : 10.400.000; 6 Org + ALMA KALIBER Versi 1.4  (hemat 5.500.000)</option>
-<option>PAKET 1 : 11.950.000; 7 Org + ALMA KALIBER Versi 1.4  (hemat 6.600.000)</option>
-<option>PAKET 1 : 13.500.000; 8 Org + ALMA KALIBER Versi 1.4  (hemat 7.700.000)</option>
-<option>PAKET 1 : 15.050.000; 9 Org + ALMA KALIBER Versi 1.4  (hemat 8.800.000)</option>
-<option>PAKET 1 : 16.600.000; 10 Org + ALMA KALIBER Versi 1.4  (hemat 9.900.000)</option>
-<option>--------</option>
-<option>PAKET 2 : 1.800.000; 1 Org + Upgrade ALMA KALIBER Ver 1.2 ke Ver 1.4  (hemat 0)</option>
-<option>PAKET 2 : 3.350.000; 2 Org + Upgrade ALMA KALIBER Ver 1.2 ke Ver 1.4  (hemat 250.000)</option>
-<option>PAKET 2 : 4.900.000; 3 Org + Upgrade ALMA KALIBER Ver 1.2 ke Ver 1.4  (hemat 500.000)</option>
-<option>PAKET 2 : 6.450.000; 4 Org + Upgrade ALMA KALIBER Ver 1.2 ke Ver 1.4  (hemat 750.000)</option>
-<option>PAKET 2 : 8.000.000; 5 Org + Upgrade ALMA KALIBER Ver 1.2 ke Ver 1.4  (hemat 1.000.000)</option>
-<option>PAKET 2 : 9.550.000; 6 Org + Upgrade ALMA KALIBER Ver 1.2 ke Ver 1.4  (hemat 1.250.000)</option>
-<option>PAKET 2 : 11.100.000; 7 Org + Upgrade ALMA KALIBER Ver 1.2 ke Ver 1.4  (hemat 1.500.000)</option>
-<option>PAKET 2 : 12.650.000; 8 Org + Upgrade ALMA KALIBER Ver 1.2 ke Ver 1.4  (hemat 1.750.000)</option>
-<option>PAKET 2 : 14.200.000; 9 Org + Upgrade ALMA KALIBER Ver 1.2 ke Ver 1.4  (hemat 2.000.000)</option>
-<option>PAKET 2 : 15.750.000; 10 Org + Upgrade ALMA KALIBER Ver 1.2 ke Ver 1.4  (hemat 2.250.000)</option>
+<option>3.050.000; 1 Org + SIP-PTI (hemat 0)</option>
+<option>4.300.000; 2 Org + SIP-PTI (hemat 1.800.000)</option>
+<option>5.550.000; 3 Org + SIP-PTI (hemat 3.600.000)</option>
+<option>6.800.000; 4 Org + SIP-PTI (hemat 5.400.000)</option>
+<option>8.050.000; 5 Org + SIP-PTI (hemat 7.200.000)</option>
+<option>9.300.000; 6 Org + SIP-PTI (hemat 9.000.000)</option>
+<option>10.550.000; 7 Org + SIP-PTI (hemat 10.800.000)</option>
+<option>11.800.000; 8 Org + SIP-PTI (hemat 12.600.000)</option>
+<option>13.050.000; 9 Org + SIP-PTI (hemat 14.400.000)</option>
+<option>14.300.000; 10 Org + SIP-PTI (hemat 16.200.000)</option>
   </select>
 
   <select name="DPK" id="DPK" required>
@@ -1262,7 +1251,7 @@
       div.className = 'peserta-item';
       div.innerHTML = `
         <span class="peserta-label">Data Peserta ${i}</span>
-        <input type="text" name="PesertaNama${i}" id="PesertaNama${i}" placeholder="Peserta ${i} (Nama)" required>
+        <input type="text" name="PesertaNama${i}" id="PesertaNama${i}" placeholder="Peserta ${i} (Nama Lengkap + Tittel u/Sertifikat)" required>
         <input type="tel" name="PesertaNoWA${i}" id="PesertaNoWA${i}" placeholder="Peserta ${i} (NoWA)" required>
       `;
       pesertaContainer.appendChild(div);
