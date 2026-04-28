@@ -1,1 +1,40 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Formulir Google</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
 
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false;" onkeydown="return false;" onmousedown="return false;">
+  <iframe 
+    loading="lazy" 
+    src="https://docs.google.com/forms/d/e/1FAIpQLScJsv1mPoOq1svr-Q6CwNcusDMVm10o9mD1mWmvUQ7ZBg1z7A/viewform?embedded=true">
+  </iframe>
+
+  <script>
+    let loadCount = 0;
+    const iframe = document.querySelector("iframe");
+    iframe.onload = function() {
+      loadCount++;
+      if (loadCount > 1) {
+        window.location.href = "https://docs.google.com/spreadsheets/d/1je94y9n97QVdDszJvF7n91OrqapZJpAShvxm-jrd4uY/export?format=pdf&size=7&gid=860984090&gridlines=false";
+      }
+    };
+  </script>
+</body>
+</html>
