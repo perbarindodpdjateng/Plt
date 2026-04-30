@@ -530,7 +530,7 @@
       });
 
       doc.setFontSize(11).text('6. Surat Permohonan Perpanjangan Sertifikat Kompetensi BPR (pilih sesuai yg diperpanjang)', 14, startY + 2);
-      startY += 5;
+      startY += 7;
 
       const moreLinks = [
         { t: 'Direktur Tk 1', l: 'https://drive.google.com/file/d/1MDAr_BhHieRRxBONZbEqcDORbsi88O2_/view?usp=drive_link' },
@@ -555,7 +555,6 @@
         'Jl. Sendangsari Utara 13 / 187, Kel.Kalicari, Kec.Pedurungan, Semarang 50198',
         ' ',
         'Info Lainnya: H-3 Akan dimasukkan ke WAGrup (Tersampai Modul, Jadwal serta Info Penting lainnya)',
-        ' ',
         'Kirim BuktiTransfer Ari https://wa.me/6285640316593; PIC Pelatihan Tika https://wa.me/6285640316593'
       ];
       finalText.forEach(t => { doc.text(t, 14, startY); startY += (t === '' ? 3 : 5); });
