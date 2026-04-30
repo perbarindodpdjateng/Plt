@@ -504,7 +504,7 @@
       doc.text('2 BIAYA TSB DIATAS BUKAN PILIHAN BAYAR, NAMUN BIAYA YG HARUS DI BAYAR SEMUA,', 14, startY += 5);
       doc.text('BAIK BIAYA PELATIHAN & BIAYA SERTIFIKASI ULANG (SU)KE 2 NO.REK BERBEDA (TSB DIATAS)', 14, startY += 5);
 
-      startY += 3;
+      startY += 5;
 
       doc.setFont(undefined, 'normal');
       const instructions = [
@@ -526,11 +526,11 @@
         doc.text(txt, 14, startY);
         doc.setTextColor(0, 102, 204).textWithLink(it.t, 14 + doc.getTextWidth(txt), startY, { url: it.l });
         doc.setTextColor(0, 0, 0);
-        startY += 3;
+        startY += 5;
       });
 
       doc.setFontSize(11).text('6. Surat Permohonan Perpanjangan Sertifikat Kompetensi BPR (pilih sesuai yg diperpanjang)', 14, startY + 2);
-      startY += 7;
+      startY += 5;
 
       const moreLinks = [
         { t: 'Direktur Tk 1', l: 'https://drive.google.com/file/d/1MDAr_BhHieRRxBONZbEqcDORbsi88O2_/view?usp=drive_link' },
@@ -549,10 +549,10 @@
       const finalText = [
         '7. FC Bukti Transfer By Pelatihan (ke No.Rek.PerbarindoJateng)',
         '8. FC Bukti Transfer By Sertifikasi Ulang (ke No.Rek. LSP CERTIF)',
-        '9. FC NPWP BPR (bila dari BPR) atau NPWP Personal (bila dari Umum/pribadi)',
+        '9. FC NPWP BPR (bila dari BPR) atau NPWP Personal (bila dari Umum/pribadi)', ' ",
         'Kirim Berkas Persyaratan Fisik (Paling Lambat H-7) Ke: Kepada Yth. Perbarindo DPD Jawa Tengah,',
-        'Jl. Sendangsari Utara 13 / 187, Kel.Kalicari, Kec.Pedurungan, Semarang 50198',
-        'Info Lainnya: H-3 Akan dimasukkan ke WAGrup (Tersampai Modul, Jadwal serta Info Penting lainnya)',
+        'Jl. Sendangsari Utara 13 / 187, Kel.Kalicari, Kec.Pedurungan, Semarang 50198',' ",
+        'Info Lainnya: H-3 Akan dimasukkan ke WAGrup (Tersampai Modul, Jadwal serta Info Penting lainnya)',' ",
         'Kirim BuktiTransfer Ari https://wa.me/6285640316593; PIC Pelatihan Tika https://wa.me/6285640316593'
       ];
       finalText.forEach(t => { doc.text(t, 14, startY); startY += (t === '' ? 3 : 5); });
