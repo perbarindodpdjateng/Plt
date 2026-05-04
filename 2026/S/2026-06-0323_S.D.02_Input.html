@@ -186,7 +186,6 @@
 <option>[UMUM] Direktur 2 Lanjutan dari Dir1+PeOPR</option>
 <option>[UMUM] Direktur 2 Lanjutan dari Dir1+PeAI</option>
 <option>[UMUM] Direktur 2 Lanjutan dari Dir1+PeKPR</option>
-
               </select>
             </div>
             <div class="form-group"><label>Nama BPR/Umum <span class="required">*</span></label><input name="NamaBPR" required placeholder="Nama BPR atau Umum"></div>
@@ -228,12 +227,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
 <script>
-/* ================================================================
- * ⚠️  GANTI scriptURL dengan URL baru hasil deploy GAS!
- *     Setelah deploy kode GAS baru, copy URL-nya ke sini.
- * ================================================================ */
 var CONFIG = {
-  scriptURL : 'https://script.google.com/macros/s/AKfycbwYMnOH42aAU7FcJujh2hv1ICLCIAbabLwE-0II94nOpHuwSVkWuy49tgg6J-iIbRPj/exec',   // ← GANTI INI
+  scriptURL : 'https://script.google.com/macros/s/AKfycbwYMnOH42aAU7FcJujh2hv1ICLCIAbabLwE-0II94nOpHuwSVkWuy49tgg6J-iIbRPj/exec',
   maxKuota  : 30,
   feeMap    : {
 "[BPR] Direktur 1 Full Modul" : [9500000, 4384500],
@@ -258,7 +253,6 @@ var CONFIG = {
 "[UMUM] Direktur 2 Lanjutan dari Dir1+PeOPR" : [2500000, 888000],
 "[UMUM] Direktur 2 Lanjutan dari Dir1+PeAI" : [2500000, 888000],
 "[UMUM] Direktur 2 Lanjutan dari Dir1+PeKPR" : [2500000, 888000]
-
   }
 };
 
@@ -269,14 +263,6 @@ function cleanNum(v)     { return parseInt(String(v||'0').replace(/\D/g,''),10)|
 function formatRp(n)     { return 'Rp '+cleanNum(n).toLocaleString('id-ID').replace(/,/g,'.'); }
 function getBiaya(j)     { return CONFIG.feeMap[j]||[0,0]; }
 
-/* ================================================================
- * gasGet — fetch() dengan no-cors mode sebagai fallback
- *
- * Strategi 3 lapis:
- *  1. fetch() normal (berhasil jika GAS sudah kirim CORS header)
- *  2. JSONP via <script> tag (fallback jika CORS tidak ada)
- *  3. Timeout 20 detik
- * ================================================================ */
 function gasGet(params, callback) {
   var qs = Object.keys(params).map(function(k){
     return encodeURIComponent(k)+'='+encodeURIComponent(params[k]);
@@ -295,12 +281,10 @@ function gasGet(params, callback) {
     callback(err, data);
   }
 
-  /* ── Coba 1: fetch() ── */
   fetch(url, {redirect:'follow'})
     .then(function(r){ return r.text(); })
     .then(function(txt){
       var t = txt.trim();
-      // strip JSONP wrapper jika ada
       var m = t.match(/^[a-zA-Z0-9_]+\s*\(([\s\S]*)\)\s*;?\s*$/);
       if(m) t = m[1];
       try { finish(null, JSON.parse(t)); }
@@ -308,26 +292,21 @@ function gasGet(params, callback) {
     })
     .catch(function(){ tryJSONP(); });
 
-  /* ── Coba 2: JSONP ── */
   function tryJSONP(){
     if(done) return;
     var cbName = '_gcb_'+Date.now()+'_'+(Math.random()*1e6|0);
     var sc = document.createElement('script');
-
     window[cbName] = function(data){ cleanup(); finish(null, data); };
     sc.onerror = function(){ cleanup(); finish(new Error('LOAD_ERROR')); };
-
     function cleanup(){
       delete window[cbName];
       if(sc.parentNode) sc.parentNode.removeChild(sc);
     }
-
     sc.src = url + '&callback=' + cbName;
     document.head.appendChild(sc);
   }
 }
 
-/* ── iframePost untuk submit form ── */
 function iframePost(url, dataObj, callback) {
   var cbName='_gp_'+Date.now(), iId='ifr_'+cbName;
   var ifr=document.createElement('iframe');
@@ -346,13 +325,12 @@ function iframePost(url, dataObj, callback) {
   frm.submit();
 }
 
-/* ── UI ── */
 function updateKuota(){
   var el=$id('kuotaStatus'), bn=$id('kuotaHabisBanner');
   var c=currentKuota.count, m=currentKuota.max, a=currentKuota.available;
-  if(a<=0){ el.className='kuota-box full'; el.innerHTML='<div>⛔ KUOTA HABIS '+c+'/'+m+'</div>'; bn.classList.add('show'); }
-  else if(a<=5){ el.className='kuota-box waiting'; el.innerHTML='<div>⚠️ TERSISA '+a+' ('+c+'/'+m+')</div>'; bn.classList.remove('show'); }
-  else { el.className='kuota-box available'; el.innerHTML='<div>✅ Tersedia '+a+' kuota</div>'; bn.classList.remove('show'); }
+  if(a<=0){ el.className='kuota-box full'; el.innerHTML='<div>&#x26D4; KUOTA HABIS '+c+'/'+m+'</div>'; bn.classList.add('show'); }
+  else if(a<=5){ el.className='kuota-box waiting'; el.innerHTML='<div>&#x26A0;&#xFE0F; TERSISA '+a+' ('+c+'/'+m+')</div>'; bn.classList.remove('show'); }
+  else { el.className='kuota-box available'; el.innerHTML='<div>&#x2705; Tersedia '+a+' kuota</div>'; bn.classList.remove('show'); }
 }
 
 function showMsg(type, text, dur){
@@ -382,7 +360,7 @@ function initForms(){
     var cl=tpl.content.cloneNode(true), fm=$id('reForm'+type);
     var h3=cl.querySelector('h3'), p=cl.querySelector('p'), bt=cl.querySelector('.btn-text');
     if(type==='Found'){
-      h3.innerHTML='📋 Data Peserta Ditemukan';
+      h3.innerHTML='&#x1F4CB; Data Peserta Ditemukan';
       p.textContent='Data Anda sudah terdaftar. Silakan lengkapi / perbarui informasi di bawah ini.';
       bt.textContent='SEGERA REGISTRASI ULANG';
       ['PesertaNama','PesertaNoWA','NamaBPR','ContactNama','ContactNoWA'].forEach(function(n){
@@ -390,7 +368,7 @@ function initForms(){
       });
       cl.querySelectorAll('.required').forEach(function(el){el.remove();});
     } else {
-      h3.innerHTML='📝 Formulir Pendaftaran Baru';
+      h3.innerHTML='&#x1F4DD; Formulir Pendaftaran Baru';
       p.textContent='Data tidak ditemukan. Silakan isi formulir pendaftaran baru.';
       bt.textContent='Submit Pendaftaran Baru';
     }
@@ -400,12 +378,10 @@ function initForms(){
   });
 }
 
-/* ── cekData ── */
 function cekData(){
   var kw=$id('keyword').value.trim();
   if(!kw){ showMsg('error','Silakan isi nama peserta terlebih dahulu'); return; }
 
-  // Cek apakah URL sudah diganti
   if(CONFIG.scriptURL === 'GANTI_DENGAN_URL_GAS_BARU'){
     showMsg('error',
       '<b>scriptURL belum diisi!</b><br>'+
@@ -425,13 +401,12 @@ function cekData(){
 
   gasGet({action:'cek', keyword:kw}, function(err, res){
     done();
-
     if(err){
       var msg = err.message==='TIMEOUT'
         ? '<b>Timeout</b> — server GAS tidak merespons 20 detik.<br>Cek: Execution log di Apps Script, atau nama sheet "FormResponses".'
         : '<b>Koneksi ke GAS gagal.</b><br><br>'+
           'Kemungkinan penyebab:<br>'+
-          '1. <b>Who has access</b> masih "Anyone with Google Account" → harus "Anyone"<br>'+
+          '1. <b>Who has access</b> masih "Anyone with Google Account" &rarr; harus "Anyone"<br>'+
           '2. <b>Belum redeploy New Version</b> setelah edit kode GAS<br>'+
           '3. <b>URL scriptURL sudah kadaluarsa</b> — copy URL terbaru dari GAS<br><br>'+
           'Test URL GAS langsung di browser:<br>'+
@@ -441,12 +416,10 @@ function cekData(){
       showMsg('error', msg, 0);
       return;
     }
-
     if(res.count!==undefined){
       currentKuota={count:res.count,max:res.max||CONFIG.maxKuota,available:res.available!==undefined?res.available:(res.max||CONFIG.maxKuota)-res.count};
       updateKuota();
     }
-
     if(res.status==='found'){
       $id('kuotaHabisBanner').classList.remove('show');
       showMsg('success','Data ditemukan! Segera lengkapi registrasi ulang.');
@@ -477,6 +450,14 @@ function populateForm(fm,data){
   } else { updateFee(fm,data.ModulYgDiIkuti||''); }
 }
 
+/* ================================================================
+ * downloadPDF — FIXED:
+ * BUG 1: Variabel 'infoList' tidak terdefinisi → dihapus, diganti
+ *        dengan infoList1/2/3 yang sudah benar
+ * BUG 2: Loop links menggunakan it.t dua kali (duplikat teks) →
+ *        ganti property 'l' menjadi 'url' dan 't' menjadi 'label'
+ *        agar teks label dan URL link terpisah dengan jelas
+ * ================================================================ */
 function downloadPDF(fm){
   var jsPDF=window.jspdf.jsPDF, doc=new jsPDF('p','mm','a4');
   var all=Array.from(fm.elements).filter(function(el){return el.name&&el.value;}).map(function(el){return[el.name,el.value];});
@@ -484,80 +465,100 @@ function downloadPDF(fm){
   var normal=all.filter(function(r){return yF.indexOf(r[0])===-1&&bF.indexOf(r[0])===-1;});
   var yellow=all.filter(function(r){return yF.indexOf(r[0])!==-1;});
   var blue=all.filter(function(r){return bF.indexOf(r[0])!==-1;});
+
   doc.setFontSize(13).setFont(undefined,'bold');
   doc.text('BUKTI KONFIRMASI REGISTRASI PTM SERTIFIKASI DIREKTUR TK 1 - TK 2',14,12);
   doc.setFontSize(7).setFont(undefined,'normal');
   doc.text('Dicetak: '+new Date().toLocaleString('id-ID'),14,16);
+
   var sy=25;
-  function addT(d,bs){if(!d.length)return;var o={head:[['Field','Value']],body:d,startY:sy,theme:'grid',styles:{fontSize:9},headStyles:{fillColor:[66,139,202],textColor:255}};if(bs)o.bodyStyles=bs;doc.autoTable(o);sy=doc.lastAutoTable.finalY+5;}
-  addT(normal); addT(yellow,{fillColor:[255,255,153]}); addT(blue,{fillColor:[173,216,230]});
-  doc.setFontSize(9).setFont(undefined,'bold'); doc.text('Segera Transfer Biaya Pelatihan & Biaya Ujian',14,sy); sy+=7;
-  doc.setFont(undefined,'normal');
-  
-  // Array informasi yang akan ditampilkan
-var infoList1 = [
-  'Informasi:',
-  '1. Maks. H-3, akan segera dibuatkan WA Grup Peserta, u/kirim Modul, ketentuan PTM, Pemberkasan dan info penting lainnya',
-  '2. PIC Pelatihan : Tika https://wa.me/6285640316593',
-  '3. PIC Kirim BuktiTransfer : Ari https://wa.me/6285875657375',
-  '4. Pesan Kamar Hotel, hub Marketing Hotel : Ayu https://wa.me/6282245959534',
-  '5. Tanggal hadir sesuai Modul di JADWAL PELATIHAN',
-  ' '
-];
+  function addT(d,bs){
+    if(!d.length)return;
+    var o={head:[['Field','Value']],body:d,startY:sy,theme:'grid',styles:{fontSize:9},headStyles:{fillColor:[66,139,202],textColor:255}};
+    if(bs)o.bodyStyles=bs;
+    doc.autoTable(o);
+    sy=doc.lastAutoTable.finalY+5;
+  }
+  addT(normal);
+  addT(yellow,{fillColor:[255,255,153]});
+  addT(blue,{fillColor:[173,216,230]});
 
-var infoList2 = [
-  'Mohon Dilengkapi dan DIbawa saat Pelatihan (berkas Tidak Perlu distaples, cukup diklip saja):'
-];
+  doc.setFontSize(9).setFont(undefined,'bold');
+  doc.text('Segera Transfer Biaya Pelatihan & Biaya Ujian',14,sy);
+  sy+=7;
 
-var infoList3 = [
-  '1. FC KTP',
-  '2. Pas foto berwarna 3x4 = 3 lbr (bag.belakang mohon diberi nama Peserta & BPR)',
-  '3. FC Sertifikat (Dir1 / Dir2 / Kom) yang dimiliki',
-  '4. Surat Keterangan Bekerja (print dengan Kop BPR)',
-  '5. FC Bukti Transfer By Pelatihan (ke No.Rek.PerbarindoJateng)',
-  '6. FC Bukti Transfer By Sertifikasi Ulang (ke No.Rek. LSP CERTIF)',
-  '7. FC NPWP BPR',
-  '8. Surat Keterangan Penugasan Kerja level 6 (form.khusus dr LSP Certif) print dengan Kop BPR'
-];
-
-// Tampilkan bagian 1 - font normal
-doc.setFontSize(9);
-doc.setFont(undefined, 'normal');
-infoList1.forEach(function(t) { doc.text(t, 14, sy); sy += 6; });
-
-// Tampilkan bagian 2 - font bold
-doc.setFont(undefined, 'bold');
-infoList2.forEach(function(t) { doc.text(t, 14, sy); sy += 6; });
-
-// Tampilkan bagian 3 - font normal kembali
-doc.setFont(undefined, 'normal');
-infoList3.forEach(function(t) { doc.text(t, 14, sy); sy += 6; });
-  
-  // Tampilkan setiap baris informasi
-  infoList.forEach(function(t){doc.text(t,14,sy);sy+=5;});
-  
-  // Tambahkan link dengan jarak
-  sy += 3;
-  
-  // Data link yang akan ditampilkan
-  var links = [
-    { t: ' Surat Keterangan Penugasan Kerja Level 6 - Direktur Tk 1', l: 'https://docs.google.com/document/d/1kYWEMpFY3GE3ApR464KTcAorO7Y9iLj6/edit?usp=drive_link&ouid=101024212609727743125&rtpof=true&sd=true' },
-    { t: ' Surat Keterangan Penugasan Kerja Level 6 - Direktur Tk 2', l: 'https://docs.google.com/document/d/1TFZQrzaBAVzHtI-eEFwTxgK9BiFn6A9U/edit?usp=drive_link&ouid=101024212609727743125&rtpof=true&sd=true' }
+  // ── BAGIAN 1: Informasi umum (font normal) ──
+  var infoList1 = [
+    'Informasi:',
+    '1. Maks. H-3, akan segera dibuatkan WA Grup Peserta, u/kirim Modul, ketentuan PTM,',
+    '   Pemberkasan dan info penting lainnya',
+    '2. PIC Pelatihan : Tika - WA 0856-4031-6593',
+    '3. PIC Kirim Bukti Transfer : Ari - WA 0858-7565-7375',
+    '4. Pesan Kamar Hotel, hub Marketing Hotel : Ayu - WA 0822-4595-9534',
+    '5. Tanggal hadir sesuai Modul di JADWAL PELATIHAN',
+    ' '
   ];
-  
-  // Loop untuk menampilkan setiap link
-  links.forEach(function(it) {
-    var txt = '   ' + it.t + ', klik link --> ';
-    doc.text(txt, 14, sy);
-    doc.setTextColor(0, 102, 204).textWithLink(it.t, 14 + doc.getTextWidth(txt), sy, { url: it.l });
-    doc.setTextColor(0, 0, 0);
-    sy += 6;
+
+  // ── BAGIAN 2: Judul kelengkapan berkas (font bold) ──
+  var infoList2 = [
+    'Mohon Dilengkapi dan Dibawa saat Pelatihan (berkas Tidak Perlu distaples, cukup diklip):'
+  ];
+
+  // ── BAGIAN 3: Daftar berkas (font normal) ──
+  var infoList3 = [
+    '1. FC KTP',
+    '2. Pas foto berwarna 3x4 = 3 lbr (bag.belakang mohon diberi nama Peserta & BPR)',
+    '3. FC Sertifikat (Dir1 / Dir2 / Kom) yang dimiliki',
+    '4. Surat Keterangan Bekerja (print dengan Kop BPR)',
+    '5. FC Bukti Transfer Biaya Pelatihan (ke No.Rek. Perbarindo Jateng)',
+    '6. FC Bukti Transfer Biaya Sertifikasi Ulang (ke No.Rek. LSP CERTIF)',
+    '7. FC NPWP BPR',
+    '8. Surat Keterangan Penugasan Kerja level 6 (form khusus dr LSP Certif) print Kop BPR'
+  ];
+
+  // Tampilkan bagian 1
+  doc.setFontSize(9).setFont(undefined,'normal');
+  infoList1.forEach(function(t){ doc.text(t,14,sy); sy+=5; });
+
+  // Tampilkan bagian 2 (bold)
+  doc.setFont(undefined,'bold');
+  infoList2.forEach(function(t){ doc.text(t,14,sy); sy+=6; });
+
+  // Tampilkan bagian 3
+  doc.setFont(undefined,'normal');
+  infoList3.forEach(function(t){ doc.text(t,14,sy); sy+=5; });
+
+  // ── BAGIAN 4: Link download form SK ──
+  sy+=3;
+
+  // FIX BUG 2: property dipisah jadi 'label' (teks tampil) dan 'url' (hyperlink)
+  var links = [
+    {
+      label: 'Download Form SK Penugasan Level 6 - Direktur Tk 1',
+      url: 'https://docs.google.com/document/d/1kYWEMpFY3GE3ApR464KTcAorO7Y9iLj6/edit?usp=drive_link&ouid=101024212609727743125&rtpof=true&sd=true'
+    },
+    {
+      label: 'Download Form SK Penugasan Level 6 - Direktur Tk 2',
+      url: 'https://docs.google.com/document/d/1TFZQrzaBAVzHtI-eEFwTxgK9BiFn6A9U/edit?usp=drive_link&ouid=101024212609727743125&rtpof=true&sd=true'
+    }
+  ];
+
+  doc.setFont(undefined,'bold');
+  doc.text('Link Form SK Penugasan Kerja Level 6:',14,sy);
+  sy+=6;
+
+  links.forEach(function(it){
+    doc.setFont(undefined,'normal');
+    doc.setTextColor(0,102,204);
+    // FIX: gunakan it.label sebagai teks tampil dan it.url sebagai target link
+    doc.textWithLink(it.label, 14, sy, { url: it.url });
+    doc.setTextColor(0,0,0);
+    sy+=6;
   });
-  
+
   var nm=((fm.querySelector('[name="PesertaNama"]')||{}).value||'peserta').trim().replace(/\s+/g,'-');
   doc.save('Registrasi-Ulang-'+nm+'.pdf');
 }
-
 
 function handleSubmit(e){
   e.preventDefault();
@@ -567,7 +568,7 @@ function handleSubmit(e){
   Array.from(fm.elements).forEach(function(el){if(el.name)d[el.name]=el.value||'';});
   iframePost(CONFIG.scriptURL,d,function(err,res){
     btn.disabled=false;
-    btn.innerHTML='<span>✓</span> <span class="btn-text">'+(isNew?'Submit Pendaftaran Baru':'SEGERA REGISTRASI ULANG')+'</span>';
+    btn.innerHTML='<span>&#x2713;</span> <span class="btn-text">'+(isNew?'Submit Pendaftaran Baru':'SEGERA REGISTRASI ULANG')+'</span>';
     if(err){showMsg('error','Gagal: '+err.message);return;}
     if(res&&res.error){
       if(res.waitingList||String(res.error).indexOf('KUOTA HABIS')!==-1){
