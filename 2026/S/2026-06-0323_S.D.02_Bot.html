@@ -1,1 +1,547 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ChatBot Sheets</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: transparant;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 8px;
+      background-attachment: fixed;
+      font-size: 13px;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background:
+        radial-gradient(circle at 20% 80%, rgba(120,100,200,0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(140,110,210,0.3) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(160,130,220,0.2) 0%, transparent 40%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .chat-container {
+      position: relative;
+      width: 100%;
+      max-width: 400px;
+      height: 90vh;
+      min-height: 350px;
+      background: rgba(255,255,255,0.98);
+      border-radius: 16px;
+      box-shadow: 0 20px 40px -12px rgba(0,0,0,0.25), 0 0 0 1px rgba(255,255,255,0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    .chat-header {
+      background: linear-gradient(135deg, #6e5dbd 0%, #7c6bc7 100%);
+      color: #fff;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+
+    .bot-avatar {
+      width: 32px; height: 32px;
+      background: rgba(255,255,255,0.2);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      border: 1px solid rgba(255,255,255,0.3);
+    }
+
+    .header-info { flex: 1; }
+    .header-title { font-weight: 600; font-size: 14px; letter-spacing: 0.2px; }
+    .header-subtitle { font-size: 12px; opacity: 0.85; }
+
+    .status-indicator {
+      width: 8px; height: 8px;
+      background: #4ade80;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2px rgba(74,222,128,0.3);
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 10px;
+      overflow-y: auto;
+      background: linear-gradient(180deg, #f8f7fc 0%, #f0eef8 100%);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .chat-messages::-webkit-scrollbar { width: 4px; }
+    .chat-messages::-webkit-scrollbar-track { background: transparent; }
+    .chat-messages::-webkit-scrollbar-thumb { background: #6e5dbd; border-radius: 2px; }
+
+    .message {
+      max-width: 90%;
+      padding: 8px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      line-height: 1.4;
+      position: relative;
+      word-wrap: break-word;
+    }
+
+    .user-message {
+      background: linear-gradient(135deg, #6e5dbd 0%, #7c6bc7 100%);
+      color: #fff;
+      align-self: flex-end;
+      border-bottom-right-radius: 4px;
+      margin-left: auto;
+    }
+
+    .bot-message {
+      background: #fff;
+      color: #333;
+      align-self: flex-start;
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(110,93,189,0.12);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+
+    .bot-message::before {
+      content: '🤖';
+      position: absolute;
+      left: -22px; bottom: 2px;
+      font-size: 16px;
+    }
+
+    /* Link styling di pesan bot */
+    .bot-message a {
+      color: #6e5dbd;
+      text-decoration: underline;
+      font-weight: 600;
+      word-break: break-all;
+    }
+    .bot-message a:hover { color: #4e3d9d; }
+
+    /* Link styling di pesan user */
+    .user-message a { color: #e8e4ff; text-decoration: underline; }
+
+    .message-content { word-wrap: break-word; }
+    .message-content strong, .message-content b { font-weight: 700; }
+    .message-content em, .message-content i { font-style: italic; }
+
+    .welcome-message {
+      background: linear-gradient(135deg, rgba(110,93,189,0.08) 0%, rgba(124,107,199,0.04) 100%);
+      border: 1px solid rgba(110,93,189,0.15);
+      padding: 10px;
+      border-radius: 10px;
+    }
+
+    .welcome-title { font-weight: 600; color: #6e5dbd; margin-bottom: 4px; font-size: 13px; }
+
+    .menu-list { list-style: none; margin-top: 4px; }
+    .menu-list li {
+      padding: 2px 0;
+      display: flex; align-items: center; gap: 6px;
+      color: #555; font-size: 12px; line-height: 1.2;
+    }
+    .menu-list li::before { content: '›'; color: #6e5dbd; font-weight: bold; font-size: 12px; }
+
+    .typing-indicator {
+      display: none;
+      align-self: flex-start;
+      background: #fff;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border-bottom-left-radius: 4px;
+      border: 1px solid rgba(110,93,189,0.12);
+      margin-left: 22px;
+      margin-bottom: 4px;
+    }
+    .typing-indicator.active { display: flex; gap: 4px; }
+
+    .typing-dot {
+      width: 6px; height: 6px;
+      background: #6e5dbd; border-radius: 50%;
+      animation: typingBounce 1.4s infinite ease-in-out both;
+    }
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes typingBounce {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1); }
+    }
+
+    .chat-input {
+      display: flex; align-items: center;
+      padding: 10px 12px;
+      background: #fff;
+      border-top: 1px solid rgba(110,93,189,0.1);
+      gap: 8px; flex-shrink: 0;
+    }
+
+    .chat-input input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid rgba(110,93,189,0.2);
+      border-radius: 20px;
+      outline: none; font-size: 13px;
+      transition: all 0.2s ease;
+      background: #f8f7fc;
+    }
+    .chat-input input:focus { border-color: #6e5dbd; background: #fff; }
+    .chat-input input::placeholder { color: #999; font-size: 13px; }
+
+    .send-btn {
+      width: 34px; height: 34px;
+      border: none; border-radius: 50%;
+      background: linear-gradient(135deg, #6e5dbd 0%, #7c6bc7 100%);
+      color: #fff; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s ease; flex-shrink: 0;
+    }
+    .send-btn:hover { transform: scale(1.05); }
+    .send-btn:active { transform: scale(0.95); }
+    .send-btn svg { width: 16px; height: 16px; fill: currentColor; }
+
+    .quick-replies {
+      display: flex; gap: 3px;
+      padding: 5px; flex-wrap: wrap;
+      overflow-x: auto; background: #f0eef8; flex-shrink: 0;
+    }
+    .quick-replies::-webkit-scrollbar { display: none; }
+
+    .chip {
+      padding: 4px 8px;
+      background: #fff;
+      border: 1px solid rgba(110,93,189,0.25);
+      border-radius: 16px; font-size: 13px;
+      color: #6e5dbd; cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s ease;
+      font-weight: 500;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+    }
+    .chip:hover {
+      background: #6e5dbd; color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 6px rgba(110,93,189,0.3);
+    }
+    .chip:active { transform: translateY(0); }
+
+    .timestamp { font-size: 11px; opacity: 0.5; margin-top: 2px; text-align: right; }
+    .bot-message .timestamp { text-align: left; }
+
+    @media (max-width: 480px) {
+      body { padding: 0; }
+      .chat-container { height: 100vh; max-width: 100%; border-radius: 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">
+      <div class="bot-avatar">🤖</div>
+      <div class="header-info">
+        <div class="header-title">Klim's Assistant</div>
+        <div class="header-subtitle">Online • Siap membantu</div>
+      </div>
+      <div class="status-indicator"></div>
+    </div>
+
+    <div class="chat-messages" id="chatMessages"></div>
+
+    <div class="typing-indicator" id="typingIndicator">
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+      <div class="typing-dot"></div>
+    </div>
+
+    <div class="quick-replies">
+      <span class="chip" onclick="sendQuickReply('1')">1</span>
+      <span class="chip" onclick="sendQuickReply('11')">11</span>
+      <span class="chip" onclick="sendQuickReply('30')">30</span>
+      <span class="chip" onclick="sendQuickReply('31')">31</span>
+      <span class="chip" onclick="sendQuickReply('32')">32</span>      
+      <span class="chip" onclick="sendQuickReply('33')">33</span>      
+    
+    </div>
+
+    <div class="chat-input">
+      <input id="userInput" type="text" placeholder="Tulis pesan yang diinginkan..." autocomplete="off"/>
+      <button class="send-btn" onclick="sendMessage()">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </div>
+  </div>
+
+  <script>
+    const SHEET_ID = '1REf1Z_Bxp91X_FMcgiEHOwAHl-hwAm44YXHGIvw3aXY';
+    const SHEET_NM = 'Sheet1';
+    let sheetCache = [];
+    let cacheValid = false;
+    let isDataLoaded = false;
+
+    // ── AMBIL DATA DARI SPREADSHEET ──────────────────────────────────────────
+    async function getSheetData() {
+      if (cacheValid) return sheetCache;
+
+      const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(SHEET_NM)}`;
+
+      try {
+        const r = await fetch(url);
+        if (!r.ok) throw new Error(`HTTP ${r.status}`);
+        const txt = await r.text();
+        const jsonStr = txt.substring(txt.indexOf('{'), txt.lastIndexOf('}') + 1);
+        const raw = JSON.parse(jsonStr);
+
+        sheetCache = raw.table.rows
+          .map(row => ({
+            question: (row.c[0]?.v ?? '').toString().trim(),   // Kolom A
+            keywords: (row.c[1]?.v ?? '').toString().trim(),   // Kolom B
+            answer:   (row.c[2]?.v ?? '').toString().trim()    // Kolom C
+          }))
+          .filter(item => item.question || item.keywords);
+
+        cacheValid    = true;
+        isDataLoaded  = true;
+        console.log('[Sheet] Loaded:', sheetCache.length, 'baris');
+        console.log('[Sheet] 3 baris pertama:', JSON.stringify(sheetCache.slice(0,3), null, 2));
+
+      } catch (err) {
+        console.error('[Sheet] Gagal load data:', err);
+        sheetCache   = [];
+        isDataLoaded = false;
+      }
+      return sheetCache;
+    }
+
+    // ── PENCARIAN JAWABAN ────────────────────────────────────────────────────
+    // Strategi (urutan prioritas):
+    //   1. Exact match kolom A  (case-insensitive)
+    //   2. Exact match salah satu keyword kolom B (comma-separated)
+    //   3. Kolom A dimulai dengan input
+    //   4. Partial — input terdapat di kolom A atau B
+    function findAnswer(data, input) {
+      const q = input.trim().toUpperCase();
+      console.log('[Find] Mencari:', q);
+
+      // 1. Exact match kolom A
+      for (const row of data) {
+        if (row.question.toUpperCase() === q) {
+          console.log('[Find] ✓ Exact-A:', row.question);
+          return row.answer;
+        }
+      }
+
+      // 2. Exact match keyword kolom B
+      for (const row of data) {
+        if (!row.keywords) continue;
+        const keys = row.keywords.toUpperCase().split(',').map(k => k.trim());
+        if (keys.includes(q)) {
+          console.log('[Find] ✓ Exact-B keyword:', row.question);
+          return row.answer;
+        }
+      }
+
+      // 3. Kolom A dimulai dengan input (misal kolom A "1SK Biaya…")
+      for (const row of data) {
+        if (row.question.toUpperCase().startsWith(q + ' ') ||
+            row.question.toUpperCase().startsWith(q + '-')) {
+          console.log('[Find] ✓ StartsWith-A:', row.question);
+          return row.answer;
+        }
+      }
+
+      // 4. Partial match
+      const qLow = input.trim().toLowerCase();
+      for (const row of data) {
+        if (row.question.toLowerCase().includes(qLow) ||
+            row.keywords.toLowerCase().includes(qLow)) {
+          console.log('[Find] ✓ Partial:', row.question);
+          return row.answer;
+        }
+      }
+
+      console.log('[Find] ✗ Tidak ditemukan:', q);
+      return null;
+    }
+
+    // ── RENDER TEKS BOT ──────────────────────────────────────────────────────
+    // Tag yang didukung di kolom C spreadsheet:
+    //   <strong>, <b>, <em>, <i>, <br>
+    //   <a href="URL">teks</a>  ← BARU: untuk link dengan teks kustom
+    //
+    // Contoh penulisan di spreadsheet (kolom C):
+    //   Info PTM <a href="https://example.com" target="_blank">klik disini</a>
+    function renderBotText(text) {
+      if (!text) return '';
+
+      let out = text;
+
+      // ── Langkah 1: Simpan tag <a href="..."> dengan placeholder ──
+      // Pola yang didukung:
+      //   <a href="URL">teks</a>
+      //   <a href="URL" target="_blank">teks</a>
+      //   <a href='URL'>teks</a>
+      const linkPlaceholders = [];
+      out = out.replace(/<a\s+href=["']([^"']+)["'][^>]*>([\s\S]*?)<\/a>/gi,
+        (match, href, linkText) => {
+          const idx = linkPlaceholders.length;
+          // Render linkText secara rekursif (bisa ada <strong> di dalamnya)
+          linkPlaceholders.push({ href, linkText });
+          return `\x02LINK${idx}\x02`;
+        }
+      );
+
+      // ── Langkah 2: Simpan tag inline lain yang diizinkan ──
+      const allowed = {
+        '<strong>':  '\x01A\x01', '</strong>': '\x01B\x01',
+        '<b>':       '\x01C\x01', '</b>':      '\x01D\x01',
+        '<em>':      '\x01E\x01', '</em>':     '\x01F\x01',
+        '<i>':       '\x01G\x01', '</i>':      '\x01H\x01',
+        '<br>':      '\x01I\x01', '<br/>':     '\x01I\x01', '<br />': '\x01I\x01',
+      };
+
+      for (const [tag, ph] of Object.entries(allowed)) {
+        out = out.split(tag).join(ph);
+      }
+
+      // ── Langkah 3: Escape semua HTML yang tersisa ──
+      out = out.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+      // ── Langkah 4: Kembalikan tag inline yang diizinkan ──
+      out = out
+        .replace(/\x01A\x01/g,'<strong>').replace(/\x01B\x01/g,'</strong>')
+        .replace(/\x01C\x01/g,'<b>').replace(/\x01D\x01/g,'</b>')
+        .replace(/\x01E\x01/g,'<em>').replace(/\x01F\x01/g,'</em>')
+        .replace(/\x01G\x01/g,'<i>').replace(/\x01H\x01/g,'</i>')
+        .replace(/\x01I\x01/g,'<br>');
+
+      // ── Langkah 5: Newline → <br> ──
+      out = out.replace(/\n/g, '<br>');
+
+      // ── Langkah 6: URL polos → link otomatis (hanya jika tidak sudah dalam placeholder) ──
+      out = out.replace(/(https?:\/\/[^\s<\x02]+)/gi,
+        '<a href="$1" target="_blank" rel="noopener">$1</a>');
+
+      // ── Langkah 7: Kembalikan placeholder <a href="..."> ──
+      out = out.replace(/\x02LINK(\d+)\x02/g, (match, idx) => {
+        const { href, linkText } = linkPlaceholders[parseInt(idx)];
+        // Escape href untuk keamanan
+        const safeHref = href.replace(/"/g, '&quot;');
+        // linkText bisa berisi tag bold dsb — render ulang secara sederhana
+        const safeText = linkText
+          .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+          // Izinkan <strong>/<b> di dalam teks link
+          .replace(/&lt;strong&gt;/gi,'<strong>').replace(/&lt;\/strong&gt;/gi,'</strong>')
+          .replace(/&lt;b&gt;/gi,'<b>').replace(/&lt;\/b&gt;/gi,'</b>');
+        return `<a href="${safeHref}" target="_blank" rel="noopener">${safeText}</a>`;
+      });
+
+      return `<div class="message-content">${out}</div>`;
+    }
+
+    // ── TAMPILKAN PESAN ──────────────────────────────────────────────────────
+    function getCurrentTime() {
+      return new Date().toLocaleTimeString('id-ID', { hour:'2-digit', minute:'2-digit' });
+    }
+
+    function addMessage(text, sender) {
+      const box = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = `message ${sender === 'user' ? 'user-message' : 'bot-message'}`;
+
+      let content;
+      if (sender === 'user') {
+        const safe = text.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+        content = `<div class="message-content">${safe}</div>`;
+      } else {
+        content = renderBotText(text);
+      }
+
+      div.innerHTML = content + `<div class="timestamp">${getCurrentTime()}</div>`;
+      box.appendChild(div);
+      box.scrollTop = box.scrollHeight;
+    }
+
+    function showTyping() {
+      document.getElementById('typingIndicator').classList.add('active');
+      document.getElementById('chatMessages').scrollTop = 99999;
+    }
+    function hideTyping() {
+      document.getElementById('typingIndicator').classList.remove('active');
+    }
+
+    // ── PROSES QUERY ─────────────────────────────────────────────────────────
+    async function processQuery(query) {
+      addMessage(query, 'user');
+      showTyping();
+
+      if (!isDataLoaded) await getSheetData();
+
+      const answer = findAnswer(sheetCache, query);
+      const reply  = answer
+        ? answer
+        : `Maaf, kode <strong>${query.replace(/[<>]/g,'')}</strong> belum tersedia. Pastikan kode benar atau hubungi admin.`;
+
+      setTimeout(() => {
+        hideTyping();
+        addMessage(reply, 'bot');
+      }, 400 + Math.random() * 300);
+    }
+
+    async function sendMessage() {
+      const inp = document.getElementById('userInput');
+      const txt = inp.value.trim();
+      if (!txt) return;
+      inp.value = '';
+      await processQuery(txt);
+    }
+
+    async function sendQuickReply(code) {
+      await processQuery(code);
+    }
+
+    document.getElementById('userInput').addEventListener('keypress', e => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    // ── PESAN SELAMAT DATANG ─────────────────────────────────────────────────
+    window.addEventListener('DOMContentLoaded', () => {
+      const welcomeHTML =
+        '<div class="welcome-title">👋 Semangat Pagi!</div>' +
+        '<div style="line-height:1.0;margin-bottom:2px">Saya asisten virtual Anda. Pilih menu di bawah/ ketik kode:</div>' +
+        '<ul class="menu-list">' +
+
+        '<li><strong>1</strong>&nbsp;Info Sertifikasi Komisaris</li>' +
+        '<li><strong>11</strong>&nbsp;Cek Jatuh Tempo Sertifikat</li>' +
+        '<li><strong>30</strong>&nbsp;Kembali ke Menu Pilihan</li>' +
+        '<li><strong>31</strong>&nbsp;Surat Sertifikasi Komisaris</li>' +
+        '<li><strong>32</strong>&nbsp;Jadwal Sertifikasi Komisaris</li>' +
+        '<li><strong>33</strong>&nbsp;Biaya Sertifikasi Komisaris</li>' +
+
+        '</ul>';
+
+      const box = document.getElementById('chatMessages');
+      const div = document.createElement('div');
+      div.className = 'message bot-message welcome-message';
+      div.innerHTML = welcomeHTML + `<div class="timestamp">${getCurrentTime()}</div>`;
+      box.appendChild(div);
+
+      getSheetData(); // preload data
+    });
+  </script>
+</body>
+</html>
