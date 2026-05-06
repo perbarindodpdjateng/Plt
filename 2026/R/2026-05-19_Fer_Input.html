@@ -111,25 +111,35 @@
 <form id="Form">
 
   <select name="Pelatihan" id="Pelatihan" required>
-    <option>PTM Aplikasi Digital SIP-PTI (Sistem Informasi Pendukung Penyelenggaraan Teknologi Informasi) BPR/BPRS sesuai POJK No. 34 Tahun 2025 dan PADK No. 43/PADK.03/2025 tentang Penyelenggaraan Teknologi Informasi oleh BPR dan BPRS</option>
+    <option>PTM Aplikasi Digital SIP2RBB  Versi 2 untuk Menyusun dan Menyampaikan Laporan Pelaksanaan dan Pengawasan Rencana Bisnis BPR/BPRS (P2RBB) ke OJK One Click to APOLO</option>
   </select>
   
   <select name="Tgl" id="Tgl" required>
-    <option>20 Mei 2026, Hotel Metro Park View Semarang</option>
+    <option>19 Mei 2026, Hotel Metro Park View Semarang</option>
   </select>
   
   <select name="Paket" id="Paket" required>
     <option value="">-- Pilih Paket 1/2/3 --</option>
-<option>3.050.000; 1 Org + SIP-PTI (hemat 0)</option>
-<option>4.300.000; 2 Org + SIP-PTI (hemat 1.800.000)</option>
-<option>5.550.000; 3 Org + SIP-PTI (hemat 3.600.000)</option>
-<option>6.800.000; 4 Org + SIP-PTI (hemat 5.400.000)</option>
-<option>8.050.000; 5 Org + SIP-PTI (hemat 7.200.000)</option>
-<option>9.300.000; 6 Org + SIP-PTI (hemat 9.000.000)</option>
-<option>10.550.000; 7 Org + SIP-PTI (hemat 10.800.000)</option>
-<option>11.800.000; 8 Org + SIP-PTI (hemat 12.600.000)</option>
-<option>13.050.000; 9 Org + SIP-PTI (hemat 14.400.000)</option>
-<option>14.300.000; 10 Org + SIP-PTI (hemat 16.200.000)</option>
+<option>PAKET 1 : 2.850.000; 1 Org + SIP2RBB VER.2 [NEW] (hemat 0)</option>
+<option>PAKET 1 : 4.100.000; 2 Org + SIP2RBB VER.2 [NEW] (hemat 1.600.000)</option>
+<option>PAKET 1 : 5.350.000; 3 Org + SIP2RBB VER.2 [NEW] (hemat 3.200.000)</option>
+<option>PAKET 1 : 6.600.000; 4 Org + SIP2RBB VER.2 [NEW] (hemat 4.800.000)</option>
+<option>PAKET 1 : 7.850.000; 5 Org + SIP2RBB VER.2 [NEW] (hemat 6.400.000)</option>
+<option>PAKET 1 : 9.100.000; 6 Org + SIP2RBB VER.2 [NEW] (hemat 8.000.000)</option>
+<option>PAKET 1 : 10.350.000; 7 Org + SIP2RBB VER.2 [NEW] (hemat 9.600.000)</option>
+<option>PAKET 1 : 11.600.000; 8 Org + SIP2RBB VER.2 [NEW] (hemat 11.200.000)</option>
+<option>PAKET 1 : 12.850.000; 9 Org + SIP2RBB VER.2 [NEW] (hemat 12.800.000)</option>
+<option>PAKET 1 : 14.100.000; 10 Org + SIP2RBB VER.2 [NEW] (hemat 14.400.000)</option>
+<option>PAKET 2 : 2.050.000; 1 Org + Upgrade SIP2RBB Ver1 ke Ver2 (hemat 0)</option>
+<option>PAKET 2 : 3.300.000; 2 Org + Upgrade SIP2RBB Ver1 ke Ver2 (hemat 800.000)</option>
+<option>PAKET 2 : 4.550.000; 3 Org + Upgrade SIP2RBB Ver1 ke Ver2 (hemat 1.600.000)</option>
+<option>PAKET 2 : 5.800.000; 4 Org + Upgrade SIP2RBB Ver1 ke Ver2 (hemat 2.400.000)</option>
+<option>PAKET 2 : 7.050.000; 5 Org + Upgrade SIP2RBB Ver1 ke Ver2 (hemat 3.200.000)</option>
+<option>PAKET 2 : 8.300.000; 6 Org + Upgrade SIP2RBB Ver1 ke Ver2 (hemat 4.000.000)</option>
+<option>PAKET 2 : 9.550.000; 7 Org + Upgrade SIP2RBB Ver1 ke Ver2 (hemat 4.800.000)</option>
+<option>PAKET 2 : 10.800.000; 8 Org + Upgrade SIP2RBB Ver1 ke Ver2 (hemat 5.600.000)</option>
+<option>PAKET 2 : 12.050.000; 9 Org + Upgrade SIP2RBB Ver1 ke Ver2 (hemat 6.400.000)</option>
+<option>PAKET 2 : 13.300.000; 10 Org + Upgrade SIP2RBB Ver1 ke Ver2 (hemat 7.200.000)</option>
   </select>
 
   <select name="DPK" id="DPK" required>
@@ -185,7 +195,7 @@
 
 <script>
   // GANTI DENGAN URL WEB APP ANDA
-  const scriptURL = 'https://script.google.com/macros/s/AKfycbypFUuetNHZzDkpAChT3esEcrluzlfQACnyqZ--ylnwygCWz-dOjMU9zm_vMOa9OrfiJg/exec';
+  const scriptURL = 'https://script.google.com/macros/s/AKfycby8oplO18HCrl1-_bT-x2Ck1eNe57MBsHWj2v8eST_G_ZhdneTe9qu7ngmMd26d95oJNQ/exec';
   
   const { jsPDF } = window.jspdf;
   
@@ -1350,7 +1360,7 @@
     doc.setFont(undefined, 'normal');
     
     const bayarData = [
-      ['   Berita Transfer', '200526 ' + data.NamaBPR],
+      ['   Berita Transfer', '190526 ' + data.NamaBPR],
       ['   Transfer Ke', 'Bank MANDIRI 135.00.1500.2015 an. YAY.PERBARINDO SEJAHTER']
     ];
     
