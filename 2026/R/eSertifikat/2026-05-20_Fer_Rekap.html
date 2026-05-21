@@ -3,12 +3,11 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Rekap Peserta</title>
+  <title>Peserta</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
   <style>
-    /* ── TOKENS ─────────────────────────────────── */
     :root {
       --bg:        #f5f4f0;
       --surface:   #ffffff;
@@ -19,9 +18,6 @@
       --text-2:    #6b6760;
       --text-3:    #9e9a94;
       --accent:    #2563eb;
-      --accent-bg: #eff4ff;
-      --accent-text: #1d4ed8;
-      --green:     #16a34a;
       --green-bg:  #f0fdf4;
       --radius:    10px;
       --radius-sm: 6px;
@@ -31,61 +27,53 @@
       --shadow-sm: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
       --shadow:    0 4px 12px rgba(0,0,0,.07), 0 1px 3px rgba(0,0,0,.05);
     }
-
-    /* ── RESET ───────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       font-family: var(--font);
-      font-size: 14px;
-      line-height: 1.6;
+      font-size: 12px;
+      line-height: 1.5;
       color: var(--text);
       background: var(--bg);
       min-height: 100vh;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── LAYOUT ──────────────────────────────────── */
+    /* ── LAYOUT ── */
     .page {
-      max-width: 980px;
-      margin: 0 auto;
-      padding: 24px 20px 40px;
+      max-width: 100%;
+      padding: 8px 8px 16px;
     }
 
-    /* ── HEADER ──────────────────────────────────── */
+    /* ── HEADER (1 baris) ── */
     .page-header {
       display: flex;
-      align-items: flex-end;
+      align-items: center;
       justify-content: space-between;
-      margin-bottom: 20px;
-      gap: 12px;
-      flex-wrap: wrap;
+      margin-bottom: 8px;
+      gap: 8px;
     }
     .page-title {
-      font-size: 20px;
+      font-size: 14px;
       font-weight: 600;
-      letter-spacing: -.3px;
+      letter-spacing: -.2px;
       color: var(--text);
+      white-space: nowrap;
     }
-    .page-sub {
-      font-size: 13px;
-      color: var(--text-2);
-      margin-top: 2px;
-    }
-
-    /* ── TOOLBAR ─────────────────────────────────── */
     .toolbar {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
+      flex: 1;
+      justify-content: flex-end;
     }
     .search-wrap {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       background: var(--surface);
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
-      padding: 0 12px;
+      padding: 0 10px;
       box-shadow: var(--shadow-sm);
       transition: border-color .15s, box-shadow .15s;
     }
@@ -94,22 +82,22 @@
       box-shadow: 0 0 0 3px rgba(37,99,235,.1);
     }
     .search-wrap svg {
-      width: 15px; height: 15px;
+      width: 13px; height: 13px;
       stroke: var(--text-3); stroke-width: 2; fill: none;
       flex-shrink: 0;
     }
     #searchInput {
       border: none; background: transparent;
       font-family: var(--font);
-      font-size: 14px;
+      font-size: 12px;
       color: var(--text);
-      padding: 9px 0;
-      width: 240px;
+      padding: 7px 0;
+      width: 200px;
       outline: none;
     }
     #searchInput::placeholder { color: var(--text-3); }
     .refresh-btn {
-      width: 38px; height: 38px;
+      width: 32px; height: 32px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       background: var(--surface);
@@ -117,17 +105,18 @@
       display: grid; place-content: center;
       box-shadow: var(--shadow-sm);
       transition: background .15s, border-color .15s;
+      flex-shrink: 0;
     }
     .refresh-btn:hover { background: var(--surface2); border-color: var(--border2); }
     .refresh-btn:active { transform: scale(.96); }
     .refresh-btn svg {
-      width: 16px; height: 16px;
+      width: 13px; height: 13px;
       stroke: var(--text-2); stroke-width: 2; fill: none;
     }
     .refresh-btn.spinning svg { animation: spin .7s linear infinite; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── CARD ────────────────────────────────────── */
+    /* ── CARD ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
@@ -136,20 +125,14 @@
       overflow: hidden;
     }
 
-    /* ── TABLE ───────────────────────────────────── */
+    /* ── TABLE ── */
     .table-scroll { overflow-x: auto; }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 14px;
-    }
-    thead {
-      border-bottom: 1px solid var(--border);
-    }
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    thead { border-bottom: 1px solid var(--border); }
     th {
-      padding: 11px 16px;
+      padding: 8px 12px;
       text-align: left;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 500;
       color: var(--text-2);
       letter-spacing: .04em;
@@ -157,134 +140,80 @@
       background: var(--surface2);
       white-space: nowrap;
     }
-    th:first-child { border-radius: 0; }
     td {
-      padding: 12px 16px;
+      padding: 9px 12px;
       color: var(--text);
       border-bottom: 1px solid var(--border);
       vertical-align: middle;
-      line-height: 1.5;
+      line-height: 1.4;
     }
     tbody tr:last-child td { border-bottom: none; }
-    tbody tr {
-      transition: background .1s;
-    }
+    tbody tr { transition: background .1s; }
     tbody tr:hover td { background: var(--surface2); }
-    tbody tr.row-new {
-      animation: rowAppear .5s ease;
-    }
+    tbody tr.row-new { animation: rowAppear .5s ease; }
     @keyframes rowAppear {
       from { background: var(--green-bg); }
       to   { background: transparent; }
     }
     td img {
-      width: 30px; height: 30px;
+      width: 26px; height: 26px;
       border-radius: var(--radius-sm);
-      object-fit: cover;
-      display: block;
-    }
-    /* Row number helper */
-    td.row-num {
-      color: var(--text-3);
-      font-family: var(--mono);
-      font-size: 12px;
-      width: 44px;
-      text-align: center;
+      object-fit: cover; display: block;
     }
 
-    /* ── STATES ──────────────────────────────────── */
+    /* ── STATES ── */
     .state-box {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 52px 24px;
-      gap: 10px;
-      color: var(--text-2);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 36px 20px; gap: 8px; color: var(--text-2);
     }
     .state-box svg {
-      width: 32px; height: 32px;
-      stroke: var(--text-3); stroke-width: 1.5; fill: none;
-      margin-bottom: 4px;
+      width: 26px; height: 26px;
+      stroke: var(--text-3); stroke-width: 1.5; fill: none; margin-bottom: 2px;
     }
-    .state-box .state-title {
-      font-size: 15px;
-      font-weight: 500;
-      color: var(--text);
-    }
-    .state-box .state-sub {
-      font-size: 13px;
-      color: var(--text-2);
-    }
+    .state-box .state-title { font-size: 13px; font-weight: 500; color: var(--text); }
+    .state-box .state-sub   { font-size: 12px; color: var(--text-2); }
     .spinner-ring {
-      width: 28px; height: 28px;
-      border: 2.5px solid var(--border);
+      width: 24px; height: 24px;
+      border: 2px solid var(--border);
       border-top-color: var(--accent);
       border-radius: 50%;
       animation: spin .8s linear infinite;
     }
 
-    /* ── FOOTER / PAGINATION ─────────────────────── */
+    /* ── FOOTER ── */
     .table-footer {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 12px 16px;
+      padding: 8px 12px;
       border-top: 1px solid var(--border);
       background: var(--surface2);
-      gap: 12px;
-      flex-wrap: wrap;
+      gap: 8px; flex-wrap: wrap;
     }
-    .count-label {
-      font-size: 13px;
-      color: var(--text-2);
-    }
-    .count-label strong {
-      color: var(--text);
-      font-weight: 500;
-    }
-    .pag-controls {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
+    .count-label { font-size: 11px; color: var(--text-2); }
+    .count-label strong { color: var(--text); font-weight: 500; }
+    .pag-controls { display: flex; align-items: center; gap: 5px; }
     .pag-btn {
-      height: 32px;
-      padding: 0 12px;
+      height: 28px; padding: 0 10px;
       border: 1px solid var(--border);
       border-radius: var(--radius-sm);
       background: var(--surface);
       color: var(--text);
       font-family: var(--font);
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
+      display: inline-flex; align-items: center; gap: 4px;
       transition: background .12s, border-color .12s;
       box-shadow: var(--shadow-sm);
     }
-    .pag-btn svg {
-      width: 14px; height: 14px;
-      stroke: currentColor; stroke-width: 2; fill: none;
-    }
-    .pag-btn:hover:not(:disabled) {
-      background: var(--surface2);
-      border-color: var(--border2);
-    }
+    .pag-btn svg { width: 12px; height: 12px; stroke: currentColor; stroke-width: 2; fill: none; }
+    .pag-btn:hover:not(:disabled) { background: var(--surface2); border-color: var(--border2); }
     .pag-btn:disabled { opacity: .38; cursor: not-allowed; }
-    .pag-indicator {
-      font-size: 13px;
-      color: var(--text-2);
-      padding: 0 6px;
-      font-weight: 500;
-    }
+    .pag-indicator { font-size: 12px; color: var(--text-2); padding: 0 4px; font-weight: 500; }
 
-    /* ── RESPONSIVE ──────────────────────────────── */
-    @media (max-width: 600px) {
-      .page { padding: 16px 12px 32px; }
-      .page-header { flex-direction: column; align-items: flex-start; }
-      #searchInput { width: 160px; }
+    @media (max-width: 480px) {
+      #searchInput { width: 130px; }
       .table-footer { flex-direction: column; align-items: flex-start; }
     }
   </style>
@@ -292,12 +221,8 @@
 <body>
 <div class="page">
 
-  <!-- Header -->
   <div class="page-header">
-    <div>
-      <h1 class="page-title">Rekap Peserta</h1>
-      <p class="page-sub" id="subLabel">Memuat data…</p>
-    </div>
+    <h1 class="page-title">Peserta</h1>
     <div class="toolbar">
       <div class="search-wrap">
         <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
@@ -309,66 +234,49 @@
     </div>
   </div>
 
-  <!-- Card -->
   <div class="card">
-    <!-- Loading state -->
     <div class="state-box" id="loadingState">
       <div class="spinner-ring"></div>
       <span class="state-sub">Memuat data…</span>
     </div>
-
-    <!-- Error state -->
     <div class="state-box" id="errorState" style="display:none">
       <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></svg>
       <span class="state-title">Gagal memuat data</span>
       <span class="state-sub">Periksa koneksi, lalu coba refresh.</span>
     </div>
-
-    <!-- Empty state -->
     <div class="state-box" id="emptyState" style="display:none">
-      <svg viewBox="0 0 24 24"><path d="M21 21-6-6m2-5a7 7 0 1 1-14 0 7 7 0 0 1 14 0z"/></svg>
+      <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       <span class="state-title">Tidak ditemukan</span>
       <span class="state-sub">Coba kata kunci yang berbeda.</span>
     </div>
-
-    <!-- Table -->
     <div class="table-scroll" id="tableWrap" style="display:none">
       <table id="dataTable">
         <thead id="thead"></thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
-
-    <!-- Footer -->
     <div class="table-footer" id="tableFooter" style="display:none">
       <span class="count-label" id="countLabel"></span>
       <div class="pag-controls">
         <button id="prevBtn" class="pag-btn">
-          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
-          Sebelumnya
+          <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>Sebelumnya
         </button>
         <span class="pag-indicator" id="pagIndicator"></span>
         <button id="nextBtn" class="pag-btn">
-          Berikutnya
-          <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
+          Berikutnya<svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6"/></svg>
         </button>
       </div>
     </div>
   </div>
 
 </div>
-
 <script>
-  /* ── CONFIG ─────────────────────────────────── */
   const ROWS_PER_PAGE = 10;
   const ENDPOINT = 'https://script.google.com/macros/s/AKfycbyzvygqPl3pXXSiqUR-HJLcVdkjNOge3fKf33RCTRD2WYd4DRNMiBZ_tZY1GjTp0QwJ/exec';
-
   let cache = [], lastSerial = '', currentPage = 1, filtered = [];
   const seen = new Set();
-
   const el = id => document.getElementById(id);
 
-  /* ── FETCH ──────────────────────────────────── */
   async function pull() {
     const btn = el('refreshBtn');
     btn.classList.add('spinning');
@@ -376,21 +284,12 @@
       const r = await fetch(ENDPOINT + '?t=' + Date.now(), { cache: 'no-store' });
       const raw = await r.json();
       const serial = JSON.stringify(raw);
-      if (serial !== lastSerial) {
-        lastSerial = serial;
-        cache = raw;
-        currentPage = 1;
-      }
-      show('table');
-      render();
-    } catch (e) {
-      show('error');
-    } finally {
-      btn.classList.remove('spinning');
-    }
+      if (serial !== lastSerial) { lastSerial = serial; cache = raw; currentPage = 1; }
+      show('table'); render();
+    } catch (e) { show('error'); }
+    finally { btn.classList.remove('spinning'); }
   }
 
-  /* ── SHOW STATE ─────────────────────────────── */
   function show(state) {
     el('loadingState').style.display  = state === 'loading' ? '' : 'none';
     el('errorState').style.display    = state === 'error'   ? '' : 'none';
@@ -399,80 +298,49 @@
     el('tableFooter').style.display   = state === 'table'   ? '' : 'none';
   }
 
-  /* ── RENDER ─────────────────────────────────── */
   function render() {
     const key = el('searchInput').value.trim().toLowerCase();
-    filtered = cache.filter((row, i) => {
-      if (i === 0) return true;
-      return row.join(' ').toLowerCase().includes(key);
-    });
-
+    filtered = cache.filter((row, i) => i === 0 || row.join(' ').toLowerCase().includes(key));
     const totalRows = filtered.length - 1;
     if (totalRows === 0 && key) { show('empty'); return; }
     show('table');
-
     const totalPages = Math.max(1, Math.ceil(totalRows / ROWS_PER_PAGE));
     if (currentPage > totalPages) currentPage = totalPages;
     if (currentPage < 1) currentPage = 1;
-
     const start = 1 + (currentPage - 1) * ROWS_PER_PAGE;
     const end   = Math.min(start + ROWS_PER_PAGE - 1, totalRows);
-
     const thead = el('thead'), tbody = el('tbody');
     thead.innerHTML = ''; tbody.innerHTML = '';
-
-    /* thead */
     if (filtered[0]) {
       const tr = document.createElement('tr');
-      filtered[0].forEach(cell => {
-        const th = document.createElement('th');
-        th.textContent = cell;
-        tr.appendChild(th);
-      });
+      filtered[0].forEach(cell => { const th = document.createElement('th'); th.textContent = cell; tr.appendChild(th); });
       thead.appendChild(tr);
     }
-
-    /* tbody */
     filtered.forEach((row, i) => {
       if (i === 0 || i < start || i > end) return;
       const tr = document.createElement('tr');
       row.forEach(cell => {
         const td = document.createElement('td');
         if (/^https?:\/\/.+\.(jpg|jpeg|png|gif|webp)/i.test(cell)) {
-          const img = new Image();
-          img.src = cell; img.alt = 'foto'; img.loading = 'lazy';
-          td.appendChild(img);
-        } else {
-          td.textContent = cell;
-        }
+          const img = new Image(); img.src = cell; img.alt = 'foto'; img.loading = 'lazy'; td.appendChild(img);
+        } else { td.textContent = cell; }
         tr.appendChild(td);
       });
       const sig = row.join('|');
       if (!seen.has(sig)) { tr.classList.add('row-new'); seen.add(sig); }
       tbody.appendChild(tr);
     });
-
-    /* footer */
     const from = Math.min(start, totalRows), to = Math.min(end, totalRows);
-    el('countLabel').innerHTML =
-      `Menampilkan <strong>${from}–${to}</strong> dari <strong>${totalRows}</strong> peserta`;
+    el('countLabel').innerHTML = `Menampilkan <strong>${from}–${to}</strong> dari <strong>${totalRows}</strong> data`;
     el('pagIndicator').textContent = `${currentPage} / ${totalPages}`;
     el('prevBtn').disabled = currentPage === 1;
     el('nextBtn').disabled = currentPage === totalPages;
-
-    /* sub label */
-    el('subLabel').textContent = key
-      ? `${totalRows} hasil untuk "${key}"`
-      : `${totalRows} peserta terdaftar`;
   }
 
-  /* ── EVENTS ─────────────────────────────────── */
   el('searchInput').addEventListener('input', () => { currentPage = 1; render(); });
   el('refreshBtn').addEventListener('click', pull);
   el('prevBtn').addEventListener('click', () => { currentPage--; render(); });
   el('nextBtn').addEventListener('click', () => { currentPage++; render(); });
-
-  /* ── INIT ───────────────────────────────────── */
   pull();
 </script>
 </body>
