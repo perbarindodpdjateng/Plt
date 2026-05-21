@@ -1,1 +1,41 @@
 
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cetak eSertifikat</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+  </style>
+</head>
+<body oncontextmenu="return false;" onkeydown="return false;" onmousedown="return false;">
+  <iframe 
+    loading="lazy" 
+    src="https://docs.google.com/forms/d/e/1FAIpQLSeSIxCmbdbY672CgDh-OMMofNoprc2OrhehQ6lpvUM9tTU2Pw/viewform?embedded=true">
+  </iframe>
+
+  <script>
+    let loadCount = 0;
+    const iframe = document.querySelector("iframe");
+    iframe.onload = function() {
+      loadCount++;
+      if (loadCount > 1) {
+        window.location.href = "https://docs.google.com/spreadsheets/d/1WWv2Ic9caem_mr43Rc-ZFb7ssn9YtddzVgMQ-pZUb-I/export?format=pdf&size=7&gid=860984090&gridlines=false";
+      }
+    };
+  </script>
+</body>
+</html>
